@@ -1,0 +1,9 @@
+pwn
+***
+
+For the moment, ``fdb pwd`` and ``fdb pwn`` (print working directory/namespace)
+both execute ``fdb whoami``.
+At some point in the future, ``fdb`` may support the notion of a working
+namespace and a ``cd`` command; this is only really relevant if the
+user chooses to use unix-style paths with ``fdb``.
+

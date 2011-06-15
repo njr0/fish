@@ -1,0 +1,43 @@
+fdb su
+******
+
+Set user: changes the set of credentials in use by ``fdb``.
+
+**FORM**
+::
+
+    fdb su userspec
+
+**EXAMPLES**
+::
+
+    fdb su foo
+
+The ``fdb`` command expects user credentials for Fluidinfo to be stored
+in a file in the users's home directory.   On unix systems, this file
+is ``~/.fluidDBcredentials``; on Windows systems it is
+``fluiddbcredentials.ini`` in the user's home folder..
+
+The the user has access to more than on Fluidinfo account, multiple
+credentials may be stored in variant files.   In unix systems,
+these files have names like ``~/.fluidDBcredentials.foo``;
+on windows they have names like ``fluiddbcredentials-foo.ini``.
+
+A different set of credentials can be used for any one-off command
+by adding ``-u foo`` to the command line; this will cause the credentials
+in the ``foo`` variant of the file to be used.
+
+The ``fdb su command`` changes the default set of credentials to be used
+by copying the specified variant file over the default file.
+Because it is a simple copy, this is a *global* change, i.e. it affects
+all sessions, not just one in the current shell.    So on unix,
+::
+
+    fdb su njr
+
+is exactly equivalent to
+::
+
+   cp ~/.fluidDBcredentials.njr ~/.fluidDBcredentials
+
+

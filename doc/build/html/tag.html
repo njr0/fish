@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>tag &mdash; fdb v2.17 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '2.17',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="fdb v2.17 documentation" href="index.html" />
+    <link rel="next" title="untag" href="untag.html" />
+    <link rel="prev" title="The fdb Command Line for Fluidinfo" href="cli.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="untag.html" title="untag"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cli.html" title="The fdb Command Line for Fluidinfo"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">fdb v2.17 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="tag">
+<h1>tag<a class="headerlink" href="#tag" title="Permalink to this headline">¶</a></h1>
+<p>Adds one or more tags (with optional values) to the object or objects
+specified.</p>
+<p><strong>FORM</strong></p>
+<div class="highlight-python"><pre>fdb tag [flags] &lt;object specifier&gt; &lt;tag-value-pairs&gt;</pre>
+</div>
+<p><strong>EXAMPLES</strong></p>
+<div class="highlight-python"><pre>fdb tag -a "Eiffel Tower" njr/rating=7 njr/seen
+fdb tag -a "Eiffel Tower" njr/rating=7 njr/seen
+fdb tag -i 93bd1999-0998-49cc-8004-af457ce34ce4 njr/rating=7 njr/seen
+fdb tag -q 'fluiddb/about matches "Eiffel Tower"' njr/rating=7 njr/seen
+fdb tag -U -a "Eiffel Tower" rating=7 seen</pre>
+</div>
+<p>All of these commands will tag the object with about tag &#8220;Eiffel Tower&#8221;
+and ID <tt class="docutils literal"><span class="pre">93bd1999-0998-49cc-8004-af457ce34ce4</span></tt> with two
+tags&#8212;<tt class="docutils literal"><span class="pre">njr/rating</span></tt> of 7 and <tt class="docutils literal"><span class="pre">njr/seen</span></tt> with no value.
+The last one may also tag other objects since the query</p>
+<div class="highlight-python"><pre>fluiddb/about matches "Eiffel Tower"</pre>
+</div>
+<p>is search-engine-style string match that will match any about tag
+containing the words <tt class="docutils literal"><span class="pre">Eiffel</span></tt> and <tt class="docutils literal"><span class="pre">Tower</span></tt>, ignoring case, other words
+and punctuation.</p>
+<p>The <tt class="docutils literal"><span class="pre">-U</span></tt> option specifies &#8220;unix-style&#8221; relative paths; when this option
+is used, tag names are assumed to be relative to the authenticated user&#8217;s
+namespace; if other user&#8217;s tags are to be referred to, they must be
+introduced with a leading <tt class="docutils literal"><span class="pre">/</span></tt> (e.g. <tt class="docutils literal"><span class="pre">/ntoll/rating).</span>
+<span class="pre">Note</span> <span class="pre">that</span> <span class="pre">``-U</span></tt> does not affect queries specified with <tt class="docutils literal"><span class="pre">-q</span></tt>,
+i.e. full Fluidinfo-style paths must be used inside the query.</p>
+<p>The command produces no output when successful and a suitable
+warning when it fails.</p>
+<div class="highlight-python"><pre>$ fdb tag -a "Eiffel Tower" njr/rating=7
+
+$ fdb tag -a "Eiffel Tower" ntoll/rating=7
+Failed to tag object with about="Eiffel Tower" with ntoll/rating
+Error code 401 (UNAUTHORIZED)</pre>
+</div>
+<p><strong>NOTES</strong></p>
+<p>When specified by about tag, the object does not need to exist
+in Fluidinfo prior to the operation; if necessary an object with
+the given about tag will be created.   (Conceptually, an object
+for every possible about tag always exists in Fluidinfo;
+they are just <em>instantiated lazily</em>, i.e. allocated IDs when first used.)</p>
+<p>The user must have permission to write the tag.
+By default, the user can write any tag under her namespace.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/fdb-doc-logo.png" alt="Logo"/>
+            </a></p>
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="cli.html"
+                                  title="previous chapter">The fdb Command Line for Fluidinfo</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="untag.html"
+                                  title="next chapter">untag</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/tag.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="untag.html" title="untag"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cli.html" title="The fdb Command Line for Fluidinfo"
+             >previous</a> |</li>
+        <li><a href="index.html">fdb v2.17 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2011, Nicholas J. Radcliffe.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.2.
+    </div>
+  </body>
+</html>

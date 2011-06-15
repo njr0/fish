@@ -299,5 +299,24 @@
 #                      seem to work (so perhaps not unicode user names
 #                      or passwords on windows).
 #
+# 2011/06/15 v2.17     Added amazon command.
+#
+#                      This adds a dependency on the abouttag lib,
+#                      which might be made conditional.
+#
+#                      Removed leading fdb from top-level help.
+#
+#                      Restored accidentally disable count command
+#
+#                      Added per-command help.
+#
+#                      Changed various things to support the web app
+#                      (shell-fish) like printing, some exceptions etc.
+#                      Added extra arguments to functions such as
+#                      execute command line in support of above.
+#
+#                      Changed core help examples to use Paris rather
+#                      than DADGAD as the example object.
+#
 
 

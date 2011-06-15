@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>count &mdash; fdb v2.17 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '2.17',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="fdb v2.17 documentation" href="index.html" />
+    <link rel="next" title="ls" href="ls.html" />
+    <link rel="prev" title="tags" href="tags.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="ls.html" title="ls"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tags.html" title="tags"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">fdb v2.17 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="count">
+<h1>count<a class="headerlink" href="#count" title="Permalink to this headline">¶</a></h1>
+<p>Counts the number of objects matching a set of conditions</p>
+<p><strong>FORM</strong></p>
+<div class="highlight-python"><pre>fdb count [flags] &lt;object specifier&gt;</pre>
+</div>
+<p><strong>EXAMPLES</strong></p>
+<div class="highlight-python"><pre>$ fdb count -q 'has njr/rating'
+141 objects matched
+Total: 141 objects
+
+$ fdb count -a 'Eiffel Tower'
+Total: 1 object
+
+$ fdb count -q 'fluiddb/about matches "Eiffel Tower"'
+6 objects matched
+Total: 6 objects</pre>
+</div>
+<p>The command produces no output when successful, even if the tag did
+not exist.</p>
+<div class="highlight-python"><pre>$ fdb untag -F -a "Eiffel Tower" ntoll/rating
+Failed to remove tag ntoll/rating from object with about="Eiffel Tower"
+Error code 401 (UNAUTHORIZED)</pre>
+</div>
+<p><strong>NOTES</strong></p>
+<p>The Fluidinfo API does not provide a primitive <tt class="docutils literal"><span class="pre">count</span></tt> function,
+so FDB actually has to retrieve all the objects that match the query
+and count them; this operation can, therefore, be comparatively slow.</p>
+<p>The user&#8217;s ability to read tags is regulated by the permissions system,
+so the count reflects that, i.e. it is the restricted to objects
+that the user can see the relevant tags for.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/fdb-doc-logo.png" alt="Logo"/>
+            </a></p>
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="tags.html"
+                                  title="previous chapter">tags</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="ls.html"
+                                  title="next chapter">ls</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/count.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="ls.html" title="ls"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tags.html" title="tags"
+             >previous</a> |</li>
+        <li><a href="index.html">fdb v2.17 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2011, Nicholas J. Radcliffe.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.2.
+    </div>
+  </body>
+</html>

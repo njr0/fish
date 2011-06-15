@@ -1,0 +1,22 @@
+whoami
+******
+
+Shows the username name of the current user credentials.
+**FORM**
+::
+
+   fdb whoami
+
+
+**EXAMPLES**
+::
+
+    $ fdb whoami
+
+    $ fdb su greek
+    Credentials set to user Νικολας (file greek).
+
+    $ fdb whoami
+    Νικολας
+
+

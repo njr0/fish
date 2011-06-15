@@ -6,7 +6,7 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'2.16'
+__version__ = u'2.17'
 VERSION = __version__
 
 import codecs
@@ -28,6 +28,7 @@ else:
 
 
 DADGAD_ID = u'ca0f03b5-3c0d-4c00-aa62-bdb07f29599c'
+PARIS_ID = u'17ecdfbc-c148-41d3-b898-0b5396ebe6cc'
 UNICODE = True
 DEFAULT_UNIX_STYLE_PATHS = False
 toStr = unicode if UNICODE else str
@@ -85,10 +86,11 @@ class STATUS:
     OK = 200
     CREATED = 201
     NO_CONTENT = 204
-    INTERNAL_SERVER_ERROR = 500
-    NOT_FOUND = 404
-    UNAUTHORIZED = 401
     BAD_REQUEST= 400
+    UNAUTHORIZED = 401
+    PRECONDITION_FAILED = 402
+    NOT_FOUND = 404
+    INTERNAL_SERVER_ERROR = 500
 
 
 FLUIDDB_PATH = u'http://fluiddb.fluidinfo.com'
@@ -533,7 +535,8 @@ class FluidDB:
                                    returnTags=True, returnNamespaces=True)
         return O(result) if status == STATUS.OK else status
 
-    def create_abstract_tag(self, tag, description=None, indexed=True):
+    def create_abstract_tag(self, tag, description=None, indexed=True,
+                            inPref=False):
         """Creates an (abstract) tag with the name (full path) given.
            The tag is not applied to any object.
            If the tag's name (tag) contains slashes, namespaces are created
@@ -544,7 +547,8 @@ class FluidDB:
            Returns (O) object corresponding to the tag if successful,
            otherwise an integer error code.
         """
-        (user, subnamespace, tagname) = self.tag_path_split(tag)
+        absTag = self.abs_tag_path(tag, inPref=inPref)
+        (user, subnamespace, tagname) = self.tag_path_split(absTag)
         if subnamespace:
             fullnamespace = u'/tags/%s/%s' % (user, subnamespace)
         else:
@@ -595,12 +599,12 @@ class FluidDB:
         objTagParts = self.path_parts(byAbout, spec, tag, inPref)
         (status, o) = self._set_tag_value(objTagParts, value, value_type)
         if status == STATUS.NOT_FOUND and createAbstractTagIfNeeded:
-            o = self.create_abstract_tag(tag)
+            o = self.create_abstract_tag(tag, inPref=inPref)
             if type(o) == types.IntType:       # error code
                 return o
             else:
                 return self.tag_object(spec, tag, byAbout, value, value_type,
-                                       False)
+                                       False, inPref=inPref)
         else:
             return 0 if status == STATUS.NO_CONTENT else status
 

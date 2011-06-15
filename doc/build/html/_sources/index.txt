@@ -6,12 +6,42 @@
 Documentation for the fdb Command Line
 ======================================
 
-Contents:
+**Contents**
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    cli.txt
+
+**Commands**
+
+.. toctree::
+   :maxdepth: 1
+
+   tag.txt
+   untag.txt
+   show.txt
+   tags.txt
+   count.txt
+
+   ls.txt
+   perms.txt
+   su.txt
+   whoami.txt
+   pwd.txt
+   pwn.txt
+
+   help.txt
+   commands.txt
+   version.txt
+
+   test.txt   
+
+**Installation and Configuration**
+
+.. toctree::
+   :maxdepth: 1
+
    unixlike.txt
    install.txt
 

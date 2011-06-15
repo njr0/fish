@@ -1,0 +1,4 @@
+version
+*******
+
+Reports the version of fdb running; ``--version`` may be used as a long form.

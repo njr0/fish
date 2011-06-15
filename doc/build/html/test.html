@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>test &mdash; fdb v2.17 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '2.17',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="fdb v2.17 documentation" href="index.html" />
+    <link rel="next" title="Using Unix-Like Paths" href="unixlike.html" />
+    <link rel="prev" title="version" href="version.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="unixlike.html" title="Using Unix-Like Paths"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="version.html" title="version"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">fdb v2.17 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <p>. _fdbtest:</p>
+<div class="section" id="test">
+<h1>test<a class="headerlink" href="#test" title="Permalink to this headline">¶</a></h1>
+<p>Runs fdb&#8217;s self-tests.</p>
+<p><strong>FORM</strong></p>
+<div class="highlight-python"><pre>fdb test [flags] [subset to run]
+fdb testcli
+fdb testapi
+fdb testdb</pre>
+</div>
+<p>The only normally relevant flag is <tt class="docutils literal"><span class="pre">-s</span></tt>, to run against the sandbox.</p>
+<p>The <tt class="docutils literal"><span class="pre">testcli</span></tt>, <tt class="docutils literal"><span class="pre">testdb</span></tt> and <tt class="docutils literal"><span class="pre">testapi</span></tt> variants run subets of the tests.</p>
+<p><strong>EXAMPLE</strong></p>
+<div class="highlight-python"><pre>$ fdb test
+......................
+----------------------------------------------------------------------
+Ran 22 tests in 47.210s</pre>
+</div>
+<p>Everything is running correctly if you get a line of dots with no
+<tt class="docutils literal"><span class="pre">E</span></tt> (error) or <tt class="docutils literal"><span class="pre">F</span></tt> failures.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/fdb-doc-logo.png" alt="Logo"/>
+            </a></p>
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="version.html"
+                                  title="previous chapter">version</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="unixlike.html"
+                                  title="next chapter">Using Unix-Like Paths</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/test.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="unixlike.html" title="Using Unix-Like Paths"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="version.html" title="version"
+             >previous</a> |</li>
+        <li><a href="index.html">fdb v2.17 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2011, Nicholas J. Radcliffe.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.2.
+    </div>
+  </body>
+</html>

@@ -6,6 +6,7 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
+import os
 import shutil
 import sys
 import types
@@ -25,12 +26,14 @@ from fdblib import (
     DEFAULT_ENCODING,
     STATUS,
     DADGAD_ID,
+    PARIS_ID,
     HTTP_TIMEOUT,
     SANDBOX_PATH,
     FLUIDDB_PATH,
 )
 import ls
 import flags
+import abouttag.amazon
 
 
 HTTP_METHODS = ['GET', 'PUT', 'POST', 'DELETE', 'HEAD']
@@ -39,88 +42,96 @@ ARGLESS_COMMANDS = ['COUNT', 'TAGS', 'LS', 'PWD', 'PWN', 'WHOAMI']
 
 USAGE = u"""
 
+For help with a specific command, type help followed by the command name.
+For a list of commands, type commands.
+
  Tag objects:
-   fdb tag -a 'DADGAD' tuning rating=10
-   fdb tag -i %s /njr/tuning /njr/rating=10
-   fdb tag -q 'about = "DADGAD"' tuning rating=10
+   tag -a 'Paris' visited rating=10
+   tag -i %s /njr/visited /njr/rating=10
+   tag -q 'about = "Paris"' visited rating=10
 
  Untag objects:
-   fdb untag -a 'DADGAD' /njr/tuning rating
-   fdb untag -i %s
-   fdb untag -q 'about = "DADGAD"' tuning rating
+   untag -a 'Paris' /njr/visited rating
+   untag -i %s
+   untag -q 'about = "Paris"' visited rating
 
  Fetch objects and show tags
-   fdb show -a 'DADGAD' /njr/tuning /njr/rating
-   fdb show -i %s tuning rating
-   fdb show -q 'about = "DADGAD"' tuning rating
+   show -a 'Paris' /njr/visited /njr/rating
+   show -i %s visited rating
+   show -q 'about = "Paris"' visited rating
 
  Count objects matching query:
-   fdb count -q 'has fluiddb/users/username'
+   count -q 'has fluiddb/users/username'
 
  Get tags on objects and their values:
-   fdb tags -a 'DADGAD'
-   fdb tags -i %s
+   tags -a 'Paris'
+   tags -i %s
 
  Miscellaneous:
-   fdb whoami              prints username for authenticated user
-   fdb pwd / fdb pwn       prints root namespace of authenticated user
-   fdb su fdbuser          set fdb to use user credentials for fdbuser
+   whoami              prints username for authenticated user
+   pwd / pwn           prints root namespace of authenticated user
+   su fiuser           set fish to use user credentials for fiuser
+   help [command]      show this help, or help for the nominated comamnd.
+   commands            show a list of available commands
+   amazon 'url'        show the about tag for a book on ana Amazon US/UK page
 
  Run Tests:
-   fdb test                runs all tests
-   fdb testcli             tests command line interface only
-   fdb testdb              tests core FluidDB interface only
-   fdb testutil            runs tests not requiring FluidDB access
+   test                runs all tests
+   testcli             tests command line interface only
+   testdb              tests core FluidDB interface only
+   testutil            runs tests not requiring FluidDB access
 
- Raw HTTP GET:
-   fdb get /tags/njr/google
-   fdb get /permissions/tags/njr/rating action=delete
-   (use POST/PUT/DELETE/HEAD at your peril; currently untested.)
 
-""" % (DADGAD_ID, DADGAD_ID, DADGAD_ID, DADGAD_ID)
+""" % (PARIS_ID, PARIS_ID, PARIS_ID, PARIS_ID)
 
 
 USAGE_FI = u"""
 
+For help with a specific command, type help followed by the command name.
+For a list of commands, type commands.
+
  Tag objects:
-   fdb tag -a 'DADGAD' njr/tuning njr/rating=10
-   fdb tag -i %s njr/tuning njr/rating=10
-   fdb tag -q 'about = "DADGAD"' tuning njr/rating=10
+   tag -a 'Paris' njr/visited njr/rating=10
+   tag -i %s njr/visited njr/rating=10
+   tag -q 'about = "Paris"' visited njr/rating=10
 
  Untag objects:
-   fdb untag -a 'DADGAD' njr/tuning njr/rating
-   fdb untag -i %s
-   fdb untag -q 'about = "DADGAD"' njr/tuning njr/rating
+   untag -a 'Paris' njr/visited njr/rating
+   untag -i %s
+   untag -q 'about = "Paris"' njr/visited njr/rating
 
  Fetch objects and show tags
-   fdb show -a 'DADGAD' njr/tuning njr/rating
-   fdb show -i %s njr/tuning njr/rating
-   fdb show -q 'about = "DADGAD"' njr/tuning njr/rating
+   show -a 'Paris' njr/visited njr/rating
+   show -i %s njr/visited njr/rating
+   show -q 'about = "Paris"' njr/visited njr/rating
 
  Count objects matching query:
-   fdb count -q 'has fluiddb/users/username'
+   count -q 'has fluiddb/users/username'
 
  Get tags on objects and their values:
-   fdb tags -a 'DADGAD'
-   fdb tags -i %s
+   tags -a 'Paris'
+   tags -i %s
 
  Miscellaneous:
-   fdb whoami              prints username for authenticated user
-   fdb pwd / fdb pwn       prints root namespace of authenticated user
-   fdb su fdbuser          set fdb to use user credentials for fdbuser
+   whoami              prints username for authenticated user
+   pwd / pwn           prints root namespace of authenticated user
+   su fiuser           set fish to use user credentials for fiuser
+   help [command]      show this help, or help for the nominated comamnd.
+   commands            show a list of available commands
+   amazon 'url'        show the about tag for a book on ana Amazon US/UK page
 
  Run Tests:
-   fdb test            (runs all tests)
-   fdb testcli         (tests command line interface only)
-   fdb testdb          (tests core FluidDB interface only)
-   fdb testutil        (runs tests not requiring FluidDB access)
+   test            (runs all tests)
+   testcli         (tests command line interface only)
+   testdb          (tests core FluidDB interface only)
+   testutil        (runs tests not requiring FluidDB access)
 
  Raw HTTP GET:
-   fdb get /tags/njr/google
-   fdb get /permissions/tags/njr/rating action=delete
+   get /tags/njr/google
+   get /permissions/tags/njr/rating action=delete
    (use POST/PUT/DELETE/HEAD at your peril; currently untested.)
 
-""" % (DADGAD_ID, DADGAD_ID, DADGAD_ID, DADGAD_ID)
+""" % (PARIS_ID, PARIS_ID, PARIS_ID, PARIS_ID)
 
 
 class ModeError(Exception):
@@ -223,7 +234,7 @@ def execute_show_command(objs, db, tags, options):
             elif status == STATUS.NOT_FOUND:
                 Print(u'  %s' % cli_bracket(u'tag %s not present' % outtag))
             else:
-                Print(cli_bracket(u'error code %s getting tag %s'
+                Print(cli_bracket(u'error code %s attempting to read tag %s'
                                   % (error_code(status), outtag)))
 
 
@@ -243,7 +254,7 @@ def execute_tags_command(objs, db, options):
             elif status == STATUS.NOT_FOUND:
                 Print(u'  %s' % cli_bracket(u'tag %s not present' % outtag))
             else:
-                Print(cli_bracket(u'error code %s getting tag %s'
+                Print(cli_bracket(u'error code %s attempting to read tag %s'
                                   % (error_code(status), uttag)))
 
 
@@ -260,6 +271,10 @@ def execute_su_command(db, args):
     file = args[0].decode(DEFAULT_ENCODING)
     extra = u'' if args[0] == username else (u' (file %s)' % file)
     Print(u'Credentials set to user %s%s.' % (username, extra))
+
+
+def execute_amazon_command(db, args):
+    Print(abouttag.amazon.get_about_tag_for_item(args[0]))
 
 
 def execute_http_request(action, args, db, options):
@@ -463,12 +478,15 @@ def parse_args(args=None):
     return action, args, options, parser
 
 
-def execute_command_line(action, args, options, parser, user=None, pwd=None):
+def execute_command_line(action, args, options, parser, user=None, pwd=None,
+                         unixPaths=None, docbase=None):
     credentials = (Credentials(user or options.user[0], pwd)
                    if (user or options.user) else None)
     if not action == 'ls':
+        unixPaths = (path_style(options) if path_style(options) is not None
+                                         else unixPaths)
         db = FluidDB(host=options.hostname, credentials=credentials,
-                     debug=options.debug, unixStylePaths=path_style(options))
+                     debug=options.debug, unixStylePaths=unixPaths)
     ids_from_queries = chain(*imap(lambda q: get_ids_or_fail(q, db),
         options.query))
     ids = chain(options.id, ids_from_queries)
@@ -481,10 +499,12 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None):
         'untag',
         'show',
         'tags',
+        'count',
         'ls',
         'perms',
         'pwd',
         'pwn',
+        'amazon',
         'test',
         'testcli',
         'testdb',
@@ -497,12 +517,18 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None):
             [O({'mode': 'id', 'specifier': id}) for id in ids]
 
     if action == 'version' or options.version:
-        Print('fdb %s' % version())
+        Print('fish %s' % version())
         if action == 'version':
             return
     
     if action == 'help':
-        Print(USAGE if db.unixStyle else USAGE_FI)
+        if args and args[0] in command_list:
+            base = docbase or sys.path[0]
+            f = open(os.path.join(base, 'doc/build/text/%s.txt' % args[0]))
+            Print (f.read())
+            f.close()
+        else:
+            Print(USAGE if db.unixStyle else USAGE_FI)
     elif action == 'commands':
         Print(' '.join(command_list))
     elif action not in command_list:
@@ -530,15 +556,17 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None):
 
         command(objs, db, args, options)
     elif action == 'ls':
-        ls.execute_ls_command(objs, args, options, credentials)
+        ls.execute_ls_command(objs, args, options, credentials, unixPaths)
     elif action == 'chmod':
-        ls.execute_chmod_command(objs, args, options, credentials)
+        ls.execute_chmod_command(objs, args, options, credentials, unixPaths)
     elif action == 'perms':
-        ls.execute_perms_command(objs, args, options, credentials)
+        ls.execute_perms_command(objs, args, options, credentials, unixPaths)
     elif action in ('pwd', 'pwn', 'whoami'):
         execute_whoami_command(db)
     elif action == 'su':
         execute_su_command(db, args)
+    elif action == 'amazon':
+        execute_amazon_command(db, args)
     elif action in ['get', 'put', 'post', 'delete']:
         execute_http_request(action, args, db, options)
     else:

@@ -1,0 +1,225 @@
+
+The fdb Command Line for Fluidinfo
+**********************************
+
+
+A Brief Overview of Fluidinfo
+=============================
+
+Fluidinfo is a simple, shared, online storage system in which each
+there are a set of objects, each of which can optionally be *about*
+something, and information is stored by tagging objects. Tags belong
+to users, and have names.   Tags may store information simply by being
+present or absent, or they may have values. Thus I  can indicate that
+I have read a book by attaching a tag called ``have-read`` to the
+object corresponding to that book, or I can rate it by attaching a
+``rating`` tag with a numeric value to the object.   Tag owners can
+set permissions on their tags to control who can see them and who can
+alter/use them. So tags are owned and are subject to a permissions
+system and policies, while all objects are shared.
+
+
+Overview of the Command Line
+============================
+
+The fdb command line is a acts as a sort-of one-shot command shell for
+Fluidinfo.   It gives access to much of the functionality of the
+underlying ``fdb.py`` library, with a main focus on tagging, getting
+tag values, finding tags, querying Fluidinfo and clearing (removing
+tags). It also has some facilities for listing tags and viewing and
+altering their permissions.
+
+Assuming you have installed fdb.py, set up a credentials file, and
+created an alias ``fdb`` to run it, basic use is exemplified as
+follows.   In the examples that follow, I assume that the Fluidinfo
+user has username ``njr``.   All tags belonging to njr start ``njr/``.
+(``fdb`` actually has a configuration option to allow this to be
+omitted, but for now we'll specify the user explicitly, since that is
+normal in Fluidinfo.)
+
+   1. Rate the Eiffel Tower as a 9:
+
+         $ fdb tag -a "Eiffel Tower" njr/rating=9
+
+   2. Show the my rating and ntoll's rating of the "Eiffel Tower".
+
+         $ fdb show -a "Eiffel Tower"  fluiddb/about  njr/rating  ntoll/rating
+         Object with about="Eiffel Tower":
+         /objects/93bd1999-0998-49cc-8004-af457ce34ce4
+         njr/rating = 9
+         fluiddb/about = "Eiffel Tower"
+         ntoll/rating = "I prefer the one in Blackpool"
+
+   3. Show all the tags on the "Eiffel Tower" (now referenced by ID):
+
+         $ fdb tags -i 93bd1999-0998-49cc-8004-af457ce34ce4
+         Object with id=93bd1999-0998-49cc-8004-af457ce34ce4:
+         njr/rating = 9
+         ntoll/rating = "I prefer the  the one in Blackpool"
+         njr/location = "Paris"
+         njr/indexed/about
+         fluiddb/about = "Eiffel Tower"
+
+   4. Add a ``dislike`` tag to each object that I have rated 1 or 0
+      and then show their about tags.
+
+         $ fdb tag -q 'njr/rating < 2' njr/dislike
+         $ fdb show -q 'has njr/dislike' fluiddb/about njr/rating njr/dislike
+         5 objects matched
+         Object a98f2c80-ae5f-405a-a319-d47122ae9da3:
+           fluiddb/about = "book:foucaults pendulum (umberto eco)"
+           njr/rating = 1
+           njr/dislike = True
+         Object 5157c69e-ceaf-4e7c-9423-d67751d029d3:
+           fluiddb/about = "The_Beatles"
+           njr/rating = 1
+           njr/dislike = True
+         Object 1ab066e8-c2a1-4769-9121-e3346849e7e4:
+           fluiddb/about = "book:beloved (toni morrison)"
+           njr/rating = 1
+           njr/dislike = True
+         Object ff873602-e9a8-4f9a-a7d4-c0cfc394a120:
+           fluiddb/about = "book:the lord of the rings (jrr tolkien)"
+           njr/rating = 1
+           njr/dislike = True
+         Object 7aed1e67-a88e-439d-8a56-b2ab52c838ab:
+           fluiddb/about = "book:oranges are not the only fruit (jeanette winterson)"
+           njr/rating = 0
+           njr/dislike = True
+
+Before describing these commands in detail, it will be useful to
+describe the abstraction ``fdb`` uses, as it differs in key respects
+from the underlying Fluidinfo model.
+
+
+The fdb Abstraction
+===================
+
+The Fluidinfo API is quite low level and rigid; ``fdb`` offers a
+slightly higher level of abstraction. Here, we briefly note the
+differences.
+
+   * In the Fluidinfo API, you can't simply tag an object with an
+     ``njr/rating`` tag; you first have to tell the system that you
+     wish to use a ``rating`` tag by ``creating`` it; only once you
+     have done this can you use it.
+
+     In ``fdb``, you can just go ahead and set a tag; if it doesn't
+     exist, the system will create it for you.
+
+   3. Fluidinfo supports *namespaces*; a namespace is to a tag much
+     like a directory or folder is to a file, i.e. tags live in
+     namespaces and you can have different tags with the same name in
+     different namspaces, just as you can have two files with the same
+     name in different folders.   User Jacqui (username ``jacqui``)
+     has a namespace ``jacqui``, and she can create tags ("top-level
+     tags") in that namespace.   Jacqui may, however, wish to group
+     tags into sets using namespaces.   For example, she may wish to
+     have some private tags that all live in a namespace called
+     ``private``.   So she might have a private rating tag called
+     ``jacqui/private/rating``. As with tags, Fluidinfo first requires
+     jacqui to create the ``private`` namespace before she can create
+     the ``jacqui/private/rating`` tag. So to use
+     ``jacqui/private/rating`` for the first time, using the API
+     directly, the process would be:
+
+        1. Create the namespace ``private`` under ``jacqui``
+
+        2. Create the tag ``rating``
+
+        3. Tag the relevant object with ``rating``.
+
+      Again, ``fdb`` takes care of all that, and allows jacqui just to
+      say:
+
+         fdb tag -a "Eiffel Tower" jacqui/rating=10
+
+      ``fdb`` will create any tags and namespaces required on the fly.
+
+   * Finally, in Fluidinfo itself, the object ID (128-bit number,
+     usually formatted as a hex-number in 8-4-4-4-12 digit groups) is
+     not actually a tag on the object.   ``fdb`` allows the user to
+     use refer to it as a tag, at least for reporting purposes, using
+     the name ``/id``.
+
+
+The Anatomy of the core fdb Commands
+====================================
+
+The general form of the core fdb commands is:
+
+   fdb <verb> [flags] <object selector> <tags/values>
+
+The verb says what you want to do.   The main verbs currently
+avalaible are
+
+   * ``tag`` --- set tags on some objects
+
+   * ``show`` --- show tag values from some objects
+
+   * ``untag`` --- remove tags from some objects
+
+   * ``tags`` --- show what readable tags an object has
+
+   * ``count`` --- count the number of objects match some criterion.
+
+The optional ``flags`` modify the command.   The main ones used are:
+
+   * ``-v`` --- verbose (gives extra information)
+
+   * ``-s`` --- to specify that the command should operate againss the
+     sandbox (``sandbox.fluidinfo.com``) rather than the main
+     Fluidinfo instance (``fluiddb.fluidinfo.com``); this is mostly
+     used for testing.
+
+   * ``-U`` --- use unix-style paths (overriding configuration and
+     default; see below)
+
+   * ``-F`` --- use Fluidinfo-style paths (overriding configuration
+     and default; see below)
+
+   * ``-u userspec`` --- if you have multiple Fluidinfo accounts, this
+     specifies an alternate credentials file to use, normally
+     identified by the username (see below).
+
+The ``<object selector>`` is used to specify which objects you are
+interested in and usually takes on of three forms:
+
+   * ``-a "about tag value"`` is used to specify an object on the
+     basis of its about tag (``fluiddb/about``).   For example, ``-a
+     "book:nineteen eighty four (george orwell)"`` specifies an
+     important book by George Orwell.
+
+   * ``-i ID`` is used to specify an object on the basis of its ID
+     (expressed as a hex string, appropriately formatted). For
+     example, ``-i 93bd1999-0998-49cc-8004-af457ce34ce4`` specifies
+     the object with this ID, which happens to be the on with the
+     about tag ``Eiffel Tower``.
+
+   * ``-q "fluidinfo query"`` is used to specify a set of objects on
+     the basis of a query expressed in the Fluidinfo query language.
+     For example ``-q has njr/rating`` specifies objects that have an
+     njr/rating rag on them.
+
+Finally, some commands need or accept a list of tags or tag-value
+pairs. Specifically, ``show`` and ``untag`` both require a list of
+tags to be shown or removed, and ``tag`` requires a set of tag-value
+pairs to know what tags to set.   Tag value pairs usually take the
+form:
+
+   tag=value
+
+so that a list of them might be
+
+   rating=9 description="fabulous" seen=true price=18.77
+
+Don't put spaces around equals signs assigning tag values: it won't
+work.
+
+In general, strings should be in double quotes ``"like this"``,
+booleans should be ``true``, ``false``, ``t`` or ``f`` (unquoted) and
+numbers should just be plain numbers like 3 or 4.7. All strings are
+always unicode, i.e. they may contain any character.
+
+It is also possible to set a tag without a value by just giving a tag
+name.

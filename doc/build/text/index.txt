@@ -1,0 +1,28 @@
+
+Documentation for the fdb Command Line
+**************************************
+
+**Contents**
+
+* The fdb Command Line for Fluidinfo
+**Commands**
+
+* tag
+* untag
+* show
+* tags
+* count
+* ls
+* perms
+* fdb su
+* whoami
+* pwd
+* pwn
+* help
+* commands
+* version
+* test
+**Installation and Configuration**
+
+* Using Unix-Like Paths
+* Installation and Configuration

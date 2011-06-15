@@ -1,0 +1,184 @@
+perms
+*****
+
+The ``perms`` command provides a simple interface for changing the
+permissions on tags and namespaces.   It only supports five cases,
+but there are powerful enough to cover the vast bulk of common
+situations.
+
+**FORM**
+::
+
+    fdb perms permissions-spec list-of-one-or-more-tags-or-namespaces
+
+Here ``permissions-spec`` can be
+
+  * ``private``
+  * ``default``
+  * ``lock``
+  * ``unlock``
+  * ``group list+of+usernames+separated+by+pluses``
+  * ``group-write list+of+usernames+separated+by+pluses``
+  * ``group-read list+of+usernames+separated+by+pluses``
+
+**EXAMPLES**
+
+The eight supported cases are as follows and apply equally namespaces and tags.
+In what follows, we'll use a ``rating`` tag and a namespace called ``friends``.
+
+  * Make a tag or namespace completely private.
+    ::
+
+        $ fdb perms private njr/rating
+	$ fdb perms private njr/fi
+
+    We could also change them together by saying:
+    ::
+
+        $ fdb perms private njr/rating njr/fi
+
+    This sets the permissions so that only the owner of the tag
+    or namespace has permission to do anything with it---``read``, ``write``
+    and ``control`` permission.
+    The abbreviated view of this is shown by
+    ::
+
+        $ fdb ls -ld njr/rating njr/fi
+        trwc------   njr/rating
+        nrwc------   njr/fi/
+
+    (See :ref:`fdbls` for an detailed explanation of the permissions codes.)
+
+    The full listing after this is:
+    ::
+
+        $ fdb -F ls -Ld njr/rating njr/fi
+
+        njr/rating:
+
+        ABSTRACT TAG (/tags)
+          Write
+            update (metadata):  policy: closed; exceptions = [njr]
+            delete (delete):    policy: closed; exceptions = [njr]
+          Control
+            control (control):  policy: closed; exceptions = [njr]
+
+        TAG (/tag-values)
+          Read
+            read (read):        policy: closed; exceptions = [njr]
+          Write
+            create (tag):       policy: closed; exceptions = [njr]
+            delete (untag):     policy: closed; exceptions = [njr]
+          Control
+            control (control):  policy: closed; exceptions = [njr]
+
+
+        njr/fi/:
+
+        NAMESPACE (/namespaces)
+          Read
+            list (read):        policy: closed; exceptions = [njr]
+          Write
+            create (create):    policy: closed; exceptions = [njr]
+            delete (delete):    policy: closed; exceptions = [njr]
+          Control
+            control (control):  policy: closed; exceptions = [njr]
+
+  * Restore default permissions to a tag or namespace.
+    The default is that the owner has read, write and control
+    and everyone else has read only:
+    ::
+
+        $ fdb perms default njr/rating njr/fi
+
+        $ fdb -F ls -ld njr/rating njr/fi
+        trwcr--r--   njr/rating
+        nrwcr--r--   njr/fi/
+
+  * Lock a namespace or tag so that it can't be edited (i.e.,
+    remove all write permissions).
+    ::
+
+      $ fdb perms lock njr/rating
+
+      $fdb ls -l njr/rating
+      tr-cr--r--   njr/rating
+
+    This does not alter read or control permissions.
+
+  * Unlock a namespace or tag so that the owner (only) can edit it.
+    ::
+
+      $ fdb perms unlock njr/rating
+
+      $fdb ls -l njr/rating
+      trwcr--r--   njr/rating
+
+    This does not alter read or control permissions.
+
+  * Set the permissions on a tag or namespace so that one or more extra people
+    can write it.   (This does not alter read permissions.)
+    ::
+
+        $ fdb perms group-write ntoll+jkakar njr/rating njr/fi
+
+        $ fdb ls -gd njr/rating njr/fi
+        fdb -F ls -gd njr/rating njr/fi
+        trwcrw-r--   r:(world)  w:ntoll+jkakar   njr/rating
+        nrwcrw-r--   r:(world)  w:ntoll+jkakar   njr/fi/
+
+  * Set the permissions so that only a particular group can read it,
+    leaving write permissions as the are.
+    ::
+
+        $ fdb perms default njr/rating njr/fi
+        $ fdb perms group-read ntoll+jkakar+miro njr/rating njr/fi
+
+        $ fdb -F ls -gd njr/rating njr/fi
+        trwcr-----   r:ntoll+jkakar+miro  w:(world)   njr/rating
+        nrwcr-----   r:ntoll+jkakar+miro  w:(world)   njr/fi/
+
+  * Set permissions so that one group of users can write tge tag
+    or namespace, and another group can read it.
+    In this case, let's allow ``miro`` to write and ``ntoll`` and
+    ``jkakar`` (as well as ``miro``) to read.
+    ::
+
+        $ fdb perms group-read ntoll+jkakar+miro njr/rating njr/fi
+        $ fdb perms group-write miro njr/rating njr/fi
+
+        $ fdb ls -gd njr/rating njr/fi
+        trwcrw----   r:ntoll+jkakar+miro  w:miro   njr/rating
+        nrwcrw----   r:ntoll+jkakar+miro  w:miro   njr/fi/
+
+  * The final case is really just a special case of the previous one,
+    where the read and write groups are the same.
+    Let's make ``miro`` the only user (other the owner, ``njr``)
+    who can read or write the tag and namespace.
+    ::
+
+        $ fdb perms group miro njr/rating njr/fi
+
+        $ fdb ls -gd njr/rating njr/fi
+        trwcrw----   miro   njr/rating
+        nrwcrw----   miro   njr/fi/
+
+**NOTE**
+
+Removing read access to a namespace prevents people from listing
+that namespace but does not stop them working with the contents
+of the namespace if they can find them.   So if you have a
+namespace called ``secret`` and set its permissions to
+``nrwc------`` (owner-only access) and in it have a tag called
+``password`` with its permission set to the default ``trwcr--r--``
+then anyone will be able to read the password if they discover
+it exists.
+
+This is clearly not a good situation; the Fluidinfo team is aware of
+it and I expect some resolution will be forthcoming at some point.
+
+Note also that the *existence* of a tag cannot really be hidden
+in Fluidinfo, so people will be able to find out that you have
+a tag called ``secret/password``.
+
+

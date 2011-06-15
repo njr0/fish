@@ -1,0 +1,29 @@
+. _fdbtest:
+
+
+test
+****
+
+Runs fdb's self-tests.
+
+**FORM**
+
+   fdb test [flags] [subset to run]
+   fdb testcli
+   fdb testapi
+   fdb testdb
+
+The only normally relevant flag is ``-s``, to run against the sandbox.
+
+The ``testcli``, ``testdb`` and ``testapi`` variants run subets of the
+tests.
+
+**EXAMPLE**
+
+   $ fdb test
+   ......................
+   ----------------------------------------------------------------------
+   Ran 22 tests in 47.210s
+
+Everything is running correctly if you get a line of dots with no
+``E`` (error) or ``F`` failures.

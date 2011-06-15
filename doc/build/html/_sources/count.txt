@@ -1,0 +1,43 @@
+count
+*****
+
+Counts the number of objects matching a set of conditions
+
+**FORM**
+::
+
+    fdb count [flags] <object specifier>
+
+**EXAMPLES**
+::
+
+    $ fdb count -q 'has njr/rating'
+    141 objects matched
+    Total: 141 objects
+
+    $ fdb count -a 'Eiffel Tower'
+    Total: 1 object
+
+    $ fdb count -q 'fluiddb/about matches "Eiffel Tower"'
+    6 objects matched
+    Total: 6 objects
+
+The command produces no output when successful, even if the tag did
+not exist.
+::
+
+  $ fdb untag -F -a "Eiffel Tower" ntoll/rating  
+  Failed to remove tag ntoll/rating from object with about="Eiffel Tower"
+  Error code 401 (UNAUTHORIZED)
+
+**NOTES**
+
+The Fluidinfo API does not provide a primitive ``count`` function,
+so FDB actually has to retrieve all the objects that match the query
+and count them; this operation can, therefore, be comparatively slow.
+
+The user's ability to read tags is regulated by the permissions system,
+so the count reflects that, i.e. it is the restricted to objects
+that the user can see the relevant tags for.
+
+

@@ -134,6 +134,7 @@ class FluidinfoPerms:
         self.isTag = isTag
         self.isPolicy = isPolicy
         self.path = path
+        self.valid = True
         self.entities = [u'abstract-tag', u'tag'] if isTag else [u'namespace']
 
         self.owner = path.split(u'/')[1]
@@ -142,12 +143,13 @@ class FluidinfoPerms:
             for (action, name) in zip(desc.actions, desc.names):
                 if getFromFI:
                     if isPolicy:
-                        self.__dict__[name] = db.get_raw_policy(entity,
-                                                                path[1:],
-                                                                action)
+                        p = db.get_raw_policy(entity, path[1:], action)
+                        
                     else:
-                        self.__dict__[name] = db.get_raw_perm(entity, path[1:],
-                                                              action, isTag)
+                        p = db.get_raw_perm(entity, path[1:], action, isTag)
+                    self.__dict__[name] = p
+                    if type(p) == int:
+                        self.value = False
                 else:
                     # figure out defaults etc.
                     policy = u'open' if name in READ_NAMES else u'closed'
@@ -261,6 +263,8 @@ class FluidinfoPerms:
     def __unicode__(self):
         if self.isTag is None:
             raise Exception
+        if not self.valid:
+            return ' (denied) '
         return self.fi_tag_desc() if self.isTag else self.fi_ns_desc() 
 
 
@@ -488,6 +492,9 @@ class ExtendedFluidDB(fdblib.FluidDB):
 
     def ns_perms_string(self, ns, group=False):
         h = self.get_ns_perms_hash(ns)
+        for k in h:
+            if type(h[k]) == int:
+                return ' (denied) '
         s = []
         owner = ns.split(u'/')[0]
         r = h[u'read']
@@ -583,10 +590,12 @@ def write_status(writes):
          return u'-' if all(w == u'-' for w in writes) else u'/'
 
 
-def execute_ls_command(objs, tags, options, credentials):
+def execute_ls_command(objs, tags, options, credentials, unixPaths=None):
+    unixPaths = (fdblib.path_style(options)
+                 if fdblib.path_style(options) is not None else unixPaths)
     db = ExtendedFluidDB(host=options.hostname, credentials=credentials,
                          debug=options.debug,
-                         unixStylePaths=fdblib.path_style(options))
+                         unixStylePaths=unixPaths)
     long_ = options.long or options.group
     if options.policy:
         if len(tags) > 0:
@@ -626,9 +635,14 @@ def execute_ls_command(objs, tags, options, credentials):
                 Print(tag)
 
 
-def execute_chmod_command(objs, args, options, credentials):
+def execute_chmod_command(objs, args, options, credentials, unixPaths=None):
     cli.warning('Not implemented yet.')
     return
+    unixPaths = (fdblib.path_style(options)
+                 if fdblib.path_style(options) is not None else unixPaths)
+    db = ExtendedFluidDB(host=options.hostname, credentials=credentials,
+                         debug=options.debug,
+                         unixStylePaths=unixPaths)
     db = ExtendedFluidDB(host=options.hostname, credentials=credentials,
                          debug=options.debug,
                          unixStylePaths=fdblib.path_style(options))
@@ -664,10 +678,12 @@ def execute_chmod_command(objs, args, options, credentials):
             Print('No tag or namespace %s found' % db.abs_tag_path(path,
                                                                  outPref=True))
 
-def execute_perms_command(objs, args, options, credentials):
+def execute_perms_command(objs, args, options, credentials, unixPaths=None):
+    unixPaths = (fdblib.path_style(options)
+                 if fdblib.path_style(options) is not None else unixPaths)
     db = ExtendedFluidDB(host=options.hostname, credentials=credentials,
                          debug=options.debug,
-                         unixStylePaths=fdblib.path_style(options))
+                         unixStylePaths=unixPaths)
     if len(args) < 2:
         Print(u'Form: perms SPEC list of tags and namespaces')
         return
