@@ -332,4 +332,10 @@
 #                      Check the availability of the abouttag library
 #                      before using the amazon command.
 #
+# 2011/06/18 v3.01     Fixed touch, which had a verbose option that broke it.
+#                      Added -X flag to perms to allow even finer-grained
+#                      control of permissions.
+#
+
+
 

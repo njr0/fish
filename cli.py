@@ -291,8 +291,7 @@ def execute_touch_command(db, args, options):
         fullpath = db.abs_tag_path(tag, inPref=True)
         if not db.tag_exists(fullpath):
             id = db.create_abstract_tag(fullpath,
-                                        description=options.description,
-                                        verbose=True)
+                                        description=options.description)
                 
 
 def execute_mkns_command(db, args, options):
@@ -514,6 +513,8 @@ def parse_args(args=None):
     general.add_option('-2', '--hightestverbosity', action='store_true',
                        default=False,
             help='don\'t list namespace; just name of namespace.')
+    general.add_option('-X', '--extravals', action='append', default=[],
+            help='extra values for a command.')
     parser.add_option_group(general)
 
     other = OptionGroup(parser, 'Other flags')

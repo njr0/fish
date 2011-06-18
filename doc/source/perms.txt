@@ -9,7 +9,7 @@ situations.
 **FORM**
 ::
 
-    fish [-f] perms permissions-spec list-of-one-or-more-tags-or-namespaces
+    fish [flags] perms permissions-spec list-of-one-or-more-tags-or-namespaces
 
 Here ``permissions-spec`` can be one of the short forms:
 
@@ -29,9 +29,32 @@ or one of three low-level forms:
 
 **FLAGS**
 
-The ``-f`` flag is used to force ``fish`` to set a policy it would otherwise
-resist.   In particular, setting any policy that does not include owner
-control always requires use of the ``-f`` flag.
+  ``-f``  The ``-f`` flag is used to force ``fish`` to set a policy it
+          would otherwise resist.  In particular, setting any policy that
+          does not include owner control always requires use of the ``-f``
+          flag.
+
+  ``-X name -X name2`` The ``-X`` flag is used two allow fully
+                       fine-grained control over permissions.
+                       If one or more ``-X`` flags are used.
+                       only the finest-grained permissions with
+                       the fish names specified are changed.
+                       These are the names shown by ls -L:
+                        - ``metadata``, ``delete``, ``acontrol``
+                          for abstract tags
+                        - ``read``, ``tag``, ``untag``, ``tcontrol`` for tags
+                        - ``read``, ``create``, ``delete``, ``control``
+                          for namespaces.
+
+                       For example:
+                       ::
+                          fish perms write -X delete closed except njr fish/z
+
+                       Changes the fine-grained write permission
+		       ``delete`` on ``fish/z`` so that only ``njr`` has
+		       the permission.
+
+                       ``-X`` is rarely used.
 
 **EXAMPLES**
 
@@ -43,7 +66,7 @@ a namespace called ``friends``.
     ::
 
         $ fish perms private njr/rating
-	$ fish perms private njr/fi
+        $ fish perms private njr/fi
 
     We could also change them together by saying:
     ::
@@ -248,8 +271,3 @@ the change unless forced with ``-f``.
    ::
 
        $ fish perms control closed except njr njr/alice/a
-
-
-
-
-
