@@ -33,7 +33,10 @@ from fishlib import (
 )
 import ls
 import flags
-import abouttag.amazon
+try:
+    import abouttag.amazon
+except ImportError:
+    pass
 
 
 HTTP_METHODS = ['GET', 'PUT', 'POST', 'DELETE', 'HEAD']
@@ -313,6 +316,13 @@ def execute_su_command(db, args):
 
 
 def execute_amazon_command(db, args):
+    try:
+        abouttag.amazon
+    except:
+        raise CommandError(u'You need the abouttag library to use the amazon '
+                           u'command.\n'
+                           u'This is available from '
+                           u'http://github.com/njr0/abouttag.')
     Print(abouttag.amazon.get_about_tag_for_item(args[0]))
 
 

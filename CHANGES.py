@@ -325,3 +325,11 @@
 #                      and made a few more commands throw exceptions.
 #                      (-D suppresses this.)
 #                      Now accept -r or -R for all recursive commands.
+#
+# 2011/06/18 v3.00     Fish being pushed to github for the first time.
+#                      Added support for low-level read, write and control
+#                      arguments to perms command.
+#                      Check the availability of the abouttag library
+#                      before using the amazon command.
+#
+

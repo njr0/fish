@@ -8,9 +8,9 @@ there are powerful enough to cover the vast bulk of common situations.
 
 **FORM**
 
-   fish perms permissions-spec list-of-one-or-more-tags-or-namespaces
+   fish [-f] perms permissions-spec list-of-one-or-more-tags-or-namespaces
 
-Here ``permissions-spec`` can be
+Here ``permissions-spec`` can be one of the short forms:
 
    * ``private``
 
@@ -26,11 +26,28 @@ Here ``permissions-spec`` can be
 
    * ``group-read list+of+usernames+separated+by+pluses``
 
+or one of three low-level forms:
+
+   * ``read [open|closed] [except
+     list+of+usernames+separated+by+pluses]``
+
+   * ``write [open|closed] [except
+     list+of+usernames+separated+by+pluses]``
+
+   * ``control [open|closed] [except
+     list+of+usernames+separated+by+pluses]``
+
+**FLAGS**
+
+The ``-f`` flag is used to force ``fish`` to set a policy it would
+otherwise resist.   In particular, setting any policy that does not
+include owner control always requires use of the ``-f`` flag.
+
 **EXAMPLES**
 
-The eight supported cases are as follows and apply equally namespaces
-and tags. In what follows, we'll use a ``rating`` tag and a namespace
-called ``friends``.
+The eight special cases supported are as follows and apply equally
+namespaces and tags.  In what follows, we'll use a ``rating`` tag and
+a namespace called ``friends``.
 
    * Make a tag or namespace completely private.
 
@@ -50,8 +67,7 @@ called ``friends``.
         trwc------   njr/rating
         nrwc------   njr/fi/
 
-     (See *fishls* for an detailed explanation of the permissions
-     codes.)
+     (See *ls* for an detailed explanation of the permissions codes.)
 
      The full listing after this is:
 
@@ -159,19 +175,73 @@ called ``friends``.
         trwcrw----   miro   njr/rating
         nrwcrw----   miro   njr/fi/
 
-**NOTE**
+The three low-level case are exemplified by the following. In these
+forms, the Fluidinfo-style policy is explicitly given as ``open`` or
+``closed``, optionally foollowed by the word ``except`` and a list of
+user names on the exception list, separated by plus signs.
 
-Removing read access to a namespace prevents people from listing that
-namespace but does not stop them working with the contents of the
-namespace if they can find them.   So if you have a namespace called
-``secret`` and set its permissions to ``nrwc------`` (owner-only
-access) and in it have a tag called ``password`` with its permission
-set to the default ``trwcr--r--`` then anyone will be able to read the
-password if they discover it exists.
+Note that the owner is not treated specially, so should normally be
+included in the exception list if the policy is closed. If the owner
+is excluded from control, ``fish`` will refuse to make the change
+unless forced with ``-f``.
 
-This is clearly not a good situation; the Fluidinfo team is aware of
-it and I expect some resolution will be forthcoming at some point.
+   $ fish perms read open njr/rating
+   $ fish perms write closed except njr+miro njr/rating
+   $ fish perms control closed except njr+miro njr/rating
+   $ fish ls -L njr/rating
+   njr/rating:
 
-Note also that the *existence* of a tag cannot really be hidden in
-Fluidinfo, so people will be able to find out that you have a tag
-called ``secret/password``.
+   ABSTRACT TAG (/tags)
+     Write
+       update (metadata):  policy: closed; exceptions = [njr, miro]
+       delete (delete):    policy: closed; exceptions = [njr, miro]
+     Control
+       control (control):  policy: closed; exceptions = [njr, miro]
+
+   TAG (/tag-values)
+     Read
+       read (read):        policy: open; exceptions = []
+     Write
+       create (tag):       policy: closed; exceptions = [njr, miro]
+       delete (untag):     policy: closed; exceptions = [njr, miro]
+     Control
+       control (control):  policy: closed; exceptions = [njr, miro]
+
+**NOTES**
+
+1. **READ (LIST) PERMISSION ON NAMESPACES**.  Removing read access to
+   a namespace prevents people from listing that namespace but does
+   not stop them working with the contents of the namespace if they
+   can find them.  So if you have a namespace called ``secret`` and
+   set its permissions to ``nrwc------`` (owner-only access) and in it
+   have a tag called ``password`` with its permission set to the
+   default ``trwcr--r--`` then anyone will be able to read the
+   password if they discover it exists.
+
+   This is clearly not a good situation; the Fluidinfo team is aware
+   of it and I expect some resolution will be forthcoming at some
+   point.
+
+   Note also that the *existence* of a tag cannot really be hidden in
+   Fluidinfo, so people will be able to find out that you have a tag
+   called ``secret/password``.
+
+2. **LOSING CONTROL**.   If you give someone else write into one of
+   your namespaces, you should be aware that any tags or namespaces
+   that person creates will, by default be under the control of that
+   user, i.e. if ``alice`` creates a tag in your namespace, she will
+   have control permission and write permission over it and *you will
+   not*.
+
+   This is a recognized failure, and will be fixed.
+
+   In the meantime, if ``alice`` does create a tag called ``alice/a``
+   in ``njr``'s namespace, she can give back shared control to ``njr``
+   by saying:
+
+      $ fish perms write closed except alice+njr njr/alice/a
+      $ fish perms control closed except alice+njr njr/alice/a
+
+   She could also hand back exclusive control by saying:
+
+      $ fish perms control closed except njr njr/alice/a

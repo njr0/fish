@@ -1,17 +1,26 @@
 
-whoami
+amazon
 ******
 
-Shows the username name of the current user credentials. **FORM**
+Gets the about tag for a recognized book, ebook, CD, record or MP3
+track from an Amazon US or UK URL.
 
-   fish whoami
+**FORM**
+
+   amazon url-of-amazon-product-page
 
 **EXAMPLES**
 
-   $ fish whoami
+   $ fish amazon 'http://www.amazon.com/Renbourn-Stefan-Grossman-Live-Concert/dp/B000000E8R/ref=sr_1_7?ie=UTF8&qid=1308066155&sr=8-7'
 
-   $ fish su greek
-   Credentials set to user Νικολας (file greek).
+   album:john renbourn and stefan grossman live in concert (john renbourn & stefan grossman)
 
-   $ fish whoami
-   Νικολας
+   $ fish amazon 'http://www.amazon.co.uk/Hundred-Solitude-Gabriel-Garcia-Marquez/dp/014103243X/ref=sr_1_1?ie=UTF8&qid=1307974975&sr=8-1'
+
+   book:one hundred years of solitude (gabriel garcia marquez)
+
+**NOTE**
+
+The ``amazon`` command requires the abouttag library to be installed
+and available on your python path (``PYTHONPATH``). The library is
+available from http://github.com/njr0/abouttag.

@@ -35,6 +35,7 @@ Documentation for the fish Command Line
 
    su.txt
    whoami.txt
+   amazon.txt
 
    help.txt
    commands.txt

@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>perms &mdash; fish v2.18 documentation</title>
+    <title>perms &mdash; fish v3.00 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '2.18',
+        VERSION:     '3.00',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="fish v2.18 documentation" href="index.html" />
+    <link rel="top" title="fish v3.00 documentation" href="index.html" />
     <link rel="next" title="rm" href="rm.html" />
     <link rel="prev" title="ls" href="ls.html" /> 
   </head>
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="ls.html" title="ls"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fish v2.18 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v3.00 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -52,9 +52,9 @@ permissions on tags and namespaces.   It only supports five cases,
 but there are powerful enough to cover the vast bulk of common
 situations.</p>
 <p><strong>FORM</strong></p>
-<div class="highlight-python"><pre>fish perms permissions-spec list-of-one-or-more-tags-or-namespaces</pre>
+<div class="highlight-python"><pre>fish [-f] perms permissions-spec list-of-one-or-more-tags-or-namespaces</pre>
 </div>
-<p>Here <tt class="docutils literal"><span class="pre">permissions-spec</span></tt> can be</p>
+<p>Here <tt class="docutils literal"><span class="pre">permissions-spec</span></tt> can be one of the short forms:</p>
 <blockquote>
 <ul class="simple">
 <li><tt class="docutils literal"><span class="pre">private</span></tt></li>
@@ -66,9 +66,22 @@ situations.</p>
 <li><tt class="docutils literal"><span class="pre">group-read</span> <span class="pre">list+of+usernames+separated+by+pluses</span></tt></li>
 </ul>
 </blockquote>
+<p>or one of three low-level forms:</p>
+<blockquote>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">read</span> <span class="pre">[open|closed]</span> <span class="pre">[except</span> <span class="pre">list+of+usernames+separated+by+pluses]</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">write</span> <span class="pre">[open|closed]</span> <span class="pre">[except</span> <span class="pre">list+of+usernames+separated+by+pluses]</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">control</span> <span class="pre">[open|closed]</span> <span class="pre">[except</span> <span class="pre">list+of+usernames+separated+by+pluses]</span></tt></li>
+</ul>
+</blockquote>
+<p><strong>FLAGS</strong></p>
+<p>The <tt class="docutils literal"><span class="pre">-f</span></tt> flag is used to force <tt class="docutils literal"><span class="pre">fish</span></tt> to set a policy it would otherwise
+resist.   In particular, setting any policy that does not include owner
+control always requires use of the <tt class="docutils literal"><span class="pre">-f</span></tt> flag.</p>
 <p><strong>EXAMPLES</strong></p>
-<p>The eight supported cases are as follows and apply equally namespaces and tags.
-In what follows, we&#8217;ll use a <tt class="docutils literal"><span class="pre">rating</span></tt> tag and a namespace called <tt class="docutils literal"><span class="pre">friends</span></tt>.</p>
+<p>The eight special cases supported are as follows and apply equally
+namespaces and tags.  In what follows, we&#8217;ll use a <tt class="docutils literal"><span class="pre">rating</span></tt> tag and
+a namespace called <tt class="docutils literal"><span class="pre">friends</span></tt>.</p>
 <blockquote>
 <ul>
 <li><p class="first">Make a tag or namespace completely private.</p>
@@ -192,20 +205,70 @@ nrwcrw----   miro   njr/fi/</pre>
 </li>
 </ul>
 </blockquote>
-<p><strong>NOTE</strong></p>
-<p>Removing read access to a namespace prevents people from listing
-that namespace but does not stop them working with the contents
-of the namespace if they can find them.   So if you have a
-namespace called <tt class="docutils literal"><span class="pre">secret</span></tt> and set its permissions to
-<tt class="docutils literal"><span class="pre">nrwc------</span></tt> (owner-only access) and in it have a tag called
-<tt class="docutils literal"><span class="pre">password</span></tt> with its permission set to the default <tt class="docutils literal"><span class="pre">trwcr--r--</span></tt>
-then anyone will be able to read the password if they discover
-it exists.</p>
-<p>This is clearly not a good situation; the Fluidinfo team is aware of
-it and I expect some resolution will be forthcoming at some point.</p>
-<p>Note also that the <em>existence</em> of a tag cannot really be hidden
-in Fluidinfo, so people will be able to find out that you have
-a tag called <tt class="docutils literal"><span class="pre">secret/password</span></tt>.</p>
+<p>The three low-level case are exemplified by the following.
+In these forms, the Fluidinfo-style policy is explicitly
+given as <tt class="docutils literal"><span class="pre">open</span></tt> or <tt class="docutils literal"><span class="pre">closed</span></tt>, optionally foollowed by the
+word <tt class="docutils literal"><span class="pre">except</span></tt> and a list of user names on the exception list,
+separated by plus signs.</p>
+<p>Note that the owner is not treated specially, so should normally be included
+in the exception list if the policy is closed.
+If the owner is excluded from control, <tt class="docutils literal"><span class="pre">fish</span></tt> will refuse to make
+the change unless forced with <tt class="docutils literal"><span class="pre">-f</span></tt>.</p>
+<div class="highlight-python"><pre>$ fish perms read open njr/rating
+$ fish perms write closed except njr+miro njr/rating
+$ fish perms control closed except njr+miro njr/rating
+$ fish ls -L njr/rating
+njr/rating:
+
+ABSTRACT TAG (/tags)
+  Write
+    update (metadata):  policy: closed; exceptions = [njr, miro]
+    delete (delete):    policy: closed; exceptions = [njr, miro]
+  Control
+    control (control):  policy: closed; exceptions = [njr, miro]
+
+TAG (/tag-values)
+  Read
+    read (read):        policy: open; exceptions = []
+  Write
+    create (tag):       policy: closed; exceptions = [njr, miro]
+    delete (untag):     policy: closed; exceptions = [njr, miro]
+  Control
+    control (control):  policy: closed; exceptions = [njr, miro]</pre>
+</div>
+<p><strong>NOTES</strong></p>
+<ol class="arabic">
+<li><p class="first"><strong>READ (LIST) PERMISSION ON NAMESPACES</strong>.  Removing read access to
+a namespace prevents people from listing that namespace but does
+not stop them working with the contents of the namespace if they
+can find them.  So if you have a namespace called <tt class="docutils literal"><span class="pre">secret</span></tt> and
+set its permissions to <tt class="docutils literal"><span class="pre">nrwc------</span></tt> (owner-only access) and in it
+have a tag called <tt class="docutils literal"><span class="pre">password</span></tt> with its permission set to the
+default <tt class="docutils literal"><span class="pre">trwcr--r--</span></tt> then anyone will be able to read the
+password if they discover it exists.</p>
+<p>This is clearly not a good situation; the Fluidinfo team is aware
+of it and I expect some resolution will be forthcoming at some point.</p>
+<p>Note also that the <em>existence</em> of a tag cannot really be hidden in
+Fluidinfo, so people will be able to find out that you have a tag
+called <tt class="docutils literal"><span class="pre">secret/password</span></tt>.</p>
+</li>
+<li><p class="first"><strong>LOSING CONTROL</strong>.   If you give someone else write into one of your
+namespaces, you should be aware that any tags or namespaces that person
+creates will, by default be under the control of that user, i.e.
+if <tt class="docutils literal"><span class="pre">alice</span></tt> creates a tag in your namespace, she will have control
+permission and write permission over it and <em>you will not</em>.</p>
+<p>This is a recognized failure, and will be fixed.</p>
+<p>In the meantime, if <tt class="docutils literal"><span class="pre">alice</span></tt> does create a tag called <tt class="docutils literal"><span class="pre">alice/a</span></tt>
+in <tt class="docutils literal"><span class="pre">njr</span></tt>&#8216;s namespace, she can give back shared control to
+<tt class="docutils literal"><span class="pre">njr</span></tt> by saying:</p>
+<div class="highlight-python"><pre>$ fish perms write closed except alice+njr njr/alice/a
+$ fish perms control closed except alice+njr njr/alice/a</pre>
+</div>
+<p>She could also hand back exclusive control by saying:</p>
+<div class="highlight-python"><pre>$ fish perms control closed except njr njr/alice/a</pre>
+</div>
+</li>
+</ol>
 </div>
 
 
@@ -257,7 +320,7 @@ a tag called <tt class="docutils literal"><span class="pre">secret/password</spa
         <li class="right" >
           <a href="ls.html" title="ls"
              >previous</a> |</li>
-        <li><a href="index.html">fish v2.18 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v3.00 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

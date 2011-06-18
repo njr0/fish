@@ -21,7 +21,7 @@ Documentation for the fish Command Line
 * pwd
 * pwn
 * su
-* whoami
+* amazon
 * help
 * commands
 * version

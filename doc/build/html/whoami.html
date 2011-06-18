@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>whoami &mdash; fish v2.18 documentation</title>
+    <title>amazon &mdash; fish v3.00 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '2.18',
+        VERSION:     '3.00',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="fish v2.18 documentation" href="index.html" />
+    <link rel="top" title="fish v3.00 documentation" href="index.html" />
     <link rel="next" title="help" href="help.html" />
     <link rel="prev" title="su" href="su.html" /> 
   </head>
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="su.html" title="su"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fish v2.18 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v3.00 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -45,21 +45,26 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="whoami">
-<h1>whoami<a class="headerlink" href="#whoami" title="Permalink to this headline">¶</a></h1>
-<p>Shows the username name of the current user credentials.
-<strong>FORM</strong></p>
-<div class="highlight-python"><pre>fish whoami</pre>
+  <div class="section" id="amazon">
+<h1>amazon<a class="headerlink" href="#amazon" title="Permalink to this headline">¶</a></h1>
+<p>Gets the about tag for a recognized book, ebook, CD, record or MP3 track
+from an Amazon US or UK URL.</p>
+<p><strong>FORM</strong></p>
+<div class="highlight-python"><pre>amazon url-of-amazon-product-page</pre>
 </div>
 <p><strong>EXAMPLES</strong></p>
-<div class="highlight-python"><pre>$ fish whoami
+<div class="highlight-python"><pre>$ fish amazon 'http://www.amazon.com/Renbourn-Stefan-Grossman-Live-Concert/dp/B000000E8R/ref=sr_1_7?ie=UTF8&amp;qid=1308066155&amp;sr=8-7'
 
-$ fish su greek
-Credentials set to user Νικολας (file greek).
+album:john renbourn and stefan grossman live in concert (john renbourn &amp; stefan grossman)
 
-$ fish whoami
-Νικολας</pre>
+$ fish amazon 'http://www.amazon.co.uk/Hundred-Solitude-Gabriel-Garcia-Marquez/dp/014103243X/ref=sr_1_1?ie=UTF8&amp;qid=1307974975&amp;sr=8-1'
+
+book:one hundred years of solitude (gabriel garcia marquez)</pre>
 </div>
+<p><strong>NOTE</strong></p>
+<p>The <tt class="docutils literal"><span class="pre">amazon</span></tt> command requires the abouttag library to be installed and
+available on your python path (<tt class="docutils literal"><span class="pre">PYTHONPATH</span></tt>).
+The library is available from <a class="reference external" href="http://github.com/njr0/abouttag">http://github.com/njr0/abouttag</a>.</p>
 </div>
 
 
@@ -111,7 +116,7 @@ $ fish whoami
         <li class="right" >
           <a href="su.html" title="su"
              >previous</a> |</li>
-        <li><a href="index.html">fish v2.18 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v3.00 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

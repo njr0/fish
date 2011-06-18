@@ -20,6 +20,11 @@ version of python, you need to get access to simplejson and httplib2.
 You can get simplejson from http://pypi.python.org/pypi/simplejson/
 and httplib2 from http://code.google.com/p/httplib2/.
 
+If you wish to use Amazon command (for finding about tags for books and music
+items from Amazon product pages) you will also need the abouttag
+library to be available on your python path.
+This is available from http://github.com/njr0/abouttag.
+
 
 Making the fish command available
 ---------------------------------

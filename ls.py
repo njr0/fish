@@ -56,7 +56,7 @@ RAW_PERMS = {
 RAW_PERM_ENTITIES = RAW_PERMS.keys()
 
 READ_NAMES = [u'read']
-WRITE_NAMES = [u'create', u'metadata', 'tag', 'untag', 'delete']
+WRITE_NAMES = [u'create', u'metadata', u'tag', u'untag', u'delete']
 CONTROL_NAMES = [u'acontrol', u'tcontrol']
 ALL_NAMES = READ_NAMES + WRITE_NAMES + CONTROL_NAMES
 
@@ -205,25 +205,31 @@ class FluidinfoPerms:
                 self.__dict__[name].policy = u'closed'
                 self.__dict__[name].exceptions = [self.owner]
 
-    def update_fluidinfo(self, db):
+    def check_owner_control(self, p):
+        if ((p.policy == 'open' and self.owner in p.exceptions)
+                or (p.policy == 'closed' and not self.owner in p.exceptions)):
+            raise PermissionsError(u'You are attempting to set permissions '
+                                   u'that do not include owner control.\n'
+                                   u'  If you are sure you know what you are'
+                                   u'doing, you can force this with -f.')
 
+    def update_fluidinfo(self, db, permsToSet=None, force=False):
+        permsToSet = permsToSet or ALL_NAMES
         # check owner has control permissions
-        for name in CONTROL_NAMES:
-            if hasattr(self, name):
-                if self.__dict__[name].policy == 'open':
-                    assert not self.owner in self.__dict__[name].exceptions
-                else:
-                    assert self.owner in self.__dict__[name].exceptions
-
+        if not force:
+            for name in CONTROL_NAMES:
+                if hasattr(self, name):
+                    self.check_owner_control(self.__dict__[name])
         entities = (u'abstract-tag', u'tag') if self.isTag else (u'namespace',)
         for entity in entities:
             for name in RAW_PERMS[entity].names:
-                action = RAW_PERMS[entity].action(name)
-                err = db.set_raw_perm(entity, self.path[1:], action,
-                                      self.__dict__[name].policy,
-                                      self.__dict__[name].exceptions)
-                if err:
-                    cli.warning(cli.error_code(err))
+                if name in permsToSet:
+                    action = RAW_PERMS[entity].action(name)
+                    err = db.set_raw_perm(entity, self.path[1:], action,
+                                          self.__dict__[name].policy,
+                                          self.__dict__[name].exceptions)
+                    if err:
+                        cli.warning(cli.error_code(err))
 
     def fi_tag_desc(self):
         s = []
@@ -570,7 +576,11 @@ class ExtendedFluidDB(fishlib.FluidDB):
                 return unicode(FluidinfoPerms(self, u'/' + tagOrNS,
                                               isTag=True))
             else:
-                return self.tag_perms_string(tagOrNS, group)
+                try:
+                    return self.tag_perms_string(tagOrNS, group)
+                except AttributeError:
+                    raise PermissionsError(u'Forbidden (you don\'t appear to'
+                        u' have control permission for %s)' % tagOrNS)
 
     def full_perms(self, tagOrNS, longer, group=False):
         perms = self.perms_string(tagOrNS, longer, group)
@@ -758,10 +768,6 @@ def execute_perms_command(objs, args, options, credentials, unixPaths=None):
         raise PermissionsError(u'perms must be followed by one of:\n%s'
                                 % u', '.join(spec + primitives))
     isGroup = spec.startswith(u'group')
-    for i, a in enumerate(args):
-        print i, a
-    print
-
     if isGroup:
         group = args[1].split(u'+')
         if len(args) < 3:
@@ -770,16 +776,22 @@ def execute_perms_command(objs, args, options, credentials, unixPaths=None):
                     u'and namespaces' % spec)
 
     if spec in primitives:
-        errorText = (u'Group form: perms %s [open|closed]'
+        errorText = (u'%s form: perms %s [open|closed]'
                      u'[except list+of+group+members list'
-                     u'of tags and namespaces]' % spec)
+                     u'of tags and namespaces]' % (spec, spec))
         if len(args) < 3 or not args[1] in (u'open', u'closed'):
             raise PermissionsError(errorText)
+        policy = args[1]
         exceptions = args[3].split(u'+') if args[2] == u'except' else []
-    fullpaths = (db.abs_tag_path(t, inPref=True) for t in args[1 + isGroup:])
+        fullpaths = (db.abs_tag_path(t, inPref=True)
+                     for t in args[2 + 2 * bool(exceptions):])
+    else:
+        fullpaths = (db.abs_tag_path(t, inPref=True)
+                     for t in args[1 + isGroup:])
     for path in fullpaths:
         done = False
         owner = path.split(u'/')[1]
+        permsToSet = ALL_NAMES
         for (exists, isTag) in ((db.tag_exists, True), (db.ns_exists, False)):
             if exists(path):
                 inPerms = FluidinfoPerms(db, path, isTag=isTag,
@@ -797,8 +809,16 @@ def execute_perms_command(objs, args, options, credentials, unixPaths=None):
                                              getFromFI=True)
                     inPerms.unlock()
                 elif spec in primitives:
-                    raise PermissionsError(u'General %s permissions not yet '
-                                           u'implemented')
+                    if spec == u'control':
+                        permsToSet = CONTROL_NAMES
+                    elif spec == u'write':
+                        permsToSet = WRITE_NAMES
+                    else:
+                        permsToSet = READ_NAMES
+                    for name in permsToSet:
+                        if hasattr(inPerms, name):
+                            inPerms.__dict__[name].policy = policy
+                            inPerms.__dict__[name].exceptions = exceptions
                 else:  # group
                     inPerms = FluidinfoPerms(db, path, isTag=isTag,
                                              getFromFI=True)
@@ -806,7 +826,7 @@ def execute_perms_command(objs, args, options, credentials, unixPaths=None):
                          inPerms.set_group_readable(group)
                     if spec in (u'group', u'group-write'):
                          inPerms.set_group_writable(group)
-                inPerms.update_fluidinfo(db)
+                inPerms.update_fluidinfo(db, permsToSet, options.force)
                 done = True
         if not done:
             Print('No tag or namespace %s found' % db.abs_tag_path(path,
