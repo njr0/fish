@@ -1,0 +1,35 @@
+touch
+-----
+
+The ``touch`` command may be used to create a tag, and optionally
+to set its description.
+
+**FORM**
+::
+
+    [fish] touch path
+
+**FLAGS**
+
+  * ``-m description`` Sets the description (metadata) for a tag.
+
+
+**EXAMPLES**
+
+  #. Create a tag called ``njr/rating``
+     ::
+
+        $ touch njr/rating
+
+  #. Create a tag ``njr/private/rating`` with description "keep out"
+     ::
+
+	$ touch -m "keep out"  njr/private/rating
+
+**NOTE**
+
+Tag creation is automatic on first use in ``fish``.
+Touch is only needed, therefore, if you wish to set permissions before use
+or specify a description
+
+Touch cannot be used (at present) to change the description of an existing tag.

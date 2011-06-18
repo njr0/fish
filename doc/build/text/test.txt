@@ -1,17 +1,15 @@
-. _fdbtest:
-
 
 test
 ****
 
-Runs fdb's self-tests.
+Runs fish's self-tests.
 
 **FORM**
 
-   fdb test [flags] [subset to run]
-   fdb testcli
-   fdb testapi
-   fdb testdb
+   fish test [flags] [subset to run]
+   fish testcli
+   fish testapi
+   fish testdb
 
 The only normally relevant flag is ``-s``, to run against the sandbox.
 
@@ -20,7 +18,7 @@ tests.
 
 **EXAMPLE**
 
-   $ fdb test
+   $ fish test
    ......................
    ----------------------------------------------------------------------
    Ran 22 tests in 47.210s

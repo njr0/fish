@@ -6,16 +6,23 @@ Removes one or more tags from the object or objects specified.
 **FORM**
 ::
 
-    fdb untag [flags] <object specifier> <tags>
+    [fish] untag [flags] <object specifier> <tags>
 
 **EXAMPLES**
 ::
 
-    fdb untag -a "Eiffel Tower" njr/rating njr/seen
-    fdb untag -a "Eiffel Tower" njr/rating njr/seen
-    fdb untag -i 93bd1999-0998-49cc-8004-af457ce34ce4 njr/rating njr/seen
-    fdb untag -q 'fluiddb/about matches "Eiffel Tower"' njr/rating njr/seen
-    fdb untag -U -a "Eiffel Tower" rating seen
+    untag -a "Eiffel Tower" njr/rating njr/seen
+    untag -a "Eiffel Tower" njr/rating njr/seen
+    untag -i 93bd1999-0998-49cc-8004-af457ce34ce4 njr/rating njr/seen
+    untag -U -a "Eiffel Tower" rating seen
+    untag -q 'fluiddb/about matches "Eiffel Tower"' njr/rating njr/seen
+
+**NOTE FOR WINDOWS USERS* Working from a Windows command line, single quotes
+do not work as above.   Instead you need to use double quotes and "stutter"
+quotes inside quotes.   So the last example becomes:
+::
+
+    untag -q "fluiddb/about matches """Eiffel Tower""" njr/rating njr/seen
 
 All of these commands will remove the tags ``njr/rating``
 and ``njr/seen`` from the object with about tag "Eiffel Tower"
@@ -40,7 +47,7 @@ The command produces no output when successful, even if the tag did
 not exist.
 ::
 
-    $ fdb untag -F -a "Eiffel Tower" ntoll/rating  
+    $ fish untag -F -a "Eiffel Tower" ntoll/rating  
     Failed to remove tag ntoll/rating from object with about="Eiffel Tower"
     Error code 401 (UNAUTHORIZED)
 

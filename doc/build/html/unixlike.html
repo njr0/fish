@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Using Unix-Like Paths &mdash; fdb v2.17 documentation</title>
+    <title>Using Unix-Like Paths &mdash; fish v2.18 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '2.17',
+        VERSION:     '2.18',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="fdb v2.17 documentation" href="index.html" />
+    <link rel="top" title="fish v2.18 documentation" href="index.html" />
     <link rel="next" title="Installation and Configuration" href="install.html" />
     <link rel="prev" title="test" href="test.html" /> 
   </head>
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="test.html" title="test"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fdb v2.17 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v2.18 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -60,8 +60,8 @@ of interest relative to the working directory.   Thus if the <tt class="docutils
 <tt class="docutils literal"><span class="pre">njr</span></tt>, then <tt class="docutils literal"><span class="pre">/njr/rating</span></tt> can be referred to as <tt class="docutils literal"><span class="pre">rating</span></tt>.
 Unix uses the <tt class="docutils literal"><span class="pre">cd</span></tt> command to allow you to change your working directory,
 and <tt class="docutils literal"><span class="pre">pwd</span></tt> to print the name of the working directory.</p>
-<p><tt class="docutils literal"><span class="pre">fdb</span></tt> supports a limited version of the same.   There are two ways
-to tell <tt class="docutils literal"><span class="pre">fdb</span></tt> that you would like to use unix-style paths rather than
+<p><tt class="docutils literal"><span class="pre">fish</span></tt> supports a limited version of the same.   There are two ways
+to tell <tt class="docutils literal"><span class="pre">fish</span></tt> that you would like to use unix-style paths rather than
 fluidinfo-style paths.   First, on any command line, you can add
 a <tt class="docutils literal"><span class="pre">-U</span></tt> flag, and this will have the desired effect for that command only.
 Thus</p>
@@ -91,28 +91,28 @@ then <tt class="docutils literal"><span class="pre">rating</span></tt> is a shor
 <li><p class="first">Paths in other users&#8217; namespaces must be introduced with a slash.
 Thus, to refer to <tt class="docutils literal"><span class="pre">jacqui</span></tt>&#8216;s rating, use <tt class="docutils literal"><span class="pre">/jacqui/rating</span></tt> etc.
 For example,</p>
-<div class="highlight-python"><pre>fdb show -a DADGAD rating /jacqui/rating</pre>
+<div class="highlight-python"><pre>fish show -a DADGAD rating /jacqui/rating</pre>
 </div>
 <p>will request the Fluidinfo tags <tt class="docutils literal"><span class="pre">njr/rating</span></tt> and <tt class="docutils literal"><span class="pre">jacqui/rating</span></tt>.</p>
 </li>
 <li><p class="first">The <em>about tag</em>, <tt class="docutils literal"><span class="pre">fluiddb/about</span></tt> may be referred to with the
 special abbreviation <tt class="docutils literal"><span class="pre">/about</span></tt>.
 For example,</p>
-<div class="highlight-python"><pre>fdb show -a DADGAD rating /jacqui/rating /about</pre>
+<div class="highlight-python"><pre>fish show -a DADGAD rating /jacqui/rating /about</pre>
 </div>
 <p>(though requesting the about tag for an object specified by about
 tag is obviously a bit pointless).</p>
 </li>
 <li><p class="first">The pseudo-tag <tt class="docutils literal"><span class="pre">/id</span></tt> may be used to request the object&#8217;s ID.</p>
 </li>
-<li><p class="first">The exception to this is in the body of queries: <tt class="docutils literal"><span class="pre">fdb</span></tt> does not
+<li><p class="first">The exception to this is in the body of queries: <tt class="docutils literal"><span class="pre">fish</span></tt> does not
 rewrite queries, which are passed directly to Fluidinfo.
 Thus, to request the about tags for all objects containing DADGAD,
 you would say:</p>
-<div class="highlight-python"><pre>fdb show -q 'fluiddb/about matches "DADGAD"' /about</pre>
+<div class="highlight-python"><pre>fish show -q 'fluiddb/about matches "DADGAD"' /about</pre>
 </div>
 <p>Similarly, to request all objects <tt class="docutils literal"><span class="pre">njr</span></tt> has rated 10:</p>
-<div class="highlight-python"><pre>fdb show -q 'njr/rating = 10' /about</pre>
+<div class="highlight-python"><pre>fish show -q 'njr/rating = 10' /about</pre>
 </div>
 </li>
 </ul>
@@ -124,7 +124,7 @@ you would say:</p>
 returns the authenticated user&#8217;s username; there is no <tt class="docutils literal"><span class="pre">cd</span></tt>
 command at present.   This may change.</li>
 <li>It is quite likely that at some point in the future, when unix paths
-are in use, <tt class="docutils literal"><span class="pre">fdb</span></tt> will rewrite queries too, i.e. unix-style
+are in use, <tt class="docutils literal"><span class="pre">fish</span></tt> will rewrite queries too, i.e. unix-style
 paths will be extended to the query; however, that is a slightly more
 delicate operation, so hasn&#8217;t been tackled yet.</li>
 </ul>
@@ -139,7 +139,7 @@ delicate operation, so hasn&#8217;t been tackled yet.</li>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="index.html">
-              <img class="logo" src="_static/fdb-doc-logo.png" alt="Logo"/>
+              <img class="logo" src="_static/fish-doc-logo.png" alt="Logo"/>
             </a></p>
             <h3><a href="index.html">Table Of Contents</a></h3>
             <ul>
@@ -189,7 +189,7 @@ delicate operation, so hasn&#8217;t been tackled yet.</li>
         <li class="right" >
           <a href="test.html" title="test"
              >previous</a> |</li>
-        <li><a href="index.html">fdb v2.17 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v2.18 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

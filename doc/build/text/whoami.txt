@@ -4,14 +4,14 @@ whoami
 
 Shows the username name of the current user credentials. **FORM**
 
-   fdb whoami
+   fish whoami
 
 **EXAMPLES**
 
-   $ fdb whoami
+   $ fish whoami
 
-   $ fdb su greek
+   $ fish su greek
    Credentials set to user Νικολας (file greek).
 
-   $ fdb whoami
+   $ fish whoami
    Νικολας

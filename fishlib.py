@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-# fdbcore.py
+# fdblib.py
 #
 # Copyright (c) Nicholas J. Radcliffe 2009-2011 and other authors specified
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'2.17'
+__version__ = u'2.18'
 VERSION = __version__
 
 import codecs
@@ -90,6 +90,7 @@ class STATUS:
     UNAUTHORIZED = 401
     PRECONDITION_FAILED = 402
     NOT_FOUND = 404
+    PRECONDITION_FAILED = 412
     INTERNAL_SERVER_ERROR = 500
 
 
@@ -101,7 +102,7 @@ UNIX_USER_CREDENTIALS_FILE = u'.fluidDBcredentials.%s'
 WINDOWS_USER_CREDENTIALS_FILE = u'fluidDBcredentials-%s.ini'
 
 CRED_FILE_VAR = 'FDB_CREDENTIALS_FILE'
-WIN_CRED_FILE = 'c:\\fdb\\credentials.txt'
+WIN_CRED_FILE = 'c:\\fish\\credentials.txt'
 
 HTTP_TIMEOUT = 300.123456       # unlikey the user will choose this
 PRIMITIVE_CONTENT_TYPE = u'application/vnd.fluiddb.value+json'
@@ -134,6 +135,17 @@ class UnicodeOut:
     def write(self, msg):
         self.std.write((msg.encode('UTF-8') if type(msg) == unicode else msg))
             
+
+def human_status(c, extra=None, trans=None):
+    extras = u'; [%s]' % extra if extra else ''
+    translation = u' %s' % trans[c] if trans and c in trans else ''
+        
+    if c in STATUS.__dict__.values():
+        for k in STATUS.__dict__:
+            if STATUS.__dict__[k] == c:
+                return u'Error Status %d (%s%s)' % (c, k, translation) + extras
+    return u'Error Status %d%s' % (c, translation) + extras
+
 
 def quote_u_u(s):
     """Quote a unicode string s using %-encoding.
@@ -469,14 +481,13 @@ class FluidDB:
         containingNS = u'/namespaces/%s' % parent
         subNS = parts[-1]
         body = json.dumps({u'name': subNS,
-                           u'description': description})
+                           u'description': description or u''})
         status, result = self.call(u'POST', containingNS, body)
         if status == STATUS.CREATED:
             id = result[u'id']
             if verbose:
                 Print(u'Created namespace /%s/%s with ID %s' % (parent,
                                                                 subNS, id))
-#            return self.encode(id)
             return id
         elif status == STATUS.NOT_FOUND:    # parent namespace doesn't exist
             if not createParentIfNeeded:
@@ -514,7 +525,7 @@ class FluidDB:
                 Print(u'Removed namespace %s' % absPath)
             else:
                 Print(u'Failed to remove namespace %s (%d)' % (absPath, status))
-        return status
+        return 0 if status == STATUS.NO_CONTENT else status
 
     def describe_namespace(self, path):
         """Returns an object describing the namespace specified by the path.
@@ -892,7 +903,7 @@ def choose_http_timeout():
 #
 # VALUES API:
 #
-# Note: these calls are different from the rest of fdb.py (at present)
+# Note: these calls are different from the rest of fish.py (at present)
 # in that (1) they used full Fluidinfo paths with no leading slash,
 # and (2) they use unicode throughout (3) tags must exist before being used.
 # Things will be made more consistent over time.
@@ -962,8 +973,8 @@ def tag_by_query(db, query, tagsToSet):
 
     sets an njr/rated tag to True for every object having an njr/rating.
 
-    NOTE: Unlike in much of the rest of fdb.py, tags need to be full paths
-    without a leading slash.   (This will change.)
+    NOTE: Unlike in much of the rest of fish.py, tags need to be full paths
+    without a leading slash.
 
     NOTE: Tags must exist before being used.   (This will change.)
 
@@ -978,12 +989,44 @@ def tag_by_query(db, query, tagsToSet):
     assert_status(v, STATUS.NO_CONTENT)
 
 
+def untag_by_query(db, query, tags):
+    """
+    Deletes one or more tags on objects that match a query.
+
+    db         is an instantiated FluidDB instance.
+
+    query      is a unicode string representing a valid Fluidinfo query.
+               e.g. 'has njr/rating'
+
+    tags       a list tag names to delete.
+
+    Example:
+
+        db = FluidDB()
+        untag_by_query(db, u'has njr/rating', ['njr/rating'])
+
+    removes an njr/rating tag from every object that has one.
+
+    NOTE: Unlike in much of the rest of fish.py, tags need to be full paths
+    without a leading slash.   (This will change.)
+
+    NOTE: All strings must be (and will be) unicode.
+
+
+    """
+    if not tags:
+        return
+    kw = {u'tag': tags, u'query': query}
+    (v, r) = db.call(u'DELETE', u'/values', None, kw)
+    assert_status(v, STATUS.NO_CONTENT)
+
+
 def assert_status(v, s):
     if not v == s:
         raise BadStatusError(u'Bad status %d (expected %d)' % (v, s))
 
 
-def get_values(db, query, tags):
+def get_values_by_query(db, query, tags):
     """
     Gets the values of a set of tags satisfying a given query.
     Returns them as a dictionary (hash) keyed on object ID.
@@ -1003,8 +1046,8 @@ def get_values(db, query, tags):
         db = FluidDB()
         tag_by_query(db, u'has njr/rating < 3', ('fluiddb/about',))
 
-    NOTE: Unlike in much of the rest of fdb.py, tags need to be full paths
-    without a leading slash.   (This will change.)
+    NOTE: Unlike in much of the rest of fish.py, tags need to be full paths
+    without a leading slash.
 
     NOTE: All strings must be (and will be) unicode.
 
@@ -1018,7 +1061,8 @@ def get_values(db, query, tags):
         o = O()
         o.__dict__[u'id'] = id
         for tag in tags:
-            o.__dict__[tag] = H[id][tag][u'value']
+            if tag in H[id]:
+                o.__dict__[tag] = H[id][tag][u'value']
         results.append(o)
     return results      # hash of objects, keyed on ID, with attributes
                         # corresponding to tags, inc id.

@@ -1,4 +1,4 @@
-. _fdbls:
+.. _fishls:
 
 ls
 **
@@ -9,7 +9,7 @@ potentially with additional information.
 **FORM**
 ::
 
-    ls [flags] [<namespace>|<tag>]
+    [fish] ls [flags] [<namespace>|<tag>]
 
 **FLAGS**
 
@@ -29,7 +29,7 @@ as well as the standard flags like ``-s`` etc.
      (Here, we assume we are authenticated as user ``miro``):
      ::
   
-       $ fdb ls
+       $ fish ls
        bestsellers-1998-2010/    first_field_id            n_records                
        bestsellers1998to2010/    first_record_id           next-field-about         
        books/                    forename                  next-field-id            
@@ -52,7 +52,7 @@ as well as the standard flags like ``-s`` etc.
   #. List the tags and subnamespaces in a given namespace:
      ::
      
-       $ fdb ls miro/planets
+       $ fish ls miro/planets
        Atmosphere                Mass                      OrbitalRadius            
        Category                  Moons                     RotationPeriod           
        EquatorialDiameter        Name                      db-next-record-about     
@@ -65,16 +65,16 @@ as well as the standard flags like ``-s`` etc.
   #. List a single tag (report presence or absence of that tag).
      ::
 
-       $ fdb ls miro/planets/Mass
+       $ fish ls miro/planets/Mass
        miro/planets/Mass
 
-       $ fdb ls -F miro/planets/NoMass
+       $ fish ls -F miro/planets/NoMass
        miro/planets/NoMass not found
 
   #. Long listing for tag (``njr/rating``), including permissions summary:
      ::
     
-       $ fdb ls -l njr/rating
+       $ fish ls -l njr/rating
        trwcr--r--   rating
     
      Here:
@@ -122,7 +122,7 @@ as well as the standard flags like ``-s`` etc.
      Let's start with a tag with default permissions.
      ::
 
-        $ fdb ls -g private-tag
+        $ fish ls -g private-tag
         trwcr--r--   (world)   njr/private-tag
 
      When no one has been given any unusual permissions, in effect
@@ -132,9 +132,9 @@ as well as the standard flags like ``-s`` etc.
      Now let's grant read and write access to ``jkakar`` and ``ntoll``
      ::
 
-        $ fdb perms group jkakar+ntoll njr/private-tag
+        $ fish perms group jkakar+ntoll njr/private-tag
 
-        $ fdb ls -g private-tag
+        $ fish ls -g private-tag
         trwcrw----   ntoll+jkakar   njr/private-tag
 
      Group permission is now ``rw-``, and the group is ``ntoll+jkakar``.
@@ -145,9 +145,9 @@ as well as the standard flags like ``-s`` etc.
      To do this we update the write group:
      ::
 
-        $ fdb perms group-write ntoll private-tag
+        $ fish perms group-write ntoll private-tag
 
-        $ fdb ls -g njr/private-tag
+        $ fish ls -g njr/private-tag
         trwcrw----   r:ntoll+jkakar  w:ntoll   njr/private-tag
 
      When the groups are different, they are shown separately,
@@ -159,7 +159,7 @@ as well as the standard flags like ``-s`` etc.
      permissions summary:
      ::
     
-      $ fdb ls -L njr/rating
+      $ fish ls -L njr/rating
     
       njr/rating:
 
@@ -182,7 +182,7 @@ as well as the standard flags like ``-s`` etc.
   #. Long listing for contents of namespace (``njr/index``):
      ::
      
-       $ fdb ls -l njr/index
+       $ fish ls -l njr/index
        trwcr--r--   about
        trwcr--r--   class
      
@@ -198,7 +198,7 @@ as well as the standard flags like ``-s`` etc.
      a namespace ``fi``
      ::
 
-        $ fdb ls -gd njr/fi
+        $ fish ls -gd njr/fi
         nrwcrw-r--   r:(world)  w:terrycojones+paparent   njr/fi/
 
      This is showning that the namespace njr/fi has standard world read
@@ -209,10 +209,10 @@ as well as the standard flags like ``-s`` etc.
      its contents),  including Fluidinfo-style permissions summary:
      ::     
 
-        $ fdb ls -ln njr/index
+        $ fish ls -ln njr/index
         nrwcr--r--   index
     
-        $ fdb ls -ld njr/index
+        $ fish ls -ld njr/index
         nrwcr--r--   index
     
      The first ``n`` indicates that ``njr/index`` is a namespace rather than
@@ -227,7 +227,7 @@ as well as the standard flags like ``-s`` etc.
      its contents):
      ::
 
-        $ fdb ls -Ld njr/index
+        $ fish ls -Ld njr/index
 
         NAMESPACE (/namespaces)
           Read
@@ -242,7 +242,7 @@ as well as the standard flags like ``-s`` etc.
   #. Long listing including group details (for tag ``njr/rating``)
      ::
     
-       $ fdb ls -ln njr/fi
+       $ fish ls -ln njr/fi
        nrwcr-----   ceronman+esteve+jkakar+ntoll+terrycojones fi
     
      See the section on permissions for an explanation of the permissions
@@ -271,7 +271,7 @@ as well as the standard flags like ``-s`` etc.
      permissions summary:
      ::
     
-       $ fdb ls -Ln njr/fi
+       $ fish ls -Ln njr/fi
     
        Permissions for namespace njr/fi:
     

@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>perms &mdash; fdb v2.17 documentation</title>
+    <title>perms &mdash; fish v2.18 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '2.17',
+        VERSION:     '2.18',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,8 +19,8 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="fdb v2.17 documentation" href="index.html" />
-    <link rel="next" title="fdb su" href="su.html" />
+    <link rel="top" title="fish v2.18 documentation" href="index.html" />
+    <link rel="next" title="rm" href="rm.html" />
     <link rel="prev" title="ls" href="ls.html" /> 
   </head>
   <body>
@@ -31,12 +31,12 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="su.html" title="fdb su"
+          <a href="rm.html" title="rm"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="ls.html" title="ls"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fdb v2.17 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v2.18 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -52,7 +52,7 @@ permissions on tags and namespaces.   It only supports five cases,
 but there are powerful enough to cover the vast bulk of common
 situations.</p>
 <p><strong>FORM</strong></p>
-<div class="highlight-python"><pre>fdb perms permissions-spec list-of-one-or-more-tags-or-namespaces</pre>
+<div class="highlight-python"><pre>fish perms permissions-spec list-of-one-or-more-tags-or-namespaces</pre>
 </div>
 <p>Here <tt class="docutils literal"><span class="pre">permissions-spec</span></tt> can be</p>
 <blockquote>
@@ -72,23 +72,23 @@ In what follows, we&#8217;ll use a <tt class="docutils literal"><span class="pre
 <blockquote>
 <ul>
 <li><p class="first">Make a tag or namespace completely private.</p>
-<div class="highlight-python"><pre>$ fdb perms private njr/rating
-$ fdb perms private njr/fi</pre>
+<div class="highlight-python"><pre>$ fish perms private njr/rating
+$ fish perms private njr/fi</pre>
 </div>
 <p>We could also change them together by saying:</p>
-<div class="highlight-python"><pre>$ fdb perms private njr/rating njr/fi</pre>
+<div class="highlight-python"><pre>$ fish perms private njr/rating njr/fi</pre>
 </div>
 <p>This sets the permissions so that only the owner of the tag
 or namespace has permission to do anything with it&#8212;<tt class="docutils literal"><span class="pre">read</span></tt>, <tt class="docutils literal"><span class="pre">write</span></tt>
 and <tt class="docutils literal"><span class="pre">control</span></tt> permission.
 The abbreviated view of this is shown by</p>
-<div class="highlight-python"><pre>$ fdb ls -ld njr/rating njr/fi
+<div class="highlight-python"><pre>$ fish ls -ld njr/rating njr/fi
 trwc------   njr/rating
 nrwc------   njr/fi/</pre>
 </div>
-<p>(See <em class="xref">fdbls</em> for an detailed explanation of the permissions codes.)</p>
+<p>(See <a class="reference external" href="ls.html#fishls"><em>ls</em></a> for an detailed explanation of the permissions codes.)</p>
 <p>The full listing after this is:</p>
-<div class="highlight-python"><pre>$ fdb -F ls -Ld njr/rating njr/fi
+<div class="highlight-python"><pre>$ fish -F ls -Ld njr/rating njr/fi
 
 njr/rating:
 
@@ -124,46 +124,45 @@ NAMESPACE (/namespaces)
 <li><p class="first">Restore default permissions to a tag or namespace.
 The default is that the owner has read, write and control
 and everyone else has read only:</p>
-<div class="highlight-python"><pre>$ fdb perms default njr/rating njr/fi
+<div class="highlight-python"><pre>$ fish perms default njr/rating njr/fi
 
-$ fdb -F ls -ld njr/rating njr/fi
+$ fish -F ls -ld njr/rating njr/fi
 trwcr--r--   njr/rating
 nrwcr--r--   njr/fi/</pre>
 </div>
 </li>
 <li><p class="first">Lock a namespace or tag so that it can&#8217;t be edited (i.e.,
 remove all write permissions).</p>
-<div class="highlight-python"><pre>$ fdb perms lock njr/rating
+<div class="highlight-python"><pre>$ fish perms lock njr/rating
 
-$fdb ls -l njr/rating
+$ fish ls -l njr/rating
 tr-cr--r--   njr/rating</pre>
 </div>
 <p>This does not alter read or control permissions.</p>
 </li>
 <li><p class="first">Unlock a namespace or tag so that the owner (only) can edit it.</p>
-<div class="highlight-python"><pre>$ fdb perms unlock njr/rating
+<div class="highlight-python"><pre>$ fish perms unlock njr/rating
 
-$fdb ls -l njr/rating
+$ fish ls -l njr/rating
 trwcr--r--   njr/rating</pre>
 </div>
 <p>This does not alter read or control permissions.</p>
 </li>
 <li><p class="first">Set the permissions on a tag or namespace so that one or more extra people
 can write it.   (This does not alter read permissions.)</p>
-<div class="highlight-python"><pre>$ fdb perms group-write ntoll+jkakar njr/rating njr/fi
+<div class="highlight-python"><pre>$ fish perms group-write ntoll+jkakar njr/rating njr/fi
 
-$ fdb ls -gd njr/rating njr/fi
-fdb -F ls -gd njr/rating njr/fi
+$ fish ls -gd njr/rating njr/fi
 trwcrw-r--   r:(world)  w:ntoll+jkakar   njr/rating
 nrwcrw-r--   r:(world)  w:ntoll+jkakar   njr/fi/</pre>
 </div>
 </li>
 <li><p class="first">Set the permissions so that only a particular group can read it,
 leaving write permissions as the are.</p>
-<div class="highlight-python"><pre>$ fdb perms default njr/rating njr/fi
-$ fdb perms group-read ntoll+jkakar+miro njr/rating njr/fi
+<div class="highlight-python"><pre>$ fish perms default njr/rating njr/fi
+$ fish perms group-read ntoll+jkakar+miro njr/rating njr/fi
 
-$ fdb -F ls -gd njr/rating njr/fi
+$ fish -F ls -gd njr/rating njr/fi
 trwcr-----   r:ntoll+jkakar+miro  w:(world)   njr/rating
 nrwcr-----   r:ntoll+jkakar+miro  w:(world)   njr/fi/</pre>
 </div>
@@ -172,10 +171,10 @@ nrwcr-----   r:ntoll+jkakar+miro  w:(world)   njr/fi/</pre>
 or namespace, and another group can read it.
 In this case, let&#8217;s allow <tt class="docutils literal"><span class="pre">miro</span></tt> to write and <tt class="docutils literal"><span class="pre">ntoll</span></tt> and
 <tt class="docutils literal"><span class="pre">jkakar</span></tt> (as well as <tt class="docutils literal"><span class="pre">miro</span></tt>) to read.</p>
-<div class="highlight-python"><pre>$ fdb perms group-read ntoll+jkakar+miro njr/rating njr/fi
-$ fdb perms group-write miro njr/rating njr/fi
+<div class="highlight-python"><pre>$ fish perms group-read ntoll+jkakar+miro njr/rating njr/fi
+$ fish perms group-write miro njr/rating njr/fi
 
-$ fdb ls -gd njr/rating njr/fi
+$ fish ls -gd njr/rating njr/fi
 trwcrw----   r:ntoll+jkakar+miro  w:miro   njr/rating
 nrwcrw----   r:ntoll+jkakar+miro  w:miro   njr/fi/</pre>
 </div>
@@ -184,9 +183,9 @@ nrwcrw----   r:ntoll+jkakar+miro  w:miro   njr/fi/</pre>
 where the read and write groups are the same.
 Let&#8217;s make <tt class="docutils literal"><span class="pre">miro</span></tt> the only user (other the owner, <tt class="docutils literal"><span class="pre">njr</span></tt>)
 who can read or write the tag and namespace.</p>
-<div class="highlight-python"><pre>$ fdb perms group miro njr/rating njr/fi
+<div class="highlight-python"><pre>$ fish perms group miro njr/rating njr/fi
 
-$ fdb ls -gd njr/rating njr/fi
+$ fish ls -gd njr/rating njr/fi
 trwcrw----   miro   njr/rating
 nrwcrw----   miro   njr/fi/</pre>
 </div>
@@ -216,14 +215,14 @@ a tag called <tt class="docutils literal"><span class="pre">secret/password</spa
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="index.html">
-              <img class="logo" src="_static/fdb-doc-logo.png" alt="Logo"/>
+              <img class="logo" src="_static/fish-doc-logo.png" alt="Logo"/>
             </a></p>
             <h4>Previous topic</h4>
             <p class="topless"><a href="ls.html"
                                   title="previous chapter">ls</a></p>
             <h4>Next topic</h4>
-            <p class="topless"><a href="su.html"
-                                  title="next chapter">fdb su</a></p>
+            <p class="topless"><a href="rm.html"
+                                  title="next chapter">rm</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
               <li><a href="_sources/perms.txt"
@@ -253,12 +252,12 @@ a tag called <tt class="docutils literal"><span class="pre">secret/password</spa
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="su.html" title="fdb su"
+          <a href="rm.html" title="rm"
              >next</a> |</li>
         <li class="right" >
           <a href="ls.html" title="ls"
              >previous</a> |</li>
-        <li><a href="index.html">fdb v2.17 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v2.18 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

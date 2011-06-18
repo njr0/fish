@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>count &mdash; fdb v2.17 documentation</title>
+    <title>count &mdash; fish v2.18 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '2.17',
+        VERSION:     '2.18',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="fdb v2.17 documentation" href="index.html" />
+    <link rel="top" title="fish v2.18 documentation" href="index.html" />
     <link rel="next" title="ls" href="ls.html" />
     <link rel="prev" title="tags" href="tags.html" /> 
   </head>
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="tags.html" title="tags"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fdb v2.17 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v2.18 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -49,23 +49,28 @@
 <h1>count<a class="headerlink" href="#count" title="Permalink to this headline">¶</a></h1>
 <p>Counts the number of objects matching a set of conditions</p>
 <p><strong>FORM</strong></p>
-<div class="highlight-python"><pre>fdb count [flags] &lt;object specifier&gt;</pre>
+<div class="highlight-python"><pre>[fish] count [flags] &lt;object specifier&gt;</pre>
 </div>
 <p><strong>EXAMPLES</strong></p>
-<div class="highlight-python"><pre>$ fdb count -q 'has njr/rating'
+<div class="highlight-python"><pre>$ fish count -q 'has njr/rating'
 141 objects matched
 Total: 141 objects
 
-$ fdb count -a 'Eiffel Tower'
+$ fish count -a 'Eiffel Tower'
 Total: 1 object
 
-$ fdb count -q 'fluiddb/about matches "Eiffel Tower"'
+$ fish count -q 'fluiddb/about matches "Eiffel Tower"'
 6 objects matched
 Total: 6 objects</pre>
 </div>
+<p><a href="#id1"><span class="problematic" id="id2">**</span></a>NOTE FOR WINDOWS USERS* Working from a Windows command line, single quotes
+do not work as above.   Instead you need to use double quotes and &#8220;stutter&#8221;
+quotes inside quotes.   So the last example becomes:</p>
+<div class="highlight-python"><pre>fish count -q ""fluiddb/about matches ""Eiffel Tower"""</pre>
+</div>
 <p>The command produces no output when successful, even if the tag did
 not exist.</p>
-<div class="highlight-python"><pre>$ fdb untag -F -a "Eiffel Tower" ntoll/rating
+<div class="highlight-python"><pre>$ fish untag -F -a "Eiffel Tower" ntoll/rating
 Failed to remove tag ntoll/rating from object with about="Eiffel Tower"
 Error code 401 (UNAUTHORIZED)</pre>
 </div>
@@ -85,7 +90,7 @@ that the user can see the relevant tags for.</p>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="index.html">
-              <img class="logo" src="_static/fdb-doc-logo.png" alt="Logo"/>
+              <img class="logo" src="_static/fish-doc-logo.png" alt="Logo"/>
             </a></p>
             <h4>Previous topic</h4>
             <p class="topless"><a href="tags.html"
@@ -127,7 +132,7 @@ that the user can see the relevant tags for.</p>
         <li class="right" >
           <a href="tags.html" title="tags"
              >previous</a> |</li>
-        <li><a href="index.html">fdb v2.17 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v2.18 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

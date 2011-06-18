@@ -9,7 +9,7 @@ situations.
 **FORM**
 ::
 
-    fdb perms permissions-spec list-of-one-or-more-tags-or-namespaces
+    fish perms permissions-spec list-of-one-or-more-tags-or-namespaces
 
 Here ``permissions-spec`` can be
 
@@ -29,13 +29,13 @@ In what follows, we'll use a ``rating`` tag and a namespace called ``friends``.
   * Make a tag or namespace completely private.
     ::
 
-        $ fdb perms private njr/rating
-	$ fdb perms private njr/fi
+        $ fish perms private njr/rating
+	$ fish perms private njr/fi
 
     We could also change them together by saying:
     ::
 
-        $ fdb perms private njr/rating njr/fi
+        $ fish perms private njr/rating njr/fi
 
     This sets the permissions so that only the owner of the tag
     or namespace has permission to do anything with it---``read``, ``write``
@@ -43,16 +43,16 @@ In what follows, we'll use a ``rating`` tag and a namespace called ``friends``.
     The abbreviated view of this is shown by
     ::
 
-        $ fdb ls -ld njr/rating njr/fi
+        $ fish ls -ld njr/rating njr/fi
         trwc------   njr/rating
         nrwc------   njr/fi/
 
-    (See :ref:`fdbls` for an detailed explanation of the permissions codes.)
+    (See :ref:`fishls` for an detailed explanation of the permissions codes.)
 
     The full listing after this is:
     ::
 
-        $ fdb -F ls -Ld njr/rating njr/fi
+        $ fish -F ls -Ld njr/rating njr/fi
 
         njr/rating:
 
@@ -89,9 +89,9 @@ In what follows, we'll use a ``rating`` tag and a namespace called ``friends``.
     and everyone else has read only:
     ::
 
-        $ fdb perms default njr/rating njr/fi
+        $ fish perms default njr/rating njr/fi
 
-        $ fdb -F ls -ld njr/rating njr/fi
+        $ fish -F ls -ld njr/rating njr/fi
         trwcr--r--   njr/rating
         nrwcr--r--   njr/fi/
 
@@ -99,9 +99,9 @@ In what follows, we'll use a ``rating`` tag and a namespace called ``friends``.
     remove all write permissions).
     ::
 
-      $ fdb perms lock njr/rating
+      $ fish perms lock njr/rating
 
-      $fdb ls -l njr/rating
+      $ fish ls -l njr/rating
       tr-cr--r--   njr/rating
 
     This does not alter read or control permissions.
@@ -109,9 +109,9 @@ In what follows, we'll use a ``rating`` tag and a namespace called ``friends``.
   * Unlock a namespace or tag so that the owner (only) can edit it.
     ::
 
-      $ fdb perms unlock njr/rating
+      $ fish perms unlock njr/rating
 
-      $fdb ls -l njr/rating
+      $ fish ls -l njr/rating
       trwcr--r--   njr/rating
 
     This does not alter read or control permissions.
@@ -120,10 +120,9 @@ In what follows, we'll use a ``rating`` tag and a namespace called ``friends``.
     can write it.   (This does not alter read permissions.)
     ::
 
-        $ fdb perms group-write ntoll+jkakar njr/rating njr/fi
+        $ fish perms group-write ntoll+jkakar njr/rating njr/fi
 
-        $ fdb ls -gd njr/rating njr/fi
-        fdb -F ls -gd njr/rating njr/fi
+        $ fish ls -gd njr/rating njr/fi
         trwcrw-r--   r:(world)  w:ntoll+jkakar   njr/rating
         nrwcrw-r--   r:(world)  w:ntoll+jkakar   njr/fi/
 
@@ -131,10 +130,10 @@ In what follows, we'll use a ``rating`` tag and a namespace called ``friends``.
     leaving write permissions as the are.
     ::
 
-        $ fdb perms default njr/rating njr/fi
-        $ fdb perms group-read ntoll+jkakar+miro njr/rating njr/fi
+        $ fish perms default njr/rating njr/fi
+        $ fish perms group-read ntoll+jkakar+miro njr/rating njr/fi
 
-        $ fdb -F ls -gd njr/rating njr/fi
+        $ fish -F ls -gd njr/rating njr/fi
         trwcr-----   r:ntoll+jkakar+miro  w:(world)   njr/rating
         nrwcr-----   r:ntoll+jkakar+miro  w:(world)   njr/fi/
 
@@ -144,10 +143,10 @@ In what follows, we'll use a ``rating`` tag and a namespace called ``friends``.
     ``jkakar`` (as well as ``miro``) to read.
     ::
 
-        $ fdb perms group-read ntoll+jkakar+miro njr/rating njr/fi
-        $ fdb perms group-write miro njr/rating njr/fi
+        $ fish perms group-read ntoll+jkakar+miro njr/rating njr/fi
+        $ fish perms group-write miro njr/rating njr/fi
 
-        $ fdb ls -gd njr/rating njr/fi
+        $ fish ls -gd njr/rating njr/fi
         trwcrw----   r:ntoll+jkakar+miro  w:miro   njr/rating
         nrwcrw----   r:ntoll+jkakar+miro  w:miro   njr/fi/
 
@@ -157,9 +156,9 @@ In what follows, we'll use a ``rating`` tag and a namespace called ``friends``.
     who can read or write the tag and namespace.
     ::
 
-        $ fdb perms group miro njr/rating njr/fi
+        $ fish perms group miro njr/rating njr/fi
 
-        $ fdb ls -gd njr/rating njr/fi
+        $ fish ls -gd njr/rating njr/fi
         trwcrw----   miro   njr/rating
         nrwcrw----   miro   njr/fi/
 

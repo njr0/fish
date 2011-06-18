@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>tags &mdash; fdb v2.17 documentation</title>
+    <title>tags &mdash; fish v2.18 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '2.17',
+        VERSION:     '2.18',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="fdb v2.17 documentation" href="index.html" />
+    <link rel="top" title="fish v2.18 documentation" href="index.html" />
     <link rel="next" title="count" href="count.html" />
     <link rel="prev" title="show" href="show.html" /> 
   </head>
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="show.html" title="show"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fdb v2.17 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v2.18 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -49,10 +49,10 @@
 <h1>tags<a class="headerlink" href="#tags" title="Permalink to this headline">¶</a></h1>
 <p>Show the list of tags (and their values) present on an objects</p>
 <p><strong>FORM</strong></p>
-<div class="highlight-python"><pre>fdb tag [flags] &lt;object specifier&gt;</pre>
+<div class="highlight-python"><pre>[fish] tag [flags] &lt;object specifier&gt;</pre>
 </div>
 <p><strong>EXAMPLES</strong></p>
-<div class="highlight-python"><pre>$ fdb tags -a "Eiffel Tower" njr/rating njr/seen ntoll/seen
+<div class="highlight-python"><pre>$ fish tags -a "Eiffel Tower" njr/rating njr/seen ntoll/seen
 Object with about="Eiffel Tower":
 /objects/93bd1999-0998-49cc-8004-af457ce34ce4
   njr/seen
@@ -63,9 +63,14 @@ Object with about="Eiffel Tower":
   njr/location = "Paris"</pre>
 </div>
 <p>Alternative specifications:</p>
-<div class="highlight-python"><pre>fdb tags -a "Eiffel Tower"
-fdb tags -i 93bd1999-0998-49cc-8004-af457ce34ce4
-fdb tags -q 'fluiddb/about matches "Eiffel Tower"'</pre>
+<div class="highlight-python"><pre>tags -a "Eiffel Tower"
+tags -i 93bd1999-0998-49cc-8004-af457ce34ce4
+tags -q 'fluiddb/about matches "Eiffel Tower"'</pre>
+</div>
+<p><a href="#id1"><span class="problematic" id="id2">**</span></a>NOTE FOR WINDOWS USERS* Working from a Windows command line, single quotes
+do not work as above.   Instead you need to use double quotes and &#8220;stutter&#8221;
+quotes inside quotes.   So the last example becomes:</p>
+<div class="highlight-python"><pre>tags -q "fluiddb/about matches """Eiffel Tower"""</pre>
 </div>
 <p>All of these commands will show the names and values of all the tags
 (for which the user has read permission)
@@ -86,7 +91,7 @@ and punctuation.</p>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="index.html">
-              <img class="logo" src="_static/fdb-doc-logo.png" alt="Logo"/>
+              <img class="logo" src="_static/fish-doc-logo.png" alt="Logo"/>
             </a></p>
             <h4>Previous topic</h4>
             <p class="topless"><a href="show.html"
@@ -128,7 +133,7 @@ and punctuation.</p>
         <li class="right" >
           <a href="show.html" title="show"
              >previous</a> |</li>
-        <li><a href="index.html">fdb v2.17 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v2.18 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

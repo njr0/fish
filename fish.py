@@ -34,7 +34,7 @@
 # rating                                           --- the short tag name
 #
 
-from testfdb import *
+from testfish import *
 
 sys.stdout = UnicodeOut(sys.stdout)
 sys.stderr = UnicodeOut(sys.stderr)

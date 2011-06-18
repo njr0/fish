@@ -6,25 +6,32 @@ Counts the number of objects matching a set of conditions
 
 **FORM**
 
-   fdb count [flags] <object specifier>
+   [fish] count [flags] <object specifier>
 
 **EXAMPLES**
 
-   $ fdb count -q 'has njr/rating'
+   $ fish count -q 'has njr/rating'
    141 objects matched
    Total: 141 objects
 
-   $ fdb count -a 'Eiffel Tower'
+   $ fish count -a 'Eiffel Tower'
    Total: 1 object
 
-   $ fdb count -q 'fluiddb/about matches "Eiffel Tower"'
+   $ fish count -q 'fluiddb/about matches "Eiffel Tower"'
    6 objects matched
    Total: 6 objects
+
+>>**<<NOTE FOR WINDOWS USERS* Working from a Windows command line,
+single quotes do not work as above.   Instead you need to use double
+quotes and "stutter" quotes inside quotes.   So the last example
+becomes:
+
+   fish count -q ""fluiddb/about matches ""Eiffel Tower"""
 
 The command produces no output when successful, even if the tag did
 not exist.
 
-   $ fdb untag -F -a "Eiffel Tower" ntoll/rating
+   $ fish untag -F -a "Eiffel Tower" ntoll/rating
    Failed to remove tag ntoll/rating from object with about="Eiffel Tower"
    Error code 401 (UNAUTHORIZED)
 

@@ -1,27 +1,27 @@
 # -*- coding: utf-8 -*-
 #
-# testfdb.py
+# testfish.py
 #
 # Copyright (c) Nicholas J. Radcliffe 2009-2011 and other authors specified
 #               in the AUTHOR
 # Licence terms in LICENCE.
 #
 import unittest
-from fdblib import *
+from fishlib import *
 from cli import *
 
 class TestFluidDB(unittest.TestCase):
 
     def setUp(self):
         self.db = FluidDB()
-        self.user = self.db.credentials.username
+        self.user = self.db.credentials.username   # UNICODE
         self.db.set_connection_from_global()
         self.db.set_debug_timeout(5.0)
-        self.dadgadID = id('DADGAD', self.db.host)
+        self.dadgadID = id(u'DADGAD', self.db.host)
 
     def testCreateObject(self):
         db = self.db
-        o = db.create_object('DADGAD')
+        o = db.create_object(u'DADGAD')
         self.assertEqual(o.id, self.dadgadID)
         self.assertEqual(o.URI, object_uri(self.dadgadID))
 
@@ -31,21 +31,23 @@ class TestFluidDB(unittest.TestCase):
         self.assertEqual(type(o) != types.IntType, True)
 
     def testCreateObjectFail(self):
-        bad = Credentials('doesnotexist', 'certainlywiththispassword')
+        bad = Credentials(u'doesnotexist', u'certainlywiththispassword')
         db = FluidDB(bad)
-        o = db.create_object('DADGAD')
+        o = db.create_object(u'DADGAD')
         self.assertEqual(o, STATUS.UNAUTHORIZED)
 
     def testCreateTag(self):
         db = self.db
-        o = db.delete_abstract_tag('testrating')
+        o = db.delete_abstract_tag(u'testrating')
         # doesn't really matter if this works or not
 
-        o = db.create_abstract_tag('testrating',
-                        "%s's testrating (0-10; more is better)" % self.user)
+        o = db.create_abstract_tag(u'testrating',
+                        u"%s's testrating (0-10; more is better)" % self.user)
         self.assertEqual(type(o.id) in types.StringTypes, True)
-        self.assertEqual(o.URI, tag_uri(db.credentials.username,
-                                                'testrating'))
+        self.assertEqual(unicode(urllib.unquote(o.URI.encode('UTF-8')),
+                                 'UTF-8'),
+                         tag_uri(db.credentials.username, u'testrating'))
+                                                
 
     def testTags(self):
         db = self.db
@@ -89,7 +91,7 @@ class TestFluidDB(unittest.TestCase):
 
         query = u'fluiddb/about = "ΔΑΔΓΑΔ"'
         tag_by_query(db, query, tagsToSet)
-        objects = get_values(db, query, tagsToSet)
+        objects = get_values_by_query(db, query, tagsToSet)
         self.assertEqual(len(objects), 1)
         o = objects[0]
         for key in tagsToSet:
@@ -99,61 +101,61 @@ class TestFluidDB(unittest.TestCase):
     def testSetTagByID(self):
         db = self.db
         user = db.credentials.username
-        o = db.delete_abstract_tag('testrating')
-        o = db.create_abstract_tag('testrating',
-                         "%s's testrating (0-10; more is better)" % self.user)
-        o = db.tag_object_by_id(self.dadgadID, '/%s/testrating' % user, 5)
+        o = db.delete_abstract_tag(u'testrating')
+        o = db.create_abstract_tag(u'testrating',
+                         u"%s's testrating (0-10; more is better)" % self.user)
+        o = db.tag_object_by_id(self.dadgadID, u'/%s/testrating' % user, 5)
         self.assertEqual(o, 0)
-        _status, v = db.get_tag_value_by_id(self.dadgadID, 'testrating')
+        _status, v = db.get_tag_value_by_id(self.dadgadID, u'testrating')
         self.assertEqual(v, 5)
 
     def testSetTagByAbout(self):
         db = self.db
         user = db.credentials.username
-        o = db.delete_abstract_tag('testrating')
-        o = db.tag_object_by_about('http://dadgad.com',
-                                   '/%s/testrating' % user, 'five')
+        o = db.delete_abstract_tag(u'testrating')
+        o = db.tag_object_by_about(u'http://dadgad.com',
+                                   u'/%s/testrating' % user, u'five')
         o = db.tag_object_by_about('DAD +GAD',
-                                   '/%s/testrating' % user, 'five')
+                                   u'/%s/testrating' % user, u'five')
         self.assertEqual(o, 0)
-        _status, v = db.get_tag_value_by_about('http://dadgad.com',
-                                                'testrating')
-        _status, v = db.get_tag_value_by_about('DAD +GAD', 'testrating')
-                                                
-        self.assertEqual(v, 'five')
+        _status, v = db.get_tag_value_by_about(u'http://dadgad.com',
+                                               u'testrating')
+        _status, v = db.get_tag_value_by_about(u'DAD +GAD', u'testrating')
+
+        self.assertEqual(v, u'five')
 
     def testDeleteNonExistentTag(self):
         db = self.db
-        o = db.delete_abstract_tag('testrating')
-        o = db.delete_abstract_tag('testrating')  # definitely doesn't exist
+        o = db.delete_abstract_tag(u'testrating')
+        o = db.delete_abstract_tag(u'testrating')  # definitely doesn't exist
 
     def testSetNonExistentTag(self):
         db = self.db
-        o = db.delete_abstract_tag('testrating')
-        o = db.tag_object_by_id(self.dadgadID, 'testrating', 5)
+        o = db.delete_abstract_tag(u'testrating')
+        o = db.tag_object_by_id(self.dadgadID, u'testrating', 5)
         self.assertEqual(o, 0)
-        status, v = db.get_tag_value_by_id(self.dadgadID, 'testrating')
+        status, v = db.get_tag_value_by_id(self.dadgadID, u'testrating')
         self.assertEqual(v, 5)
 
     def testUntagObjectByID(self):
         db = self.db
 
         # First tag something
-        o = db.tag_object_by_id(self.dadgadID, 'testrating', 5)
+        o = db.tag_object_by_id(self.dadgadID, u'testrating', 5)
         self.assertEqual(o, 0)
 
         # Now untag it
-        error = db.untag_object_by_id(self.dadgadID, 'testrating')
+        error = db.untag_object_by_id(self.dadgadID, u'testrating')
         self.assertEqual(error, 0)
-        status, v = db.get_tag_value_by_id(self.dadgadID, 'testrating')
+        status, v = db.get_tag_value_by_id(self.dadgadID, u'testrating')
         self.assertEqual(status, STATUS.NOT_FOUND)
 
         # Now untag it again (should be OK)
-        error = db.untag_object_by_id(self.dadgadID, 'testrating')
+        error = db.untag_object_by_id(self.dadgadID, u'testrating')
         self.assertEqual(error, 0)
 
         # And again, but this time asking for error if untagged
-        error = db.untag_object_by_id(self.dadgadID, 'testrating', False)
+        error = db.untag_object_by_id(self.dadgadID, u'testrating', False)
         self.assertEqual(error, 0)  # The API has changed so that in fact
                                     # a 204 (NO CONTENT) is always returned,
                                     # so this test and the flag are now
@@ -166,23 +168,23 @@ class TestFluidDB(unittest.TestCase):
         db = self.db
 
         # First tag something
-        o = db.tag_object_by_id(self.dadgadID, 'testrating', 5)
+        o = db.tag_object_by_id(self.dadgadID, u'testrating', 5)
         self.assertEqual(o, 0)
 
         # Now untag it
-        error = db.untag_object_by_about('DADGAD', 'testrating')
+        error = db.untag_object_by_about(u'DADGAD', u'testrating')
         self.assertEqual(error, 0)
-        status, v = db.get_tag_value_by_about('DADGAD', 'testrating')
+        status, v = db.get_tag_value_by_about(u'DADGAD', u'testrating')
         self.assertEqual(status, STATUS.NOT_FOUND)
 
     def testAddValuelessTag(self):
         db = self.db
-        o = db.delete_abstract_tag('testconvtag')
-        o = db.create_abstract_tag('testconvtag',
-                                "a conventional (valueless) tag")
-        o = db.tag_object_by_id(self.dadgadID, 'testconvtag')
+        o = db.delete_abstract_tag(u'testconvtag')
+        o = db.create_abstract_tag(u'testconvtag',
+                                   u"a conventional (valueless) tag")
+        o = db.tag_object_by_id(self.dadgadID, u'testconvtag')
         self.assertEqual(o, 0)
-        status, v = db.get_tag_value_by_id(self.dadgadID, 'testconvtag')
+        status, v = db.get_tag_value_by_id(self.dadgadID, u'testconvtag')
         self.assertEqual(v, None)
 
 
@@ -193,63 +195,63 @@ class TestFDBUtilityFunctions(unittest.TestCase):
         self.user = self.db.credentials.username
         self.db.set_connection_from_global()
         self.db.set_debug_timeout(5.0)
-        self.dadgadID = id('DADGAD', self.db.host)
+        self.dadgadID = id(u'DADGAD', self.db.host)
 
     def testFullTagPath(self):
         db = self.db
         user = db.credentials.username
-        self.assertEqual(db.full_tag_path('rating'),
-                          '/tags/%s/rating' % user)
-        self.assertEqual(db.full_tag_path('/%s/rating' % user),
-                          '/tags/%s/rating' % user)
-        self.assertEqual(db.full_tag_path('/tags/%s/rating' % user),
-                          '/tags/%s/rating' % user)
-        self.assertEqual(db.full_tag_path('foo/rating'),
-                          '/tags/%s/foo/rating' % user)
-        self.assertEqual(db.full_tag_path('/%s/foo/rating' % user),
-                          '/tags/%s/foo/rating' % user)
-        self.assertEqual(db.full_tag_path('/tags/%s/foo/rating' % user),
-                          '/tags/%s/foo/rating' % user)
+        self.assertEqual(db.full_tag_path(u'rating'),
+                          u'/tags/%s/rating' % user)
+        self.assertEqual(db.full_tag_path(u'/%s/rating' % user),
+                          u'/tags/%s/rating' % user)
+        self.assertEqual(db.full_tag_path(u'/tags/%s/rating' % user),
+                          u'/tags/%s/rating' % user)
+        self.assertEqual(db.full_tag_path(u'foo/rating'),
+                          u'/tags/%s/foo/rating' % user)
+        self.assertEqual(db.full_tag_path(u'/%s/foo/rating' % user),
+                          u'/tags/%s/foo/rating' % user)
+        self.assertEqual(db.full_tag_path(u'/tags/%s/foo/rating' % user),
+                          u'/tags/%s/foo/rating' % user)
 
     def testAbsTagPath(self):
         db = self.db
         user = db.credentials.username
-        self.assertEqual(db.abs_tag_path('rating'), '/%s/rating' % user)
-        self.assertEqual(db.abs_tag_path('/%s/rating' % user),
-                          '/%s/rating' % user)
-        self.assertEqual(db.abs_tag_path('/tags/%s/rating' % user),
-                          '/%s/rating' % user)
+        self.assertEqual(db.abs_tag_path(u'rating'), u'/%s/rating' % user)
+        self.assertEqual(db.abs_tag_path(u'/%s/rating' % user),
+                         u'/%s/rating' % user)
+        self.assertEqual(db.abs_tag_path(u'/tags/%s/rating' % user),
+                         u'/%s/rating' % user)
         self.assertEqual(db.abs_tag_path('foo/rating'),
-                          '/%s/foo/rating' % user)
+                         u'/%s/foo/rating' % user)
         self.assertEqual(db.abs_tag_path('/%s/foo/rating' % user),
-                          '/%s/foo/rating' % user)
+                         u'/%s/foo/rating' % user)
         self.assertEqual(db.abs_tag_path('/tags/%s/foo/rating' % user),
-                          '/%s/foo/rating' % user)
+                         u'/%s/foo/rating' % user)
 
     def testTagPathSplit(self):
         db = self.db
 
         user = db.credentials.username
-        self.assertEqual(db.tag_path_split('rating'), (user, '', 'rating'))
-        self.assertEqual(db.tag_path_split('/%s/rating' % user),
-                         (user, '', 'rating'))
+        self.assertEqual(db.tag_path_split(u'rating'), (user, u'', u'rating'))
+        self.assertEqual(db.tag_path_split(u'/%s/rating' % user),
+                         (user, u'', u'rating'))
         self.assertEqual(db.tag_path_split('/tags/%s/rating' % user),
-                         (user, '', 'rating'))
-        self.assertEqual(db.tag_path_split('foo/rating'),
-                         (user, 'foo', 'rating'))
+                         (user, u'', u'rating'))
+        self.assertEqual(db.tag_path_split(u'foo/rating'),
+                         (user, u'foo', u'rating'))
         self.assertEqual(db.tag_path_split('/%s/foo/rating' % user),
-                         (user, 'foo', 'rating'))
-        self.assertEqual(db.tag_path_split('/tags/%s/foo/rating' % user),
-                         (user, 'foo', 'rating'))
-        self.assertEqual(db.tag_path_split('foo/bar/rating'),
-                               (user, 'foo/bar', 'rating'))
-        self.assertEqual(db.tag_path_split('/%s/foo/bar/rating' % user),
-                         (user, 'foo/bar', 'rating'))
+                         (user, u'foo', u'rating'))
+        self.assertEqual(db.tag_path_split(u'/tags/%s/foo/rating' % user),
+                         (user, u'foo', u'rating'))
+        self.assertEqual(db.tag_path_split(u'foo/bar/rating'),
+                               (user, u'foo/bar', u'rating'))
+        self.assertEqual(db.tag_path_split(u'/%s/foo/bar/rating' % user),
+                         (user, u'foo/bar', u'rating'))
         self.assertEqual(db.tag_path_split('/tags/%s/foo/bar/rating' % user),
-                         (user, 'foo/bar', 'rating'))
-        self.assertRaises(TagPathError, db.tag_path_split, '')
-        self.assertRaises(TagPathError, db.tag_path_split, '/')
-        self.assertRaises(TagPathError, db.tag_path_split, '/foo')
+                         (user, u'foo/bar', u'rating'))
+        self.assertRaises(TagPathError, db.tag_path_split, u'')
+        self.assertRaises(TagPathError, db.tag_path_split, u'/')
+        self.assertRaises(TagPathError, db.tag_path_split, u'/foo')
 
     def testTypedValueInterpretation(self):
         corrects = {

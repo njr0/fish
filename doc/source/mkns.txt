@@ -1,0 +1,36 @@
+mkns
+----
+
+The ``mkns`` command may be used to create a namespace, and optionally
+to set its description.
+
+**FORM**
+::
+
+    [fish] mkns path
+
+**FLAGS**
+
+  * ``-m description`` Sets the description (metadata) for a tag.
+
+
+**EXAMPLES**
+
+  #. Create a namespace called ``njr/secret``
+     ::
+
+        $ touch njr/secret
+
+  #. Create a tag ``njr/very/secret`` with description "keep right out"
+     ::
+
+	$ touch -m "keep right out"  njr/very/secret
+
+**NOTE**
+
+Namespace Tag creation is automatic on first use in ``fish``.  This
+command is only needed, therefore, if you wish to set permissions
+before use set permissions before use or specify a description.
+
+The ``mkns`` command cannot be used (at present) to change the
+description of an existing namespace.

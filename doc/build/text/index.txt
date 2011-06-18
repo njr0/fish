@@ -1,10 +1,10 @@
 
-Documentation for the fdb Command Line
-**************************************
+Documentation for the fish Command Line
+***************************************
 
 **Contents**
 
-* The fdb Command Line for Fluidinfo
+* The fish Command Line for Fluidinfo
 **Commands**
 
 * tag
@@ -14,10 +14,14 @@ Documentation for the fdb Command Line
 * count
 * ls
 * perms
-* fdb su
-* whoami
+* rm
+* touch
+* mkns
+* mkdir
 * pwd
 * pwn
+* su
+* whoami
 * help
 * commands
 * version

@@ -7,48 +7,48 @@ has become more conventional; see `Tag Conventions`
 Download
 --------
 
-fdb is available from Github at https://github.com/njr0/fdb (use the
-download button).   The main program is ``fdb.py`` in the top
-level folder and the ``fdb`` script, which simply executes ``fdb.py``.
+fish is available from Github at https://github.com/njr0/fish (use the
+download button).   The main program is ``fish.py`` in the top
+level folder and the ``fish`` script, which simply executes ``fish.py``.
 
 
 Dependencies
 ------------
 
-If you're running python 2.6, fdb.py should just run.   With earlier
+If you're running python 2.6, fish.py should just run.   With earlier
 version of python, you need to get access to simplejson and httplib2.
 You can get simplejson from http://pypi.python.org/pypi/simplejson/
 and httplib2 from http://code.google.com/p/httplib2/.
 
 
-Making the fdb command available
---------------------------------
+Making the fish command available
+---------------------------------
 
-The file ``fdb`` included in the download is executable provided that
+The file ``fish`` included in the download is executable provided that
 a suitable python is installed.    You can make it available more
 conveniently by using a shell alias or adding a symbolic link to it
 somewhere on your ``PATH``.   For example:
 ::
 
-  alias fdb='/path/to/fdb'
+  alias fish='/path/to/fish'
 
 or, if ``~/bin`` is on your ``PATH``:
 ::
 
   cd ~/bin
-  ln -s /path/to/fdb
+  ln -s /path/to/fish
 
 
 
-The fdb Python Library and Command Line
----------------------------------------
+The fish Python Library and Command Line
+----------------------------------------
 
-fdb is a primarily a command line tool for providing access to the
+fish is a primarily a command line tool for providing access to the
 Fluidinfo data store (from Fluidinfo (http://fluidinfo.com/.)
 There is lots of coverage of the library (and its evolution) at
 http://blog.abouttag.com/.
 
-fdb can also be used as a python library for accessing Fluidinfo, but
+fish can also be used as a python library for accessing Fluidinfo, but
 it is less complete and less conventional the Ali Afshar's FOM library
 (https://launchpad.net/fom), which is generally preferred for
 programmatic use.
@@ -62,7 +62,7 @@ and credentials (a username and password).   You can get these from
 
     http://fluidinfo.com/accounts/new
 
-fdb expects your credentials to be available in a two-line file
+fish expects your credentials to be available in a two-line file
 in the format
 
 username
@@ -73,7 +73,7 @@ for this is ``~/.fluidDBcredentials``.
 
 On windows, the lcoation of the credentials file is specified
 by the environment variable ``FDB_CREDENTIALS_FILE``; if that is not
-set, the fdb looks for ``c:\fdb\credentials.txt``.
+set, the fish looks for ``c:\fish\credentials.txt``.
 
 You can also optionally add a line, after password, saying either
 
@@ -85,7 +85,7 @@ or unix-style-paths false
 Tag Conventions
 ---------------
 
-As from version 2.00, fdb uses absolute Fluidinfo-style paths all the time
+As from version 2.00, fish uses absolute Fluidinfo-style paths all the time
 (i.e. you always specify the namespace and don't use a leading slash).
 You can explicitly mandate this also by adding the line
 ::
@@ -98,7 +98,7 @@ If you instead set
 
     unix-style-paths true
 
-on the third line of the credentials file, fdb uses unix-style paths,
+on the third line of the credentials file, fish uses unix-style paths,
 meaning that paths are assumed to be relative to the user's namespace
 unless they are introduced with a leading slash.  Also, the about tag
 (fluiddb/about) may be referred to as /about.  This affects input and
@@ -115,14 +115,14 @@ Tests
 
 The library includes a set of tests.   If you have valid credentials,
 and everything is OK, these should run successfully if you just execute
-the file testfdb.py or say
+the file testfish.py or say
 ::
 
-    python fdb.py test
+    python fish.py test
 
 
 
-See :ref:`fdbtest`.
+See :ref:`fishtest`.
 
 
 Using the Library
@@ -149,7 +149,7 @@ web page.
 Delicious
 ---------
 
-Also distributed with fdb itself is code for accessing delicious.com
+Also distributed with fish itself is code for accessing delicious.com
 (http://del.icio.us/, as was), and for migrating bookmarks and other
 data to FluidDB.   This also includes functionality for creating web
 homepages from delicious based on a home tag.   See the README-DELICIOUS

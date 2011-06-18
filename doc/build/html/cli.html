@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>The fdb Command Line for Fluidinfo &mdash; fdb v2.17 documentation</title>
+    <title>The fish Command Line for Fluidinfo &mdash; fish v2.18 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '2.17',
+        VERSION:     '2.18',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,9 +19,9 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="fdb v2.17 documentation" href="index.html" />
+    <link rel="top" title="fish v2.18 documentation" href="index.html" />
     <link rel="next" title="tag" href="tag.html" />
-    <link rel="prev" title="Documentation for the fdb Command Line" href="index.html" /> 
+    <link rel="prev" title="Documentation for the fish Command Line" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -34,9 +34,9 @@
           <a href="tag.html" title="tag"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Documentation for the fdb Command Line"
+          <a href="index.html" title="Documentation for the fish Command Line"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fdb v2.17 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v2.18 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -45,8 +45,8 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="the-fdb-command-line-for-fluidinfo">
-<h1>The fdb Command Line for Fluidinfo<a class="headerlink" href="#the-fdb-command-line-for-fluidinfo" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="the-fish-command-line-for-fluidinfo">
+<h1>The fish Command Line for Fluidinfo<a class="headerlink" href="#the-fish-command-line-for-fluidinfo" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="a-brief-overview-of-fluidinfo">
 <h2>A Brief Overview of Fluidinfo<a class="headerlink" href="#a-brief-overview-of-fluidinfo" title="Permalink to this headline">¶</a></h2>
 <p>Fluidinfo is a simple, shared, online storage system in which each
@@ -64,28 +64,28 @@ while all objects are shared.</p>
 </div>
 <div class="section" id="overview-of-the-command-line">
 <h2>Overview of the Command Line<a class="headerlink" href="#overview-of-the-command-line" title="Permalink to this headline">¶</a></h2>
-<p>The fdb command line is a acts as a sort-of one-shot command shell
+<p>The fish command line is a acts as a sort-of one-shot command shell
 for Fluidinfo.   It gives access to much of the functionality of
-the underlying <tt class="docutils literal"><span class="pre">fdb.py</span></tt> library, with a main focus on tagging,
+the underlying <tt class="docutils literal"><span class="pre">fish.py</span></tt> library, with a main focus on tagging,
 getting tag values, finding tags, querying Fluidinfo and clearing
 (removing tags).
 It also has some facilities for listing tags and viewing and
 altering their permissions.</p>
-<p>Assuming you have installed fdb.py, set up a credentials file,
-and created an alias <tt class="docutils literal"><span class="pre">fdb</span></tt> to run it, basic use is exemplified
+<p>Assuming you have installed fish.py, set up a credentials file,
+and created an alias <tt class="docutils literal"><span class="pre">fish</span></tt> to run it, basic use is exemplified
 as follows.   In the examples that follow, I assume that the Fluidinfo
 user has username <tt class="docutils literal"><span class="pre">njr</span></tt>.   All tags belonging to njr start <tt class="docutils literal"><span class="pre">njr/</span></tt>.
-(<tt class="docutils literal"><span class="pre">fdb</span></tt> actually has a configuration option to allow this to be omitted,
+(<tt class="docutils literal"><span class="pre">fish</span></tt> actually has a configuration option to allow this to be omitted,
 but for now we&#8217;ll specify the user explicitly, since that is normal
 in Fluidinfo.)</p>
 <blockquote>
 <ol class="arabic">
 <li><p class="first">Rate the Eiffel Tower as a 9:</p>
-<div class="highlight-python"><pre>$ fdb tag -a "Eiffel Tower" njr/rating=9</pre>
+<div class="highlight-python"><pre>$ fish tag -a "Eiffel Tower" njr/rating=9</pre>
 </div>
 </li>
 <li><p class="first">Show the my rating and ntoll&#8217;s rating of the &#8220;Eiffel Tower&#8221;.</p>
-<div class="highlight-python"><pre>$ fdb show -a "Eiffel Tower"  fluiddb/about  njr/rating  ntoll/rating
+<div class="highlight-python"><pre>$ fish show -a "Eiffel Tower"  fluiddb/about  njr/rating  ntoll/rating
 Object with about="Eiffel Tower":
 /objects/93bd1999-0998-49cc-8004-af457ce34ce4
 njr/rating = 9
@@ -94,7 +94,7 @@ ntoll/rating = "I prefer the one in Blackpool"</pre>
 </div>
 </li>
 <li><p class="first">Show all the tags on the &#8220;Eiffel Tower&#8221; (now referenced by ID):</p>
-<div class="highlight-python"><pre>$ fdb tags -i 93bd1999-0998-49cc-8004-af457ce34ce4
+<div class="highlight-python"><pre>$ fish tags -i 93bd1999-0998-49cc-8004-af457ce34ce4
 Object with id=93bd1999-0998-49cc-8004-af457ce34ce4:
 njr/rating = 9
 ntoll/rating = "I prefer the  the one in Blackpool"
@@ -105,8 +105,8 @@ fluiddb/about = "Eiffel Tower"</pre>
 </li>
 <li><p class="first">Add a <tt class="docutils literal"><span class="pre">dislike</span></tt> tag to each object that I have rated 1 or 0
 and then show their about tags.</p>
-<div class="highlight-python"><pre>$ fdb tag -q 'njr/rating &lt; 2' njr/dislike
-$ fdb show -q 'has njr/dislike' fluiddb/about njr/rating njr/dislike
+<div class="highlight-python"><pre>$ fish tag -q 'njr/rating &lt; 2' njr/dislike
+$ fish show -q 'has njr/dislike' fluiddb/about njr/rating njr/dislike
 5 objects matched
 Object a98f2c80-ae5f-405a-a319-d47122ae9da3:
   fluiddb/about = "book:foucaults pendulum (umberto eco)"
@@ -133,13 +133,13 @@ Object 7aed1e67-a88e-439d-8a56-b2ab52c838ab:
 </ol>
 </blockquote>
 <p>Before describing these commands in detail, it will be useful
-to describe the abstraction <tt class="docutils literal"><span class="pre">fdb</span></tt> uses, as it differs in key
+to describe the abstraction <tt class="docutils literal"><span class="pre">fish</span></tt> uses, as it differs in key
 respects from the underlying Fluidinfo model.</p>
 </div>
-<div class="section" id="the-fdb-abstraction">
-<h2>The fdb Abstraction<a class="headerlink" href="#the-fdb-abstraction" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="the-fish-abstraction">
+<h2>The fish Abstraction<a class="headerlink" href="#the-fish-abstraction" title="Permalink to this headline">¶</a></h2>
 <p>The Fluidinfo API is quite low level and rigid;
-<tt class="docutils literal"><span class="pre">fdb</span></tt> offers a slightly higher level of abstraction.
+<tt class="docutils literal"><span class="pre">fish</span></tt> offers a slightly higher level of abstraction.
 Here, we briefly note the differences.</p>
 <blockquote>
 <ul>
@@ -147,7 +147,7 @@ Here, we briefly note the differences.</p>
 an <tt class="docutils literal"><span class="pre">njr/rating</span></tt> tag; you first have to tell the system that you
 wish to use a <tt class="docutils literal"><span class="pre">rating</span></tt> tag by <tt class="docutils literal"><span class="pre">creating</span></tt> it; only once you
 have done this can you use it.</p>
-<p>In <tt class="docutils literal"><span class="pre">fdb</span></tt>, you can just go ahead and set a tag; if it doesn&#8217;t
+<p>In <tt class="docutils literal"><span class="pre">fish</span></tt>, you can just go ahead and set a tag; if it doesn&#8217;t
 exist, the system will create it for you.</p>
 </li>
 <li><p class="first">Fluidinfo supports <em>namespaces</em>; a namespace is to a tag much
@@ -175,25 +175,25 @@ API directly, the process would be:</p>
 </li>
 </ul>
 <blockquote>
-<p>Again, <tt class="docutils literal"><span class="pre">fdb</span></tt> takes care of all that, and allows jacqui just
+<p>Again, <tt class="docutils literal"><span class="pre">fish</span></tt> takes care of all that, and allows jacqui just
 to say:</p>
-<div class="highlight-python"><pre>fdb tag -a "Eiffel Tower" jacqui/rating=10</pre>
+<div class="highlight-python"><pre>fish tag -a "Eiffel Tower" jacqui/rating=10</pre>
 </div>
-<p><tt class="docutils literal"><span class="pre">fdb</span></tt> will create any tags and namespaces required on the fly.</p>
+<p><tt class="docutils literal"><span class="pre">fish</span></tt> will create any tags and namespaces required on the fly.</p>
 </blockquote>
 <ul class="simple">
 <li>Finally, in Fluidinfo itself, the object ID (128-bit number,
 usually formatted as a hex-number in 8-4-4-4-12 digit groups)
-is not actually a tag on the object.   <tt class="docutils literal"><span class="pre">fdb</span></tt> allows the user
+is not actually a tag on the object.   <tt class="docutils literal"><span class="pre">fish</span></tt> allows the user
 to use refer to it as a tag, at least for reporting purposes,
 using the name <tt class="docutils literal"><span class="pre">/id</span></tt>.</li>
 </ul>
 </blockquote>
 </div>
-<div class="section" id="the-anatomy-of-the-core-fdb-commands">
-<h2>The Anatomy of the core fdb Commands<a class="headerlink" href="#the-anatomy-of-the-core-fdb-commands" title="Permalink to this headline">¶</a></h2>
-<p>The general form of the core fdb commands is:</p>
-<div class="highlight-python"><pre>fdb &lt;verb&gt; [flags] &lt;object selector&gt; &lt;tags/values&gt;</pre>
+<div class="section" id="the-anatomy-of-the-core-fish-commands">
+<h2>The Anatomy of the core fish Commands<a class="headerlink" href="#the-anatomy-of-the-core-fish-commands" title="Permalink to this headline">¶</a></h2>
+<p>The general form of the core fish commands is:</p>
+<div class="highlight-python"><pre>fish &lt;verb&gt; [flags] &lt;object selector&gt; &lt;tags/values&gt;</pre>
 </div>
 <p>The verb says what you want to do.   The main verbs currently avalaible are</p>
 <blockquote>
@@ -267,22 +267,22 @@ All strings are always unicode, i.e. they may contain any character.</p>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="index.html">
-              <img class="logo" src="_static/fdb-doc-logo.png" alt="Logo"/>
+              <img class="logo" src="_static/fish-doc-logo.png" alt="Logo"/>
             </a></p>
             <h3><a href="index.html">Table Of Contents</a></h3>
             <ul>
-<li><a class="reference external" href="">The fdb Command Line for Fluidinfo</a><ul>
+<li><a class="reference external" href="">The fish Command Line for Fluidinfo</a><ul>
 <li><a class="reference external" href="#a-brief-overview-of-fluidinfo">A Brief Overview of Fluidinfo</a></li>
 <li><a class="reference external" href="#overview-of-the-command-line">Overview of the Command Line</a></li>
-<li><a class="reference external" href="#the-fdb-abstraction">The fdb Abstraction</a></li>
-<li><a class="reference external" href="#the-anatomy-of-the-core-fdb-commands">The Anatomy of the core fdb Commands</a></li>
+<li><a class="reference external" href="#the-fish-abstraction">The fish Abstraction</a></li>
+<li><a class="reference external" href="#the-anatomy-of-the-core-fish-commands">The Anatomy of the core fish Commands</a></li>
 </ul>
 </li>
 </ul>
 
             <h4>Previous topic</h4>
             <p class="topless"><a href="index.html"
-                                  title="previous chapter">Documentation for the fdb Command Line</a></p>
+                                  title="previous chapter">Documentation for the fish Command Line</a></p>
             <h4>Next topic</h4>
             <p class="topless"><a href="tag.html"
                                   title="next chapter">tag</a></p>
@@ -318,9 +318,9 @@ All strings are always unicode, i.e. they may contain any character.</p>
           <a href="tag.html" title="tag"
              >next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Documentation for the fdb Command Line"
+          <a href="index.html" title="Documentation for the fish Command Line"
              >previous</a> |</li>
-        <li><a href="index.html">fdb v2.17 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v2.18 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

@@ -7,16 +7,24 @@ specified.
 **FORM**
 ::
 
-    fdb tag [flags] <object specifier> <tag-value-pairs>
+    [fish] tag [flags] <object specifier> <tag-value-pairs>
 
 **EXAMPLES**
 ::
 
-    fdb tag -a "Eiffel Tower" njr/rating=7 njr/seen
-    fdb tag -a "Eiffel Tower" njr/rating=7 njr/seen
-    fdb tag -i 93bd1999-0998-49cc-8004-af457ce34ce4 njr/rating=7 njr/seen
-    fdb tag -q 'fluiddb/about matches "Eiffel Tower"' njr/rating=7 njr/seen
-    fdb tag -U -a "Eiffel Tower" rating=7 seen
+    tag -a "Eiffel Tower" njr/rating=7 njr/seen
+    tag -a "Eiffel Tower" njr/rating=7 njr/seen
+    tag -i 93bd1999-0998-49cc-8004-af457ce34ce4 njr/rating=7 njr/seen
+    tag -U -a "Eiffel Tower" rating=7 seen
+    tag -q 'fluiddb/about matches "Eiffel Tower"' njr/rating=7 njr/seen
+
+**NOTE FOR WINDOWS USERS* Working from a Windows command line, single quotes
+do not work as above.   Instead you need to use double quotes and "stutter"
+quotes inside quotes.   So the last example becomes:
+::
+
+    tag -q "fluiddb/about matches ""Eiffel Tower""" njr/rating=7 njr/seen
+
 
 All of these commands will tag the object with about tag "Eiffel Tower"
 and ID ``93bd1999-0998-49cc-8004-af457ce34ce4`` with two
@@ -41,9 +49,9 @@ The command produces no output when successful and a suitable
 warning when it fails.
 ::
 
-  $ fdb tag -a "Eiffel Tower" njr/rating=7
+  $ fish tag -a "Eiffel Tower" njr/rating=7
 
-  $ fdb tag -a "Eiffel Tower" ntoll/rating=7
+  $ fish tag -a "Eiffel Tower" ntoll/rating=7
   Failed to tag object with about="Eiffel Tower" with ntoll/rating
   Error code 401 (UNAUTHORIZED)
 

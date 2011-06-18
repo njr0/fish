@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>mkns &mdash; fish v2.18 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '2.18',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="fish v2.18 documentation" href="index.html" />
+    <link rel="next" title="mkdir" href="mkdir.html" />
+    <link rel="prev" title="touch" href="touch.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="mkdir.html" title="mkdir"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="touch.html" title="touch"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">fish v2.18 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="mkns">
+<h1>mkns<a class="headerlink" href="#mkns" title="Permalink to this headline">¶</a></h1>
+<p>The <tt class="docutils literal"><span class="pre">mkns</span></tt> command may be used to create a namespace, and optionally
+to set its description.</p>
+<p><strong>FORM</strong></p>
+<div class="highlight-python"><pre>[fish] mkns path</pre>
+</div>
+<p><strong>FLAGS</strong></p>
+<blockquote>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">-m</span> <span class="pre">description</span></tt> Sets the description (metadata) for a tag.</li>
+</ul>
+</blockquote>
+<p><strong>EXAMPLES</strong></p>
+<blockquote>
+<ol class="arabic">
+<li><p class="first">Create a namespace called <tt class="docutils literal"><span class="pre">njr/secret</span></tt></p>
+<div class="highlight-python"><pre>$ touch njr/secret</pre>
+</div>
+</li>
+<li><p class="first">Create a tag <tt class="docutils literal"><span class="pre">njr/very/secret</span></tt> with description &#8220;keep right out&#8221;</p>
+<div class="highlight-python"><pre>$ touch -m "keep right out"  njr/very/secret</pre>
+</div>
+</li>
+</ol>
+</blockquote>
+<p><strong>NOTE</strong></p>
+<p>Namespace Tag creation is automatic on first use in <tt class="docutils literal"><span class="pre">fish</span></tt>.  This
+command is only needed, therefore, if you wish to set permissions
+before use set permissions before use or specify a description.</p>
+<p>The <tt class="docutils literal"><span class="pre">mkns</span></tt> command cannot be used (at present) to change the
+description of an existing namespace.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/fish-doc-logo.png" alt="Logo"/>
+            </a></p>
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="touch.html"
+                                  title="previous chapter">touch</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="mkdir.html"
+                                  title="next chapter">mkdir</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/mkns.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="mkdir.html" title="mkdir"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="touch.html" title="touch"
+             >previous</a> |</li>
+        <li><a href="index.html">fish v2.18 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2011, Nicholas J. Radcliffe.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.2.
+    </div>
+  </body>
+</html>

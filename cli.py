@@ -12,7 +12,7 @@ import sys
 import types
 from optparse import OptionParser, OptionGroup
 from itertools import chain, imap
-from fdblib import (
+from fishlib import (
     FluidDB,
     O,
     Credentials,
@@ -40,7 +40,7 @@ HTTP_METHODS = ['GET', 'PUT', 'POST', 'DELETE', 'HEAD']
 
 ARGLESS_COMMANDS = ['COUNT', 'TAGS', 'LS', 'PWD', 'PWN', 'WHOAMI']
 
-USAGE = u"""
+USAGE = u'''
 
 For help with a specific command, type help followed by the command name.
 For a list of commands, type commands.
@@ -49,6 +49,7 @@ For a list of commands, type commands.
    tag -a 'Paris' visited rating=10
    tag -i %s /njr/visited /njr/rating=10
    tag -q 'about = "Paris"' visited rating=10
+   [On windows: tag -q "about = "Paris""" visited rating=10
 
  Untag objects:
    untag -a 'Paris' /njr/visited rating
@@ -67,9 +68,16 @@ For a list of commands, type commands.
    tags -a 'Paris'
    tags -i %s
 
+ Tag and Namespace management:
+   ls [flags]          list the contents of a namespace or list a tag
+   perms spec paths    change the permissions on tags or namespaces
+   rm [flags] paths    remove one or more namespaces or tags
+   touch [flags] path  create an (abstract) tag (normally unnecessary)
+   mkns [flags] path   create a namespace (normally unnecessary)
+   pwd / pwn           prints root namespace of authenticated user
+
  Miscellaneous:
    whoami              prints username for authenticated user
-   pwd / pwn           prints root namespace of authenticated user
    su fiuser           set fish to use user credentials for fiuser
    help [command]      show this help, or help for the nominated comamnd.
    commands            show a list of available commands
@@ -82,10 +90,10 @@ For a list of commands, type commands.
    testutil            runs tests not requiring FluidDB access
 
 
-""" % (PARIS_ID, PARIS_ID, PARIS_ID, PARIS_ID)
+''' % (PARIS_ID, PARIS_ID, PARIS_ID, PARIS_ID)
 
 
-USAGE_FI = u"""
+USAGE_FI = u'''
 
 For help with a specific command, type help followed by the command name.
 For a list of commands, type commands.
@@ -93,7 +101,8 @@ For a list of commands, type commands.
  Tag objects:
    tag -a 'Paris' njr/visited njr/rating=10
    tag -i %s njr/visited njr/rating=10
-   tag -q 'about = "Paris"' visited njr/rating=10
+   tag -q 'about = "Paris"' njr/visited njr/rating=10
+   [On windows: tag -q "about = "Paris""" njr/visited njr/rating=10
 
  Untag objects:
    untag -a 'Paris' njr/visited njr/rating
@@ -111,6 +120,14 @@ For a list of commands, type commands.
  Get tags on objects and their values:
    tags -a 'Paris'
    tags -i %s
+
+ Tag and Namespace management:
+   ls [flags]          list the contents of a namespace or list a tag
+   perms spec paths    change the permissions on tags or namespaces
+   rm [flags] paths    remove one or more namespaces or tags
+   touch [flags] path  create an (abstract) tag (normally unnecessary)
+   mkns [flags] path   create a namespace (normally unnecessary)
+   pwd / pwn           prints root namespace of authenticated user
 
  Miscellaneous:
    whoami              prints username for authenticated user
@@ -131,7 +148,7 @@ For a list of commands, type commands.
    get /permissions/tags/njr/rating action=delete
    (use POST/PUT/DELETE/HEAD at your peril; currently untested.)
 
-""" % (PARIS_ID, PARIS_ID, PARIS_ID, PARIS_ID)
+''' % (PARIS_ID, PARIS_ID, PARIS_ID, PARIS_ID)
 
 
 class ModeError(Exception):
@@ -143,6 +160,10 @@ class TooFewArgsForHTTPError(Exception):
 
 
 class UnrecognizedHTTPMethodError(Exception):
+    pass
+
+
+class CommandError(Exception):
     pass
 
 
@@ -262,6 +283,24 @@ def execute_whoami_command(db):
     Print(db.credentials.username)
 
 
+def execute_touch_command(db, args, options):
+    for tag in args:
+        fullpath = db.abs_tag_path(tag, inPref=True)
+        if not db.tag_exists(fullpath):
+            id = db.create_abstract_tag(fullpath,
+                                        description=options.description,
+                                        verbose=True)
+                
+
+def execute_mkns_command(db, args, options):
+    for ns in args:
+        fullpath = db.abs_tag_path(ns, inPref=True)
+        if not db.ns_exists(fullpath):
+            id = db.create_namespace(fullpath,
+                                     description=options.description,
+                                     verbose=True)
+
+
 def execute_su_command(db, args):
     source =  get_credentials_file(username=args[0])
     dest = get_credentials_file()
@@ -366,9 +405,9 @@ def cli_bracket(s):
 
 def get_ids_or_fail(query, db):
     ids = db.query(query)
-    if type(ids) == types.IntType:
-        fail(u'Query failed')
-    else:   # list of ids
+    if type(ids) == int:
+        raise CommandError(ids, 'Probably a bad query specification')
+    else:
         Print(u'%s matched' % plural(len(ids), u'object'))
         return ids
 
@@ -432,9 +471,15 @@ def parse_args(args=None):
     general.add_option('-V', '--version', action='store_true',
                        default=False,
             help='Report version number.')
-    general.add_option('-R', '--recurse', action='store_true',
+    general.add_option('-R', '--Recurse', action='store_true',
                        default=False,
-            help='recursive (for ls and rm).')
+            help='recursive (for ls).')
+    general.add_option('-r', '--recurse', action='store_true',
+                       default=False,
+            help='recursive (for rm).')
+    general.add_option('-f', '--force', action='store_true',
+                       default=False,
+            help='force (override pettifogging objections).')
     general.add_option('-l', '--long', action='store_true',
                        default=False,
             help='long listing (for ls).')
@@ -453,6 +498,9 @@ def parse_args(args=None):
     general.add_option('-n', '--ns', action='store_true',
                        default=False,
             help='don\'t list namespace; just name of namespace.')
+    general.add_option('-m', '--description', action='store_true',
+                       default=False,
+            help='set description ("metadata") for tag/namespace.')
     general.add_option('-2', '--hightestverbosity', action='store_true',
                        default=False,
             help='don\'t list namespace; just name of namespace.')
@@ -469,6 +517,8 @@ def parse_args(args=None):
     parser.add_option_group(other)
 
     options, args = parser.parse_args(args)
+    if options.Recurse:
+        options.recurse = options.Recurse
 
     if args == []:
         action = 'version' if options.version else 'help'
@@ -501,9 +551,15 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
         'tags',
         'count',
         'ls',
+        'rm',
         'perms',
         'pwd',
         'pwn',
+        'rmdir',
+        'rmns',
+        'touch',
+        'mkns',
+        'mkdir',
         'amazon',
         'test',
         'testcli',
@@ -521,53 +577,69 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
         if action == 'version':
             return
     
-    if action == 'help':
-        if args and args[0] in command_list:
-            base = docbase or sys.path[0]
-            f = open(os.path.join(base, 'doc/build/text/%s.txt' % args[0]))
-            Print (f.read())
-            f.close()
+    try:
+        if action == 'help':
+            if args and args[0] in command_list:
+                base = docbase or sys.path[0]
+                f = open(os.path.join(base, 'doc/build/text/%s.txt' % args[0]))
+                Print (f.read())
+                f.close()
+            else:
+                Print(USAGE if db.unixStyle else USAGE_FI)
+        elif action == 'commands':
+            Print(' '.join(command_list))
+        elif action not in command_list:
+            Print('Unrecognized command %s' % action)        
+        elif (action.upper() not in HTTP_METHODS + ARGLESS_COMMANDS
+              and not args):
+            Print('Too few arguments for action %s' % action)
+        elif action == 'count':
+            Print('Total: %s' % (flags.Plural(len(objs), 'object')))
+        elif action == 'tags':
+            execute_tags_command(objs, db, options)
+        elif action in ('tag', 'untag', 'show'):
+            if not (options.about or options.query or options.id):
+                Print('You must use -q, -a or -i with %s' % action)
+                return
+            tags = args
+            if len(tags) == 0 and action != 'count':
+                nothing_to_do()
+            actions = {
+                'tag': execute_tag_command,
+                'untag': execute_untag_command,
+                'show': execute_show_command,
+            }
+            command = actions[action]
+            command(objs, db, args, options)
+        elif action == 'ls':
+            ls.execute_ls_command(objs, args, options, credentials, unixPaths)
+        elif action == 'rm':
+            ls.execute_rm_command(objs, args, options, credentials, unixPaths)
+        elif action in ('rmdir', 'rmns'):
+            raise CommandError(u'Use rm to remove namespaces as well as tags')
+        elif action == 'chmod':
+            ls.execute_chmod_command(objs, args, options, credentials,
+                                     unixPaths)
+        elif action == 'perms':
+            ls.execute_perms_command(objs, args, options, credentials,
+                                     unixPaths)
+        elif action in ('pwd', 'pwn', 'whoami'):
+            execute_whoami_command(db)
+        elif action == 'touch':
+            execute_touch_command(db, args, options)
+        elif action in ('mkns', 'mkdir'):
+            execute_mkns_command(db, args, options)
+        elif action == 'su':
+            execute_su_command(db, args)
+        elif action == 'amazon':
+            execute_amazon_command(db, args)
+        elif action in ['get', 'put', 'post', 'delete']:
+            execute_http_request(action, args, db, options)
         else:
-            Print(USAGE if db.unixStyle else USAGE_FI)
-    elif action == 'commands':
-        Print(' '.join(command_list))
-    elif action not in command_list:
-        Print('Unrecognized command %s' % action)        
-    elif (action.upper() not in HTTP_METHODS + ARGLESS_COMMANDS
-          and not args):
-        Print('Too few arguments for action %s' % action)
-    elif action == 'count':
-        Print('Total: %s' % (flags.Plural(len(objs), 'object')))
-    elif action == 'tags':
-        execute_tags_command(objs, db, options)
-    elif action in ('tag', 'untag', 'show'):
-        if not (options.about or options.query or options.id):
-            Print('You must use -q, -a or -i with %s' % action)
-            return
-        tags = args
-        if len(tags) == 0 and action != 'count':
-            nothing_to_do()
-        actions = {
-            'tag': execute_tag_command,
-            'untag': execute_untag_command,
-            'show': execute_show_command,
-        }
-        command = actions[action]
+            Print('Unrecognized command %s' % action)
+    except Exception, e:
+        if options.debug:
+            raise
+        else:
+            Print('Fish failure:\n  %s' % e)
 
-        command(objs, db, args, options)
-    elif action == 'ls':
-        ls.execute_ls_command(objs, args, options, credentials, unixPaths)
-    elif action == 'chmod':
-        ls.execute_chmod_command(objs, args, options, credentials, unixPaths)
-    elif action == 'perms':
-        ls.execute_perms_command(objs, args, options, credentials, unixPaths)
-    elif action in ('pwd', 'pwn', 'whoami'):
-        execute_whoami_command(db)
-    elif action == 'su':
-        execute_su_command(db, args)
-    elif action == 'amazon':
-        execute_amazon_command(db, args)
-    elif action in ['get', 'put', 'post', 'delete']:
-        execute_http_request(action, args, db, options)
-    else:
-        Print('Unrecognized command %s' % action)

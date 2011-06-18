@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Installation and Configuration &mdash; fdb v2.17 documentation</title>
+    <title>Installation and Configuration &mdash; fish v2.18 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '2.17',
+        VERSION:     '2.18',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="fdb v2.17 documentation" href="index.html" />
+    <link rel="top" title="fish v2.18 documentation" href="index.html" />
     <link rel="prev" title="Using Unix-Like Paths" href="unixlike.html" /> 
   </head>
   <body>
@@ -32,7 +32,7 @@
         <li class="right" >
           <a href="unixlike.html" title="Using Unix-Like Paths"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fdb v2.17 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v2.18 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -47,37 +47,37 @@
 has become more conventional; see <cite>Tag Conventions</cite></p>
 <div class="section" id="download">
 <h2>Download<a class="headerlink" href="#download" title="Permalink to this headline">¶</a></h2>
-<p>fdb is available from Github at <a class="reference external" href="https://github.com/njr0/fdb">https://github.com/njr0/fdb</a> (use the
-download button).   The main program is <tt class="docutils literal"><span class="pre">fdb.py</span></tt> in the top
-level folder and the <tt class="docutils literal"><span class="pre">fdb</span></tt> script, which simply executes <tt class="docutils literal"><span class="pre">fdb.py</span></tt>.</p>
+<p>fish is available from Github at <a class="reference external" href="https://github.com/njr0/fish">https://github.com/njr0/fish</a> (use the
+download button).   The main program is <tt class="docutils literal"><span class="pre">fish.py</span></tt> in the top
+level folder and the <tt class="docutils literal"><span class="pre">fish</span></tt> script, which simply executes <tt class="docutils literal"><span class="pre">fish.py</span></tt>.</p>
 </div>
 <div class="section" id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
-<p>If you&#8217;re running python 2.6, fdb.py should just run.   With earlier
+<p>If you&#8217;re running python 2.6, fish.py should just run.   With earlier
 version of python, you need to get access to simplejson and httplib2.
 You can get simplejson from <a class="reference external" href="http://pypi.python.org/pypi/simplejson/">http://pypi.python.org/pypi/simplejson/</a>
 and httplib2 from <a class="reference external" href="http://code.google.com/p/httplib2/">http://code.google.com/p/httplib2/</a>.</p>
 </div>
-<div class="section" id="making-the-fdb-command-available">
-<h2>Making the fdb command available<a class="headerlink" href="#making-the-fdb-command-available" title="Permalink to this headline">¶</a></h2>
-<p>The file <tt class="docutils literal"><span class="pre">fdb</span></tt> included in the download is executable provided that
+<div class="section" id="making-the-fish-command-available">
+<h2>Making the fish command available<a class="headerlink" href="#making-the-fish-command-available" title="Permalink to this headline">¶</a></h2>
+<p>The file <tt class="docutils literal"><span class="pre">fish</span></tt> included in the download is executable provided that
 a suitable python is installed.    You can make it available more
 conveniently by using a shell alias or adding a symbolic link to it
 somewhere on your <tt class="docutils literal"><span class="pre">PATH</span></tt>.   For example:</p>
-<div class="highlight-python"><pre>alias fdb='/path/to/fdb'</pre>
+<div class="highlight-python"><pre>alias fish='/path/to/fish'</pre>
 </div>
 <p>or, if <tt class="docutils literal"><span class="pre">~/bin</span></tt> is on your <tt class="docutils literal"><span class="pre">PATH</span></tt>:</p>
 <div class="highlight-python"><pre>cd ~/bin
-ln -s /path/to/fdb</pre>
+ln -s /path/to/fish</pre>
 </div>
 </div>
-<div class="section" id="the-fdb-python-library-and-command-line">
-<h2>The fdb Python Library and Command Line<a class="headerlink" href="#the-fdb-python-library-and-command-line" title="Permalink to this headline">¶</a></h2>
-<p>fdb is a primarily a command line tool for providing access to the
+<div class="section" id="the-fish-python-library-and-command-line">
+<h2>The fish Python Library and Command Line<a class="headerlink" href="#the-fish-python-library-and-command-line" title="Permalink to this headline">¶</a></h2>
+<p>fish is a primarily a command line tool for providing access to the
 Fluidinfo data store (from Fluidinfo (<a class="reference external" href="http://fluidinfo.com/">http://fluidinfo.com/</a>.)
 There is lots of coverage of the library (and its evolution) at
 <a class="reference external" href="http://blog.abouttag.com/">http://blog.abouttag.com/</a>.</p>
-<p>fdb can also be used as a python library for accessing Fluidinfo, but
+<p>fish can also be used as a python library for accessing Fluidinfo, but
 it is less complete and less conventional the Ali Afshar&#8217;s FOM library
 (<a class="reference external" href="https://launchpad.net/fom">https://launchpad.net/fom</a>), which is generally preferred for
 programmatic use.</p>
@@ -88,7 +88,7 @@ programmatic use.</p>
 and credentials (a username and password).   You can get these from</p>
 <blockquote>
 <a class="reference external" href="http://fluidinfo.com/accounts/new">http://fluidinfo.com/accounts/new</a></blockquote>
-<p>fdb expects your credentials to be available in a two-line file
+<p>fish expects your credentials to be available in a two-line file
 in the format</p>
 <p>username
 password</p>
@@ -96,7 +96,7 @@ password</p>
 for this is <tt class="docutils literal"><span class="pre">~/.fluidDBcredentials</span></tt>.</p>
 <p>On windows, the lcoation of the credentials file is specified
 by the environment variable <tt class="docutils literal"><span class="pre">FDB_CREDENTIALS_FILE</span></tt>; if that is not
-set, the fdb looks for <tt class="docutils literal"><span class="pre">c:\fdb\credentials.txt</span></tt>.</p>
+set, the fish looks for <tt class="docutils literal"><span class="pre">c:\fish\credentials.txt</span></tt>.</p>
 <p>You can also optionally add a line, after password, saying either</p>
 <p>unix-style-paths true
 or unix-style-paths false</p>
@@ -104,7 +104,7 @@ or unix-style-paths false</p>
 </div>
 <div class="section" id="tag-conventions">
 <h2>Tag Conventions<a class="headerlink" href="#tag-conventions" title="Permalink to this headline">¶</a></h2>
-<p>As from version 2.00, fdb uses absolute Fluidinfo-style paths all the time
+<p>As from version 2.00, fish uses absolute Fluidinfo-style paths all the time
 (i.e. you always specify the namespace and don&#8217;t use a leading slash).
 You can explicitly mandate this also by adding the line</p>
 <div class="highlight-python"><pre>unix-style-paths false</pre>
@@ -113,7 +113,7 @@ You can explicitly mandate this also by adding the line</p>
 If you instead set</p>
 <div class="highlight-python"><pre>unix-style-paths true</pre>
 </div>
-<p>on the third line of the credentials file, fdb uses unix-style paths,
+<p>on the third line of the credentials file, fish uses unix-style paths,
 meaning that paths are assumed to be relative to the user&#8217;s namespace
 unless they are introduced with a leading slash.  Also, the about tag
 (fluiddb/about) may be referred to as /about.  This affects input and
@@ -127,10 +127,10 @@ paths.</p>
 <h2>Tests<a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h2>
 <p>The library includes a set of tests.   If you have valid credentials,
 and everything is OK, these should run successfully if you just execute
-the file testfdb.py or say</p>
-<div class="highlight-python"><pre>python fdb.py test</pre>
+the file testfish.py or say</p>
+<div class="highlight-python"><pre>python fish.py test</pre>
 </div>
-<p>See <em class="xref">fdbtest</em>.</p>
+<p>See <a class="reference external" href="test.html#fishtest"><em>test</em></a>.</p>
 </div>
 <div class="section" id="using-the-library">
 <h2>Using the Library<a class="headerlink" href="#using-the-library" title="Permalink to this headline">¶</a></h2>
@@ -152,7 +152,7 @@ web page.</p>
 </div>
 <div class="section" id="delicious">
 <h2>Delicious<a class="headerlink" href="#delicious" title="Permalink to this headline">¶</a></h2>
-<p>Also distributed with fdb itself is code for accessing delicious.com
+<p>Also distributed with fish itself is code for accessing delicious.com
 (<a class="reference external" href="http://del.icio.us/">http://del.icio.us/</a>, as was), and for migrating bookmarks and other
 data to FluidDB.   This also includes functionality for creating web
 homepages from delicious based on a home tag.   See the README-DELICIOUS
@@ -167,15 +167,15 @@ file for details on this functionality.</p>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="index.html">
-              <img class="logo" src="_static/fdb-doc-logo.png" alt="Logo"/>
+              <img class="logo" src="_static/fish-doc-logo.png" alt="Logo"/>
             </a></p>
             <h3><a href="index.html">Table Of Contents</a></h3>
             <ul>
 <li><a class="reference external" href="">Installation and Configuration</a><ul>
 <li><a class="reference external" href="#download">Download</a></li>
 <li><a class="reference external" href="#dependencies">Dependencies</a></li>
-<li><a class="reference external" href="#making-the-fdb-command-available">Making the fdb command available</a></li>
-<li><a class="reference external" href="#the-fdb-python-library-and-command-line">The fdb Python Library and Command Line</a></li>
+<li><a class="reference external" href="#making-the-fish-command-available">Making the fish command available</a></li>
+<li><a class="reference external" href="#the-fish-python-library-and-command-line">The fish Python Library and Command Line</a></li>
 <li><a class="reference external" href="#credentials">Credentials</a></li>
 <li><a class="reference external" href="#tag-conventions">Tag Conventions</a></li>
 <li><a class="reference external" href="#tests">Tests</a></li>
@@ -220,7 +220,7 @@ file for details on this functionality.</p>
         <li class="right" >
           <a href="unixlike.html" title="Using Unix-Like Paths"
              >previous</a> |</li>
-        <li><a href="index.html">fdb v2.17 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v2.18 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

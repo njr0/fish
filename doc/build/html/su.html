@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>fdb su &mdash; fdb v2.17 documentation</title>
+    <title>su &mdash; fish v2.18 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '2.17',
+        VERSION:     '2.18',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,9 +19,9 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="fdb v2.17 documentation" href="index.html" />
+    <link rel="top" title="fish v2.18 documentation" href="index.html" />
     <link rel="next" title="whoami" href="whoami.html" />
-    <link rel="prev" title="perms" href="perms.html" /> 
+    <link rel="prev" title="pwn" href="pwn.html" /> 
   </head>
   <body>
     <div class="related">
@@ -34,9 +34,9 @@
           <a href="whoami.html" title="whoami"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="perms.html" title="perms"
+          <a href="pwn.html" title="pwn"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fdb v2.17 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v2.18 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -45,16 +45,16 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="fdb-su">
-<h1>fdb su<a class="headerlink" href="#fdb-su" title="Permalink to this headline">¶</a></h1>
-<p>Set user: changes the set of credentials in use by <tt class="docutils literal"><span class="pre">fdb</span></tt>.</p>
+  <div class="section" id="su">
+<h1>su<a class="headerlink" href="#su" title="Permalink to this headline">¶</a></h1>
+<p>Set user: changes the set of credentials in use by <tt class="docutils literal"><span class="pre">fish</span></tt>.</p>
 <p><strong>FORM</strong></p>
-<div class="highlight-python"><pre>fdb su userspec</pre>
+<div class="highlight-python"><pre>[fish] su userspec</pre>
 </div>
 <p><strong>EXAMPLES</strong></p>
-<div class="highlight-python"><pre>fdb su foo</pre>
+<div class="highlight-python"><pre>$ fish su foo</pre>
 </div>
-<p>The <tt class="docutils literal"><span class="pre">fdb</span></tt> command expects user credentials for Fluidinfo to be stored
+<p>The <tt class="docutils literal"><span class="pre">fish</span></tt> command expects user credentials for Fluidinfo to be stored
 in a file in the users&#8217;s home directory.   On unix systems, this file
 is <tt class="docutils literal"><span class="pre">~/.fluidDBcredentials</span></tt>; on Windows systems it is
 <tt class="docutils literal"><span class="pre">fluiddbcredentials.ini</span></tt> in the user&#8217;s home folder..</p>
@@ -65,11 +65,11 @@ on windows they have names like <tt class="docutils literal"><span class="pre">f
 <p>A different set of credentials can be used for any one-off command
 by adding <tt class="docutils literal"><span class="pre">-u</span> <span class="pre">foo</span></tt> to the command line; this will cause the credentials
 in the <tt class="docutils literal"><span class="pre">foo</span></tt> variant of the file to be used.</p>
-<p>The <tt class="docutils literal"><span class="pre">fdb</span> <span class="pre">su</span> <span class="pre">command</span></tt> changes the default set of credentials to be used
+<p>The <tt class="docutils literal"><span class="pre">fish</span> <span class="pre">su</span> <span class="pre">command</span></tt> changes the default set of credentials to be used
 by copying the specified variant file over the default file.
 Because it is a simple copy, this is a <em>global</em> change, i.e. it affects
 all sessions, not just one in the current shell.    So on unix,</p>
-<div class="highlight-python"><pre>fdb su njr</pre>
+<div class="highlight-python"><pre>su njr</pre>
 </div>
 <p>is exactly equivalent to</p>
 <div class="highlight-python"><pre>cp ~/.fluidDBcredentials.njr ~/.fluidDBcredentials</pre>
@@ -83,11 +83,11 @@ all sessions, not just one in the current shell.    So on unix,</p>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="index.html">
-              <img class="logo" src="_static/fdb-doc-logo.png" alt="Logo"/>
+              <img class="logo" src="_static/fish-doc-logo.png" alt="Logo"/>
             </a></p>
             <h4>Previous topic</h4>
-            <p class="topless"><a href="perms.html"
-                                  title="previous chapter">perms</a></p>
+            <p class="topless"><a href="pwn.html"
+                                  title="previous chapter">pwn</a></p>
             <h4>Next topic</h4>
             <p class="topless"><a href="whoami.html"
                                   title="next chapter">whoami</a></p>
@@ -123,9 +123,9 @@ all sessions, not just one in the current shell.    So on unix,</p>
           <a href="whoami.html" title="whoami"
              >next</a> |</li>
         <li class="right" >
-          <a href="perms.html" title="perms"
+          <a href="pwn.html" title="pwn"
              >previous</a> |</li>
-        <li><a href="index.html">fdb v2.17 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v2.18 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

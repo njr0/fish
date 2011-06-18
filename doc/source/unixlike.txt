@@ -16,8 +16,8 @@ of interest relative to the working directory.   Thus if the ``cwd`` is
 Unix uses the ``cd`` command to allow you to change your working directory,
 and ``pwd`` to print the name of the working directory.
 
-``fdb`` supports a limited version of the same.   There are two ways
-to tell ``fdb`` that you would like to use unix-style paths rather than
+``fish`` supports a limited version of the same.   There are two ways
+to tell ``fish`` that you would like to use unix-style paths rather than
 fluidinfo-style paths.   First, on any command line, you can add
 a ``-U`` flag, and this will have the desired effect for that command only.
 Thus
@@ -56,7 +56,7 @@ If you choose to use unix-style paths, the following changes occur:
     For example,
     ::
 
-       fdb show -a DADGAD rating /jacqui/rating
+       fish show -a DADGAD rating /jacqui/rating
 
     will request the Fluidinfo tags ``njr/rating`` and ``jacqui/rating``.
 
@@ -65,25 +65,25 @@ If you choose to use unix-style paths, the following changes occur:
     For example,
     ::
 
-       fdb show -a DADGAD rating /jacqui/rating /about
+       fish show -a DADGAD rating /jacqui/rating /about
 
     (though requesting the about tag for an object specified by about
     tag is obviously a bit pointless).
 
   * The pseudo-tag ``/id`` may be used to request the object's ID.
 
-  * The exception to this is in the body of queries: ``fdb`` does not
+  * The exception to this is in the body of queries: ``fish`` does not
     rewrite queries, which are passed directly to Fluidinfo.
     Thus, to request the about tags for all objects containing DADGAD,
     you would say:
     ::
 
-       fdb show -q 'fluiddb/about matches "DADGAD"' /about
+       fish show -q 'fluiddb/about matches "DADGAD"' /about
 
     Similarly, to request all objects ``njr`` has rated 10:
     ::
 
-       fdb show -q 'njr/rating = 10' /about 
+       fish show -q 'njr/rating = 10' /about 
 
 **NOTES**
 
@@ -92,7 +92,7 @@ If you choose to use unix-style paths, the following changes occur:
     command at present.   This may change.
 
   * It is quite likely that at some point in the future, when unix paths
-    are in use, ``fdb`` will rewrite queries too, i.e. unix-style
+    are in use, ``fish`` will rewrite queries too, i.e. unix-style
     paths will be extended to the query; however, that is a slightly more
     delicate operation, so hasn't been tackled yet.
 

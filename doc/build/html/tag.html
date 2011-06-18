@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>tag &mdash; fdb v2.17 documentation</title>
+    <title>tag &mdash; fish v2.18 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '2.17',
+        VERSION:     '2.18',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,9 +19,9 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="fdb v2.17 documentation" href="index.html" />
+    <link rel="top" title="fish v2.18 documentation" href="index.html" />
     <link rel="next" title="untag" href="untag.html" />
-    <link rel="prev" title="The fdb Command Line for Fluidinfo" href="cli.html" /> 
+    <link rel="prev" title="The fish Command Line for Fluidinfo" href="cli.html" /> 
   </head>
   <body>
     <div class="related">
@@ -34,9 +34,9 @@
           <a href="untag.html" title="untag"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="cli.html" title="The fdb Command Line for Fluidinfo"
+          <a href="cli.html" title="The fish Command Line for Fluidinfo"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fdb v2.17 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v2.18 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -50,14 +50,19 @@
 <p>Adds one or more tags (with optional values) to the object or objects
 specified.</p>
 <p><strong>FORM</strong></p>
-<div class="highlight-python"><pre>fdb tag [flags] &lt;object specifier&gt; &lt;tag-value-pairs&gt;</pre>
+<div class="highlight-python"><pre>[fish] tag [flags] &lt;object specifier&gt; &lt;tag-value-pairs&gt;</pre>
 </div>
 <p><strong>EXAMPLES</strong></p>
-<div class="highlight-python"><pre>fdb tag -a "Eiffel Tower" njr/rating=7 njr/seen
-fdb tag -a "Eiffel Tower" njr/rating=7 njr/seen
-fdb tag -i 93bd1999-0998-49cc-8004-af457ce34ce4 njr/rating=7 njr/seen
-fdb tag -q 'fluiddb/about matches "Eiffel Tower"' njr/rating=7 njr/seen
-fdb tag -U -a "Eiffel Tower" rating=7 seen</pre>
+<div class="highlight-python"><pre>tag -a "Eiffel Tower" njr/rating=7 njr/seen
+tag -a "Eiffel Tower" njr/rating=7 njr/seen
+tag -i 93bd1999-0998-49cc-8004-af457ce34ce4 njr/rating=7 njr/seen
+tag -U -a "Eiffel Tower" rating=7 seen
+tag -q 'fluiddb/about matches "Eiffel Tower"' njr/rating=7 njr/seen</pre>
+</div>
+<p><a href="#id1"><span class="problematic" id="id2">**</span></a>NOTE FOR WINDOWS USERS* Working from a Windows command line, single quotes
+do not work as above.   Instead you need to use double quotes and &#8220;stutter&#8221;
+quotes inside quotes.   So the last example becomes:</p>
+<div class="highlight-python"><pre>tag -q "fluiddb/about matches ""Eiffel Tower""" njr/rating=7 njr/seen</pre>
 </div>
 <p>All of these commands will tag the object with about tag &#8220;Eiffel Tower&#8221;
 and ID <tt class="docutils literal"><span class="pre">93bd1999-0998-49cc-8004-af457ce34ce4</span></tt> with two
@@ -76,9 +81,9 @@ introduced with a leading <tt class="docutils literal"><span class="pre">/</span
 i.e. full Fluidinfo-style paths must be used inside the query.</p>
 <p>The command produces no output when successful and a suitable
 warning when it fails.</p>
-<div class="highlight-python"><pre>$ fdb tag -a "Eiffel Tower" njr/rating=7
+<div class="highlight-python"><pre>$ fish tag -a "Eiffel Tower" njr/rating=7
 
-$ fdb tag -a "Eiffel Tower" ntoll/rating=7
+$ fish tag -a "Eiffel Tower" ntoll/rating=7
 Failed to tag object with about="Eiffel Tower" with ntoll/rating
 Error code 401 (UNAUTHORIZED)</pre>
 </div>
@@ -99,11 +104,11 @@ By default, the user can write any tag under her namespace.</p>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="index.html">
-              <img class="logo" src="_static/fdb-doc-logo.png" alt="Logo"/>
+              <img class="logo" src="_static/fish-doc-logo.png" alt="Logo"/>
             </a></p>
             <h4>Previous topic</h4>
             <p class="topless"><a href="cli.html"
-                                  title="previous chapter">The fdb Command Line for Fluidinfo</a></p>
+                                  title="previous chapter">The fish Command Line for Fluidinfo</a></p>
             <h4>Next topic</h4>
             <p class="topless"><a href="untag.html"
                                   title="next chapter">untag</a></p>
@@ -139,9 +144,9 @@ By default, the user can write any tag under her namespace.</p>
           <a href="untag.html" title="untag"
              >next</a> |</li>
         <li class="right" >
-          <a href="cli.html" title="The fdb Command Line for Fluidinfo"
+          <a href="cli.html" title="The fish Command Line for Fluidinfo"
              >previous</a> |</li>
-        <li><a href="index.html">fdb v2.17 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v2.18 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

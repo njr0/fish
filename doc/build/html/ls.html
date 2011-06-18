@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>ls &mdash; fdb v2.17 documentation</title>
+    <title>ls &mdash; fish v2.18 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '2.17',
+        VERSION:     '2.18',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="fdb v2.17 documentation" href="index.html" />
+    <link rel="top" title="fish v2.18 documentation" href="index.html" />
     <link rel="next" title="perms" href="perms.html" />
     <link rel="prev" title="count" href="count.html" /> 
   </head>
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="count.html" title="count"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fdb v2.17 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v2.18 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -45,13 +45,12 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <p>. _fdbls:</p>
-<div class="section" id="ls">
-<h1>ls<a class="headerlink" href="#ls" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="ls">
+<span id="fishls"></span><h1>ls<a class="headerlink" href="#ls" title="Permalink to this headline">¶</a></h1>
 <p>The <tt class="docutils literal"><span class="pre">ls</span></tt> command is used to view a sorted list of tags or namespaces,
 potentially with additional information.</p>
 <p><strong>FORM</strong></p>
-<div class="highlight-python"><pre>ls [flags] [&lt;namespace&gt;|&lt;tag&gt;]</pre>
+<div class="highlight-python"><pre>[fish] ls [flags] [&lt;namespace&gt;|&lt;tag&gt;]</pre>
 </div>
 <p><strong>FLAGS</strong></p>
 <blockquote>
@@ -70,7 +69,7 @@ potentially with additional information.</p>
 <ol class="arabic">
 <li><p class="first">List the tags in the user&#8217;s namespace:</p>
 <p>(Here, we assume we are authenticated as user <tt class="docutils literal"><span class="pre">miro</span></tt>):</p>
-<div class="highlight-python"><pre>$ fdb ls
+<div class="highlight-python"><pre>$ fish ls
 bestsellers-1998-2010/    first_field_id            n_records
 bestsellers1998to2010/    first_record_id           next-field-about
 books/                    forename                  next-field-id
@@ -91,7 +90,7 @@ first_field_about         n_fields                  unit</pre>
 with the unix <tt class="docutils literal"><span class="pre">ls</span></tt> command, this is modelled on <tt class="docutils literal"><span class="pre">ls</span> <span class="pre">-F</span></tt>.</p>
 </li>
 <li><p class="first">List the tags and subnamespaces in a given namespace:</p>
-<div class="highlight-python"><pre>$ fdb ls miro/planets
+<div class="highlight-python"><pre>$ fish ls miro/planets
 Atmosphere                Mass                      OrbitalRadius
 Category                  Moons                     RotationPeriod
 EquatorialDiameter        Name                      db-next-record-about
@@ -102,15 +101,15 @@ Inclination               OrbitalPeriod</pre>
 follow upper-case letters.</p>
 </li>
 <li><p class="first">List a single tag (report presence or absence of that tag).</p>
-<div class="highlight-python"><pre>$ fdb ls miro/planets/Mass
+<div class="highlight-python"><pre>$ fish ls miro/planets/Mass
 miro/planets/Mass
 
-$ fdb ls -F miro/planets/NoMass
+$ fish ls -F miro/planets/NoMass
 miro/planets/NoMass not found</pre>
 </div>
 </li>
 <li><p class="first">Long listing for tag (<tt class="docutils literal"><span class="pre">njr/rating</span></tt>), including permissions summary:</p>
-<div class="highlight-python"><pre>$ fdb ls -l njr/rating
+<div class="highlight-python"><pre>$ fish ls -l njr/rating
 trwcr--r--   rating</pre>
 </div>
 <p>Here:</p>
@@ -158,16 +157,16 @@ the permissions.</p>
 <li><p class="first">Group long listing for tag (<tt class="docutils literal"><span class="pre">njr/rating</span></tt>), including permissions
 summary.</p>
 <p>Let&#8217;s start with a tag with default permissions.</p>
-<div class="highlight-python"><pre>$ fdb ls -g private-tag
+<div class="highlight-python"><pre>$ fish ls -g private-tag
 trwcr--r--   (world)   njr/private-tag</pre>
 </div>
 <p>When no one has been given any unusual permissions, in effect
 there is no group; or to say it another way, group permissions
 can be considered to be the same as world permissions.</p>
 <p>Now let&#8217;s grant read and write access to <tt class="docutils literal"><span class="pre">jkakar</span></tt> and <tt class="docutils literal"><span class="pre">ntoll</span></tt></p>
-<div class="highlight-python"><pre>$ fdb perms group jkakar+ntoll njr/private-tag
+<div class="highlight-python"><pre>$ fish perms group jkakar+ntoll njr/private-tag
 
-$ fdb ls -g private-tag
+$ fish ls -g private-tag
 trwcrw----   ntoll+jkakar   njr/private-tag</pre>
 </div>
 <p>Group permission is now <tt class="docutils literal"><span class="pre">rw-</span></tt>, and the group is <tt class="docutils literal"><span class="pre">ntoll+jkakar</span></tt>.
@@ -175,9 +174,9 @@ trwcrw----   ntoll+jkakar   njr/private-tag</pre>
 <p>Now let&#8217;s set different groups for read and write.
 We&#8217;ll let <tt class="docutils literal"><span class="pre">ntoll</span></tt> have write permission too.
 To do this we update the write group:</p>
-<div class="highlight-python"><pre>$ fdb perms group-write ntoll private-tag
+<div class="highlight-python"><pre>$ fish perms group-write ntoll private-tag
 
-$ fdb ls -g njr/private-tag
+$ fish ls -g njr/private-tag
 trwcrw----   r:ntoll+jkakar  w:ntoll   njr/private-tag</pre>
 </div>
 <p>When the groups are different, they are shown separately,
@@ -186,7 +185,7 @@ write group.</p>
 </li>
 <li><p class="first">Longer listing for tag (<tt class="docutils literal"><span class="pre">njr/rating</span></tt>), including Fluidinfo-style
 permissions summary:</p>
-<div class="highlight-python"><pre>$ fdb ls -L njr/rating
+<div class="highlight-python"><pre>$ fish ls -L njr/rating
 
 njr/rating:
 
@@ -208,7 +207,7 @@ TAG (/tag-values)
 </div>
 </li>
 <li><p class="first">Long listing for contents of namespace (<tt class="docutils literal"><span class="pre">njr/index</span></tt>):</p>
-<div class="highlight-python"><pre>$ fdb ls -l njr/index
+<div class="highlight-python"><pre>$ fish ls -l njr/index
 trwcr--r--   about
 trwcr--r--   class</pre>
 </div>
@@ -221,7 +220,7 @@ of the namespace, but the permissions on the namespace itself.
 namespace is.  You can use <tt class="docutils literal"><span class="pre">-n</span></tt> if you prefer.)</p>
 <p>The result is very similar to that for tags.   We&#8217;ll just look at
 a namespace <tt class="docutils literal"><span class="pre">fi</span></tt></p>
-<div class="highlight-python"><pre>$ fdb ls -gd njr/fi
+<div class="highlight-python"><pre>$ fish ls -gd njr/fi
 nrwcrw-r--   r:(world)  w:terrycojones+paparent   njr/fi/</pre>
 </div>
 <p>This is showning that the namespace njr/fi has standard world read
@@ -230,10 +229,10 @@ and <tt class="docutils literal"><span class="pre">paparent</span></tt> have wri
 </li>
 <li><p class="first">Long listing for a namespace itself (<tt class="docutils literal"><span class="pre">njr/index</span></tt>) (as opposed to
 its contents),  including Fluidinfo-style permissions summary:</p>
-<div class="highlight-python"><pre>$ fdb ls -ln njr/index
+<div class="highlight-python"><pre>$ fish ls -ln njr/index
 nrwcr--r--   index
 
-$ fdb ls -ld njr/index
+$ fish ls -ld njr/index
 nrwcr--r--   index</pre>
 </div>
 <p>The first <tt class="docutils literal"><span class="pre">n</span></tt> indicates that <tt class="docutils literal"><span class="pre">njr/index</span></tt> is a namespace rather than
@@ -245,7 +244,7 @@ string.</p>
 </li>
 <li><p class="first">Longer listing for a namespace itself (<tt class="docutils literal"><span class="pre">njr/index</span></tt>) (as opposed to
 its contents):</p>
-<div class="highlight-python"><pre>$ fdb ls -Ld njr/index
+<div class="highlight-python"><pre>$ fish ls -Ld njr/index
 
 NAMESPACE (/namespaces)
   Read
@@ -258,7 +257,7 @@ NAMESPACE (/namespaces)
 </div>
 </li>
 <li><p class="first">Long listing including group details (for tag <tt class="docutils literal"><span class="pre">njr/rating</span></tt>)</p>
-<div class="highlight-python"><pre>$ fdb ls -ln njr/fi
+<div class="highlight-python"><pre>$ fish ls -ln njr/fi
 nrwcr-----   ceronman+esteve+jkakar+ntoll+terrycojones fi</pre>
 </div>
 <p>See the section on permissions for an explanation of the permissions
@@ -283,7 +282,7 @@ permissions for this namespace.</p>
 </li>
 <li><p class="first">Longer listing for namspace (<tt class="docutils literal"><span class="pre">njr/fi</span></tt>), including Fluidinfo-style
 permissions summary:</p>
-<div class="highlight-python"><pre>$ fdb ls -Ln njr/fi
+<div class="highlight-python"><pre>$ fish ls -Ln njr/fi
 
 Permissions for namespace njr/fi:
 
@@ -366,7 +365,7 @@ db-next-record-about      db-record-number          i</pre>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="index.html">
-              <img class="logo" src="_static/fdb-doc-logo.png" alt="Logo"/>
+              <img class="logo" src="_static/fish-doc-logo.png" alt="Logo"/>
             </a></p>
             <h4>Previous topic</h4>
             <p class="topless"><a href="count.html"
@@ -408,7 +407,7 @@ db-next-record-about      db-record-number          i</pre>
         <li class="right" >
           <a href="count.html" title="count"
              >previous</a> |</li>
-        <li><a href="index.html">fdb v2.17 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v2.18 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

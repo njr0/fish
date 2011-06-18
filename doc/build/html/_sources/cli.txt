@@ -1,5 +1,5 @@
-The fdb Command Line for Fluidinfo
-==================================
+The fish Command Line for Fluidinfo
+===================================
 
 A Brief Overview of Fluidinfo
 -----------------------------
@@ -20,19 +20,19 @@ while all objects are shared.
 Overview of the Command Line
 ----------------------------
 
-The fdb command line is a acts as a sort-of one-shot command shell
+The fish command line is a acts as a sort-of one-shot command shell
 for Fluidinfo.   It gives access to much of the functionality of
-the underlying ``fdb.py`` library, with a main focus on tagging,
+the underlying ``fish.py`` library, with a main focus on tagging,
 getting tag values, finding tags, querying Fluidinfo and clearing
 (removing tags).
 It also has some facilities for listing tags and viewing and
 altering their permissions.
 
-Assuming you have installed fdb.py, set up a credentials file,
-and created an alias ``fdb`` to run it, basic use is exemplified
+Assuming you have installed fish.py, set up a credentials file,
+and created an alias ``fish`` to run it, basic use is exemplified
 as follows.   In the examples that follow, I assume that the Fluidinfo
 user has username ``njr``.   All tags belonging to njr start ``njr/``.
-(``fdb`` actually has a configuration option to allow this to be omitted,
+(``fish`` actually has a configuration option to allow this to be omitted,
 but for now we'll specify the user explicitly, since that is normal
 in Fluidinfo.)
 
@@ -40,12 +40,12 @@ in Fluidinfo.)
   1. Rate the Eiffel Tower as a 9:
      ::
 
-         $ fdb tag -a "Eiffel Tower" njr/rating=9
+         $ fish tag -a "Eiffel Tower" njr/rating=9
 
   2. Show the my rating and ntoll's rating of the "Eiffel Tower".
      ::
 
-        $ fdb show -a "Eiffel Tower"  fluiddb/about  njr/rating  ntoll/rating 
+        $ fish show -a "Eiffel Tower"  fluiddb/about  njr/rating  ntoll/rating 
 	Object with about="Eiffel Tower":
 	/objects/93bd1999-0998-49cc-8004-af457ce34ce4
   	njr/rating = 9
@@ -55,7 +55,7 @@ in Fluidinfo.)
   3. Show all the tags on the "Eiffel Tower" (now referenced by ID):
      ::
 
-        $ fdb tags -i 93bd1999-0998-49cc-8004-af457ce34ce4
+        $ fish tags -i 93bd1999-0998-49cc-8004-af457ce34ce4
 	Object with id=93bd1999-0998-49cc-8004-af457ce34ce4:
         njr/rating = 9
         ntoll/rating = "I prefer the  the one in Blackpool"
@@ -67,8 +67,8 @@ in Fluidinfo.)
      and then show their about tags.
      ::
 
-        $ fdb tag -q 'njr/rating < 2' njr/dislike
-        $ fdb show -q 'has njr/dislike' fluiddb/about njr/rating njr/dislike
+        $ fish tag -q 'njr/rating < 2' njr/dislike
+        $ fish show -q 'has njr/dislike' fluiddb/about njr/rating njr/dislike
         5 objects matched
         Object a98f2c80-ae5f-405a-a319-d47122ae9da3:
           fluiddb/about = "book:foucaults pendulum (umberto eco)"
@@ -93,14 +93,14 @@ in Fluidinfo.)
 
 
 Before describing these commands in detail, it will be useful
-to describe the abstraction ``fdb`` uses, as it differs in key
+to describe the abstraction ``fish`` uses, as it differs in key
 respects from the underlying Fluidinfo model.
 
-The fdb Abstraction
--------------------
+The fish Abstraction
+--------------------
 
 The Fluidinfo API is quite low level and rigid;
-``fdb`` offers a slightly higher level of abstraction.
+``fish`` offers a slightly higher level of abstraction.
 Here, we briefly note the differences.
 
   * In the Fluidinfo API, you can't simply tag an object with
@@ -108,7 +108,7 @@ Here, we briefly note the differences.
     wish to use a ``rating`` tag by ``creating`` it; only once you
     have done this can you use it.
 
-    In ``fdb``, you can just go ahead and set a tag; if it doesn't
+    In ``fish``, you can just go ahead and set a tag; if it doesn't
     exist, the system will create it for you.
 
   * Fluidinfo supports *namespaces*; a namespace is to a tag much
@@ -131,28 +131,28 @@ Here, we briefly note the differences.
       2. Create the tag ``rating``
       3. Tag the relevant object with ``rating``.
 
-   Again, ``fdb`` takes care of all that, and allows jacqui just
+   Again, ``fish`` takes care of all that, and allows jacqui just
    to say:
    ::
 
-      fdb tag -a "Eiffel Tower" jacqui/rating=10
+      fish tag -a "Eiffel Tower" jacqui/rating=10
 
-   ``fdb`` will create any tags and namespaces required on the fly.
+   ``fish`` will create any tags and namespaces required on the fly.
 
   * Finally, in Fluidinfo itself, the object ID (128-bit number,
     usually formatted as a hex-number in 8-4-4-4-12 digit groups)
-    is not actually a tag on the object.   ``fdb`` allows the user
+    is not actually a tag on the object.   ``fish`` allows the user
     to use refer to it as a tag, at least for reporting purposes,
     using the name ``/id``.
 
 
-The Anatomy of the core fdb Commands
-------------------------------------
+The Anatomy of the core fish Commands
+-------------------------------------
 
-The general form of the core fdb commands is:
+The general form of the core fish commands is:
 ::
 
-   fdb <verb> [flags] <object selector> <tags/values>
+   fish <verb> [flags] <object selector> <tags/values>
 
 The verb says what you want to do.   The main verbs currently avalaible are
 

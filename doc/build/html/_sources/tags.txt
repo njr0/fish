@@ -6,12 +6,12 @@ Show the list of tags (and their values) present on an objects
 **FORM**
 ::
 
-    fdb tag [flags] <object specifier>
+    [fish] tag [flags] <object specifier>
 
 **EXAMPLES**
 ::
 
-    $ fdb tags -a "Eiffel Tower" njr/rating njr/seen ntoll/seen
+    $ fish tags -a "Eiffel Tower" njr/rating njr/seen ntoll/seen
     Object with about="Eiffel Tower":
     /objects/93bd1999-0998-49cc-8004-af457ce34ce4
       njr/seen
@@ -25,9 +25,17 @@ Show the list of tags (and their values) present on an objects
 Alternative specifications:
 ::
 
-    fdb tags -a "Eiffel Tower"
-    fdb tags -i 93bd1999-0998-49cc-8004-af457ce34ce4
-    fdb tags -q 'fluiddb/about matches "Eiffel Tower"'
+    tags -a "Eiffel Tower"
+    tags -i 93bd1999-0998-49cc-8004-af457ce34ce4
+    tags -q 'fluiddb/about matches "Eiffel Tower"'
+
+**NOTE FOR WINDOWS USERS* Working from a Windows command line, single quotes
+do not work as above.   Instead you need to use double quotes and "stutter"
+quotes inside quotes.   So the last example becomes:
+::
+
+    tags -q "fluiddb/about matches """Eiffel Tower"""
+
 
 All of these commands will show the names and values of all the tags
 (for which the user has read permission)

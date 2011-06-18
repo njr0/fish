@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>touch &mdash; fish v2.18 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '2.18',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="fish v2.18 documentation" href="index.html" />
+    <link rel="next" title="mkns" href="mkns.html" />
+    <link rel="prev" title="rm" href="rm.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="mkns.html" title="mkns"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="rm.html" title="rm"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">fish v2.18 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="touch">
+<h1>touch<a class="headerlink" href="#touch" title="Permalink to this headline">¶</a></h1>
+<p>The <tt class="docutils literal"><span class="pre">touch</span></tt> command may be used to create a tag, and optionally
+to set its description.</p>
+<p><strong>FORM</strong></p>
+<div class="highlight-python"><pre>[fish] touch path</pre>
+</div>
+<p><strong>FLAGS</strong></p>
+<blockquote>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">-m</span> <span class="pre">description</span></tt> Sets the description (metadata) for a tag.</li>
+</ul>
+</blockquote>
+<p><strong>EXAMPLES</strong></p>
+<blockquote>
+<ol class="arabic">
+<li><p class="first">Create a tag called <tt class="docutils literal"><span class="pre">njr/rating</span></tt></p>
+<div class="highlight-python"><pre>$ touch njr/rating</pre>
+</div>
+</li>
+<li><p class="first">Create a tag <tt class="docutils literal"><span class="pre">njr/private/rating</span></tt> with description &#8220;keep out&#8221;</p>
+<div class="highlight-python"><pre>$ touch -m "keep out"  njr/private/rating</pre>
+</div>
+</li>
+</ol>
+</blockquote>
+<p><strong>NOTE</strong></p>
+<p>Tag creation is automatic on first use in <tt class="docutils literal"><span class="pre">fish</span></tt>.
+Touch is only needed, therefore, if you wish to set permissions before use
+or specify a description</p>
+<p>Touch cannot be used (at present) to change the description of an existing tag.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/fish-doc-logo.png" alt="Logo"/>
+            </a></p>
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="rm.html"
+                                  title="previous chapter">rm</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="mkns.html"
+                                  title="next chapter">mkns</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/touch.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="mkns.html" title="mkns"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="rm.html" title="rm"
+             >previous</a> |</li>
+        <li><a href="index.html">fish v2.18 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2011, Nicholas J. Radcliffe.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.2.
+    </div>
+  </body>
+</html>

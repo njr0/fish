@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Documentation for the fdb Command Line
-======================================
+Documentation for the fish Command Line
+=======================================
 
 **Contents**
 
@@ -26,10 +26,15 @@ Documentation for the fdb Command Line
 
    ls.txt
    perms.txt
-   su.txt
-   whoami.txt
+   rm.txt
+   touch.txt
+   mkns.txt
+   mkdir.txt
    pwd.txt
    pwn.txt
+
+   su.txt
+   whoami.txt
 
    help.txt
    commands.txt

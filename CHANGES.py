@@ -299,7 +299,8 @@
 #                      seem to work (so perhaps not unicode user names
 #                      or passwords on windows).
 #
-# 2011/06/15 v2.17     Added amazon command.
+# 2011/06/15 v2.17     Added amazon command for getting an about tag
+#                      from an Amazon (US|UK, books/music) product page.
 #
 #                      This adds a dependency on the abouttag lib,
 #                      which might be made conditional.
@@ -318,5 +319,9 @@
 #                      Changed core help examples to use Paris rather
 #                      than DADGAD as the example object.
 #
-
-
+# 2011/06/15 v2.18     Added rm command (including -r)
+#                      Added touch command and mkns/mkdir commands.
+#                      Changed execute_command_line to catch exceptions
+#                      and made a few more commands throw exceptions.
+#                      (-D suppresses this.)
+#                      Now accept -r or -R for all recursive commands.

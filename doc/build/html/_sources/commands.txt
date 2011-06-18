@@ -1,5 +1,5 @@
 commands
 ********
 
-Lists the commands available in fdb.
+Lists the commands available in fish.
 

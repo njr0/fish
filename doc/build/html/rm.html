@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>rm &mdash; fish v2.18 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '2.18',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="fish v2.18 documentation" href="index.html" />
+    <link rel="next" title="touch" href="touch.html" />
+    <link rel="prev" title="perms" href="perms.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="touch.html" title="touch"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="perms.html" title="perms"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">fish v2.18 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="rm">
+<h1>rm<a class="headerlink" href="#rm" title="Permalink to this headline">¶</a></h1>
+<p>The <tt class="docutils literal"><span class="pre">rm</span></tt> command is used to remove (delete) tags and namespaces.
+Namespaces normally have to be empty for this to work (unless
+the <tt class="docutils literal"><span class="pre">-r</span></tt> options is specified) and tags have to be unused
+(unless the <tt class="docutils literal"><span class="pre">-f</span></tt> option is used).</p>
+<p><strong>FORM</strong></p>
+<div class="highlight-python"><pre>[fish] rm [flags] [&lt;namespace&gt;|&lt;tag&gt;]</pre>
+</div>
+<p><strong>FLAGS</strong></p>
+<blockquote>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">-r</span></tt> recurse (remove all tags and subnamespaces)</li>
+<li><tt class="docutils literal"><span class="pre">-f</span></tt> force (currently, don&#8217;t complain if it doesn&#8217;t exist or if
+in the case of a tag, the tag is in use.   In future, this will
+also override permissions if necessary, where possible.)</li>
+</ul>
+</blockquote>
+<p><strong>EXAMPLES</strong></p>
+<blockquote>
+<ol class="arabic">
+<li><p class="first">Remove an unused tag <tt class="docutils literal"><span class="pre">njr/unused</span></tt>:</p>
+<div class="highlight-python"><pre>$ rm njr/unused</pre>
+</div>
+</li>
+<li><p class="first">Remove a used tag <tt class="docutils literal"><span class="pre">njr/used</span></tt>, in the process removing that tag
+from all objects to which it is attached:</p>
+<div class="highlight-python"><pre>$ rm -f njr/used</pre>
+</div>
+</li>
+<li><p class="first">Remove an empty namespace <tt class="docutils literal"><span class="pre">njr/empty</span></tt>:</p>
+<div class="highlight-python"><pre>$ rm njr/empty</pre>
+</div>
+</li>
+<li><p class="first">Remove a non-empty namespace <tt class="docutils literal"><span class="pre">njr/inUse</span></tt> and all the tags and
+namespaces under it:</p>
+<div class="highlight-python"><pre>$ rm -r njr/inUse</pre>
+</div>
+</li>
+</ol>
+</blockquote>
+<p><strong>NOTES</strong></p>
+<p><tt class="docutils literal"><span class="pre">-R</span></tt> may also be used for recurse.   (<tt class="docutils literal"><span class="pre">-R</span></tt> and <tt class="docutils literal"><span class="pre">-r</span></tt> are interchangeable
+on all commands in <tt class="docutils literal"><span class="pre">fish</span></tt>.)</p>
+<p>Strictly, following Unix&#8217;s lead, you shouldn&#8217;t have to force <tt class="docutils literal"><span class="pre">rm</span></tt> to
+remove a tag that is in use, just as you can remove empty files
+without a <tt class="docutils literal"><span class="pre">force</span></tt> option in Unix.  However, since a tag may be
+attached to millions of objects, it seems prudent to insist.  The
+flag <tt class="docutils literal"><span class="pre">-r</span></tt> can also be used to force the removal of a non-empty tag since
+there is also a sense in which this is a recursive remove.</p>
+<p>The <tt class="docutils literal"><span class="pre">fish</span> <span class="pre">rm</span></tt> command effectively takes the place of <tt class="docutils literal"><span class="pre">rmdir</span></tt> from Unix,
+as well as <tt class="docutils literal"><span class="pre">rm</span></tt>.</p>
+<p>There is no <tt class="docutils literal"><span class="pre">unrm</span></tt> command: once it&#8217;s gone, it&#8217;s gone.
+Use the <tt class="docutils literal"><span class="pre">-r</span></tt> and <tt class="docutils literal"><span class="pre">-f</span></tt> flags carefully.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/fish-doc-logo.png" alt="Logo"/>
+            </a></p>
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="perms.html"
+                                  title="previous chapter">perms</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="touch.html"
+                                  title="next chapter">touch</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/rm.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="touch.html" title="touch"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="perms.html" title="perms"
+             >previous</a> |</li>
+        <li><a href="index.html">fish v2.18 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2011, Nicholas J. Radcliffe.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.2.
+    </div>
+  </body>
+</html>
