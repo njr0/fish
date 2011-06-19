@@ -336,6 +336,8 @@
 #                      Added -X flag to perms to allow even finer-grained
 #                      control of permissions.
 #
+# 2011/06/18 v3.02     Changed fish descriptions of tag controls, as reported
+#                      by ls -L, to acontrol and tcontrol (from control).
 
 
 

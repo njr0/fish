@@ -1,6 +1,6 @@
 
-Documentation for the fish Command Line
-***************************************
+The fish Command Line for Fluidinfo
+***********************************
 
 **Contents**
 

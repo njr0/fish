@@ -239,20 +239,22 @@ class FluidinfoPerms:
         controls = (self.acontrol, self.tcontrol)
         for kind in (u'ABSTRACT TAG', u'TAG'):
             desc = RAW_PERMS[u'tag' if kind == u'TAG' else u'abstract-tag']
+            L = u't' if kind == u'TAG' else u'a'
             s.append(kind + u' (/%s)' % desc.path)
             if kind == u'TAG':
                 s.append(u'  Read')
-                s.append(u'    %-18s  %s' % (u'read (read):',
+                s.append(u'    %-19s  %s' % (u'read (read):',
                                              unicode(self.read)))
 
             s.append(u'  Write')
             for (fi, fdb) in zip(desc.actions, desc.names):
                 if fdb in writes:
-                    s.append(u'    %-18s  %s' % (u'%s (%s):' % (fi, fdb),
+                    s.append(u'    %-19s  %s' % (u'%s (%s):' % (fi, fdb),
                                                  unicode(self.__dict__[fdb])))
             s.extend([u'  Control'])
             c = self.tcontrol if kind == u'TAG' else self.acontrol
-            s.append(u'    %-18s  %s' % (u'control (control):', unicode(c)))
+            s.append(u'    %-19s  %s' % (u'control (%scontrol):' % L,
+                                         unicode(c)))
             s.append(u'')
         return u'\n'.join(s)
 
