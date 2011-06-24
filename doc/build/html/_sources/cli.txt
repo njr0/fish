@@ -1,5 +1,5 @@
-The fdb Command Line for Fluidinfo
-==================================
+The fish Command Line for Fluidinfo
+===================================
 
 A Brief Overview of Fluidinfo
 -----------------------------
@@ -20,19 +20,19 @@ while all objects are shared.
 Overview of the Command Line
 ----------------------------
 
-The fdb command line is a acts as a sort-of one-shot command shell
+The fish command line is a acts as a sort-of one-shot command shell
 for Fluidinfo.   It gives access to much of the functionality of
-the underlying ``fdb.py`` library, with a main focus on tagging,
+the underlying ``fish.py`` library, with a main focus on tagging,
 getting tag values, finding tags, querying Fluidinfo and clearing
 (removing tags).
 It also has some facilities for listing tags and viewing and
 altering their permissions.
 
-Assuming you have installed fdb.py, set up a credentials file,
-and created an alias ``fdb`` to run it, basic use is exemplified
+Assuming you have installed fish.py, set up a credentials file,
+and created an alias ``fish`` to run it, basic use is exemplified
 as follows.   In the examples that follow, I assume that the Fluidinfo
 user has username ``njr``.   All tags belonging to njr start ``njr/``.
-(``fdb`` actually has a configuration option to allow this to be omitted,
+(``fish`` actually has a configuration option to allow this to be omitted,
 but for now we'll specify the user explicitly, since that is normal
 in Fluidinfo.)
 
@@ -40,12 +40,12 @@ in Fluidinfo.)
   1. Rate the Eiffel Tower as a 9:
      ::
 
-         $ fdb tag -a "Eiffel Tower" njr/rating=9
+         $ fish tag -a "Eiffel Tower" njr/rating=9
 
   2. Show the my rating and ntoll's rating of the "Eiffel Tower".
      ::
 
-        $ fdb show -a "Eiffel Tower"  fluiddb/about  njr/rating  ntoll/rating 
+        $ fish show -a "Eiffel Tower"  fluiddb/about  njr/rating  ntoll/rating 
 	Object with about="Eiffel Tower":
 	/objects/93bd1999-0998-49cc-8004-af457ce34ce4
   	njr/rating = 9
@@ -55,7 +55,7 @@ in Fluidinfo.)
   3. Show all the tags on the "Eiffel Tower" (now referenced by ID):
      ::
 
-        $ fdb tags -i 93bd1999-0998-49cc-8004-af457ce34ce4
+        $ fish tags -i 93bd1999-0998-49cc-8004-af457ce34ce4
 	Object with id=93bd1999-0998-49cc-8004-af457ce34ce4:
         njr/rating = 9
         ntoll/rating = "I prefer the  the one in Blackpool"
@@ -67,8 +67,8 @@ in Fluidinfo.)
      and then show their about tags.
      ::
 
-        $ fdb tag -q 'njr/rating < 2' njr/dislike
-        $ fdb show -q 'has njr/dislike' fluiddb/about njr/rating njr/dislike
+        $ fish tag -q 'njr/rating < 2' njr/dislike
+        $ fish show -q 'has njr/dislike' fluiddb/about njr/rating njr/dislike
         5 objects matched
         Object a98f2c80-ae5f-405a-a319-d47122ae9da3:
           fluiddb/about = "book:foucaults pendulum (umberto eco)"
@@ -93,14 +93,14 @@ in Fluidinfo.)
 
 
 Before describing these commands in detail, it will be useful
-to describe the abstraction ``fdb`` uses, as it differs in key
+to describe the abstraction ``fish`` uses, as it differs in key
 respects from the underlying Fluidinfo model.
 
-The fdb Abstraction
--------------------
+The fish Abstraction
+--------------------
 
 The Fluidinfo API is quite low level and rigid;
-``fdb`` offers a slightly higher level of abstraction.
+``fish`` offers a slightly higher level of abstraction.
 Here, we briefly note the differences.
 
   * In the Fluidinfo API, you can't simply tag an object with
@@ -108,7 +108,7 @@ Here, we briefly note the differences.
     wish to use a ``rating`` tag by ``creating`` it; only once you
     have done this can you use it.
 
-    In ``fdb``, you can just go ahead and set a tag; if it doesn't
+    In ``fish``, you can just go ahead and set a tag; if it doesn't
     exist, the system will create it for you.
 
   * Fluidinfo supports *namespaces*; a namespace is to a tag much
@@ -131,28 +131,28 @@ Here, we briefly note the differences.
       2. Create the tag ``rating``
       3. Tag the relevant object with ``rating``.
 
-   Again, ``fdb`` takes care of all that, and allows jacqui just
+   Again, ``fish`` takes care of all that, and allows jacqui just
    to say:
    ::
 
-      fdb tag -a "Eiffel Tower" jacqui/rating=10
+      fish tag -a "Eiffel Tower" jacqui/rating=10
 
-   ``fdb`` will create any tags and namespaces required on the fly.
+   ``fish`` will create any tags and namespaces required on the fly.
 
   * Finally, in Fluidinfo itself, the object ID (128-bit number,
     usually formatted as a hex-number in 8-4-4-4-12 digit groups)
-    is not actually a tag on the object.   ``fdb`` allows the user
+    is not actually a tag on the object.   ``fish`` allows the user
     to use refer to it as a tag, at least for reporting purposes,
     using the name ``/id``.
 
 
-The Anatomy of the core fdb Commands
-------------------------------------
+The Anatomy of the core fish Commands
+-------------------------------------
 
-The general form of the core fdb commands is:
+The general form of the core fish commands is:
 ::
 
-   fdb <verb> [flags] <object selector> <tags/values>
+   fish <verb> [flags] <object selector> <tags/values>
 
 The verb says what you want to do.   The main verbs currently avalaible are
 
@@ -217,919 +217,4 @@ like 3 or 4.7.
 All strings are always unicode, i.e. they may contain any character.
 
 It is also possible to set a tag without a value by just giving a tag name.
-
-Command Reference
------------------
-
-fdb tag
-*******
-
-Adds one or more tags (with optional values) to the object or objects
-specified.
-
-**FORM**
-::
-
-    fdb tag [flags] <object specifier> <tag-value-pairs>
-
-**EXAMPLES**
-::
-
-    fdb tag -a "Eiffel Tower" njr/rating=7 njr/seen
-    fdb tag -a "Eiffel Tower" njr/rating=7 njr/seen
-    fdb tag -i 93bd1999-0998-49cc-8004-af457ce34ce4 njr/rating=7 njr/seen
-    fdb tag -q 'fluiddb/about matches "Eiffel Tower"' njr/rating=7 njr/seen
-    fdb tag -U -a "Eiffel Tower" rating=7 seen
-
-All of these commands will tag the object with about tag "Eiffel Tower"
-and ID ``93bd1999-0998-49cc-8004-af457ce34ce4`` with two
-tags---``njr/rating`` of 7 and ``njr/seen`` with no value.
-The last one may also tag other objects since the query
-::
-
-    fluiddb/about matches "Eiffel Tower"
-
-is search-engine-style string match that will match any about tag
-containing the words ``Eiffel`` and ``Tower``, ignoring case, other words
-and punctuation.
-
-The ``-U`` option specifies "unix-style" relative paths; when this option
-is used, tag names are assumed to be relative to the authenticated user's
-namespace; if other user's tags are to be referred to, they must be
-introduced with a leading ``/`` (e.g. ``/ntoll/rating).
-Note that ``-U`` does not affect queries specified with ``-q``,
-i.e. full Fluidinfo-style paths must be used inside the query.
-
-The command produces no output when successful and a suitable
-warning when it fails.
-::
-
-  $ fdb tag -a "Eiffel Tower" njr/rating=7
-
-  $ fdb tag -a "Eiffel Tower" ntoll/rating=7
-  Failed to tag object with about="Eiffel Tower" with ntoll/rating
-  Error code 401 (UNAUTHORIZED)
-
-**NOTES**
-
-When specified by about tag, the object does not need to exist
-in Fluidinfo prior to the operation; if necessary an object with
-the given about tag will be created.   (Conceptually, an object
-for every possible about tag always exists in Fluidinfo;
-they are just *instantiated lazily*, i.e. allocated IDs when first used.)
-
-The user must have permission to write the tag.
-By default, the user can write any tag under her namespace.
-
-
-fdb untag
-*********
-
-Removes one or more tags from the object or objects specified.
-
-**FORM**
-::
-
-    fdb untag [flags] <object specifier> <tags>
-
-**EXAMPLES**
-::
-
-    fdb untag -a "Eiffel Tower" njr/rating njr/seen
-    fdb untag -a "Eiffel Tower" njr/rating njr/seen
-    fdb untag -i 93bd1999-0998-49cc-8004-af457ce34ce4 njr/rating njr/seen
-    fdb untag -q 'fluiddb/about matches "Eiffel Tower"' njr/rating njr/seen
-    fdb untag -U -a "Eiffel Tower" rating seen
-
-All of these commands will remove the tags ``njr/rating``
-and ``njr/seen`` from the object with about tag "Eiffel Tower"
-and ID ``93bd1999-0998-49cc-8004-af457ce34ce4``;
-The last one may also tag other objects since the query
-::
-
-    fluiddb/about matches "Eiffel Tower"
-
-is search-engine-style string match that will match any about tag
-containing the words ``Eiffel`` and ``Tower``, ignoring case, other words
-and punctuation.
-
-The ``-U`` option specifies "unix-style" relative paths; when this option
-is used, tag names are assumed to be relative to the authenticated user's
-namespace; if other user's tags are to be referred to, they must be
-introduced with a leading ``/`` (e.g. ``/ntoll/rating).
-Note that ``-U`` does not affect queries specified with ``-q``,
-i.e. full Fluidinfo-style paths must be used inside the query.
-
-The command produces no output when successful, even if the tag did
-not exist.
-::
-
-    $ fdb untag -F -a "Eiffel Tower" ntoll/rating  
-    Failed to remove tag ntoll/rating from object with about="Eiffel Tower"
-    Error code 401 (UNAUTHORIZED)
-
-**NOTE**
-
-The user's ability to remove tags from objects is governed by
-the permissions system.
-
-
-fdb show
-********
-
-Shows the values of the tags nominated from the objects specified.
-
-**FORM**
-::
-
-    fdb show [flags] <object specifier> <tags>
-
-**EXAMPLES**
-::
-
-    $ fdb show -a "Eiffel Tower" njr/rating njr/seen ntoll/seen
-    Object with about="Eiffel Tower":
-      njr/rating = 7
-      njr/seen
-      (tag ntoll/seen not present)
-
-Alternative specifications:
-::
-
-    fdb show -a "Eiffel Tower" njr/rating njr/seen ntoll/seen
-    fdb show -i 93bd1999-0998-49cc-8004-af457ce34ce4 njr/rating njr/seen ntoll/seen
-    fdb show -q 'fluiddb/about matches "Eiffel Tower"' njr/rating njr/seen ntoll/seen
-    fdb show -U -a "Eiffel Tower" rating seen ntoll/seen
-
-All of these commands will show the values the tags ``njr/rating``,
-``njr/seen`` and ``ntoll/seen`` from the object with about tag "Eiffel Tower"
-and ID ``93bd1999-0998-49cc-8004-af457ce34ce4``;
-The last one may also show other objects since the query
-::
-
-    fluiddb/about matches "Eiffel Tower"
-
-is search-engine-style string match that will match any about tag
-containing the words ``Eiffel`` and ``Tower``, ignoring case, other words
-and punctuation.
-
-The ``-U`` option specifies "unix-style" relative paths; when this option
-is used, tag names are assumed to be relative to the authenticated user's
-namespace; if other user's tags are to be referred to, they must be
-introduced with a leading ``/`` (e.g. ``/ntoll/rating).
-Note that ``-U`` does not affect queries specified with ``-q``,
-i.e. full Fluidinfo-style paths must be used inside the query.
-
-The command produces no output when successful, even if the tag did
-not exist.
-::
-
-  $ fdb untag -F -a "Eiffel Tower" ntoll/rating  
-  Failed to remove tag ntoll/rating from object with about="Eiffel Tower"
-  Error code 401 (UNAUTHORIZED)
-
-**NOTE**
-
-The user's ability to read tags is regulated by the permissions system.
-
-
-fdb tags
-********
-
-Show the list of tags (and their values) present on an objects
-
-**FORM**
-::
-
-    fdb tag [flags] <object specifier>
-
-**EXAMPLES**
-::
-
-    $ fdb tags -a "Eiffel Tower" njr/rating njr/seen ntoll/seen
-    Object with about="Eiffel Tower":
-    /objects/93bd1999-0998-49cc-8004-af457ce34ce4
-      njr/seen
-      fluiddb/about = "Eiffel Tower"
-      njr/njr/seen
-      njr/rating = 7
-      njr/index/about
-      njr/location = "Paris"
-
-
-Alternative specifications:
-::
-
-    fdb tags -a "Eiffel Tower"
-    fdb tags -i 93bd1999-0998-49cc-8004-af457ce34ce4
-    fdb tags -q 'fluiddb/about matches "Eiffel Tower"'
-
-All of these commands will show the names and values of all the tags
-(for which the user has read permission)
-from the object with about tag "Eiffel Tower"
-and ID ``93bd1999-0998-49cc-8004-af457ce34ce4``;
-The last one may also show other objects since the query
-::
-
-    fluiddb/about matches "Eiffel Tower"
-
-is search-engine-style string match that will match any about tag
-containing the words ``Eiffel`` and ``Tower``, ignoring case, other words
-and punctuation.
-
-
-fdb count
-*********
-
-Counts the number of objects matching a set of conditions
-
-**FORM**
-::
-
-    fdb count [flags] <object specifier>
-
-**EXAMPLES**
-::
-
-    $ fdb count -q 'has njr/rating'
-    141 objects matched
-    Total: 141 objects
-
-    $ fdb count -a 'Eiffel Tower'
-    Total: 1 object
-
-    $ fdb count -q 'fluiddb/about matches "Eiffel Tower"'
-    6 objects matched
-    Total: 6 objects
-
-The command produces no output when successful, even if the tag did
-not exist.
-::
-
-  $ fdb untag -F -a "Eiffel Tower" ntoll/rating  
-  Failed to remove tag ntoll/rating from object with about="Eiffel Tower"
-  Error code 401 (UNAUTHORIZED)
-
-**NOTES**
-
-The Fluidinfo API does not provide a primitive ``count`` function,
-so FDB actually has to retrieve all the objects that match the query
-and count them; this operation can, therefore, be comparatively slow.
-
-The user's ability to read tags is regulated by the permissions system,
-so the count reflects that, i.e. it is the restricted to objects
-that the user can see the relevant tags for.
-
-
-fdb ls
-******
-
-The ``ls`` command is used to view a sorted list of tags or namespaces,
-potentially with additional information.
-
-**FORM**
-::
-
-    ls [flags] [<namespace>|<tag>]
-
-**FLAGS**
-
-  * ``-l`` long listing (one per line; showing permissions)
-  * ``-g`` group listing (one per line; showing exception groups and permissions)
-  * ``-L`` longer listing (show full Fluidinfo-style permissions listing)
-  * ``-n`` list the namesace as an object, rather than the contents of the namespace
-  * ``-d`` same as ``-n``
-  * ``-R`` recursive (show contents of all subnamespaces, recursively)
-
-as well as the standard flags like ``-s`` etc.
-
-**EXAMPLES**
-
-  #. List the tags in the user's namespace:
-
-     (Here, we assume we are authenticated as user ``miro``):
-     ::
-  
-       $ fdb ls
-       bestsellers-1998-2010/    first_field_id            n_records                
-       bestsellers1998to2010/    first_record_id           next-field-about         
-       books/                    forename                  next-field-id            
-       class                     has-about-links           next_field_about         
-       consistent                has-field-numbers         next_field_id            
-       description               has-id-links              planets/                 
-       elements/                 has-record-numbers        rating                   
-       field-name                has_about_links           small/                   
-       field-number              has_field_numbers         surname                  
-       field_number              has_id_links              table-name               
-       first-field-about         has_record_numbers        testconvtag              
-       first-field-id            message                   testrating               
-       first-record-about        n-fields                  testtable/               
-       first-record-id           n-records                 type                     
-       first_field_about         n_fields                  unit
-     
-     Note that namespaces are shown with a trailing ``/``; for users familiar
-     with the unix ``ls`` command, this is modelled on ``ls -F``.
-
-  #. List the tags and subnamespaces in a given namespace:
-     ::
-     
-       $ fdb ls miro/planets
-       Atmosphere                Mass                      OrbitalRadius            
-       Category                  Moons                     RotationPeriod           
-       EquatorialDiameter        Name                      db-next-record-about     
-       HasRings                  OrbitalEccentricity       db-record-number         
-       Inclination               OrbitalPeriod
-   
-     Sort order is case-sensitive, e.g. (in English) all lower-case letters
-     follow upper-case letters.
-
-  #. List a single tag (report presence or absence of that tag).
-     ::
-
-       $ fdb ls miro/planets/Mass
-       miro/planets/Mass
-
-       $ fdb ls -F miro/planets/NoMass
-       miro/planets/NoMass not found
-
-  #. Long listing for tag (``njr/rating``), including permissions summary:
-     ::
-    
-       $ fdb ls -l njr/rating
-       trwcr--r--   rating
-    
-     Here:
-    
-      * the first ``t`` indicates that this is a tag rather
-        than a namespace
-    
-      * the next three characters indicate that the owner (``njr``)
-        has ``read``, ``write`` and ``control`` permission on the tag,
-    
-      * the *final* three characters indicate that everyone (world)
-        has read permission but not write or control permission
-        on the tag.
-
-      * the "middle" three characters (``r--``) show group
-        permissions.  Their meaning depends on the world permissions.
-        Because the world has read permission the only thing that an
-        exception list can do is to remove it; so in this case, the
-        ``r`` in the middle ``r--`` block indicates that no one is losing
-        read permission as a result of being on an exception list.  If
-        there were an exception list that excluded some people, then
-        the group read permission would be shown as ``-``.
-
-	If the world did not have read permission, an ``r`` would
-        mean that at least one person has read permission
-	in addition to the owner; and a ``-`` would indicate
-        that no one except the owner had read permission.
-
-      * the final thing to know about this way of describing permissions
-        is that Fluidinfo actually has more than one kind of write
-        permission for both tags and namespaces, and more than one
-	kind of control permission for tags.
-	Normally, all the write permissions are set consistently,
-	as are the two control permissions for tags.
-	If this is not the case, the permission will be shown as
-	a ``/``.
-
-      * Use the ``-g`` flag to find out who is in the group/exception list,
-        or ``-L`` for the even longer, full Fluidinfo description of
-	the permissions.
-
-  #. Group long listing for tag (``njr/rating``), including permissions
-     summary.
-
-     Let's start with a tag with default permissions.
-     ::
-
-        $ fdb ls -g private-tag
-        trwcr--r--   (world)   njr/private-tag
-
-     When no one has been given any unusual permissions, in effect
-     there is no group; or to say it another way, group permissions
-     can be considered to be the same as world permissions.
-
-     Now let's grant read and write access to ``jkakar`` and ``ntoll``
-     ::
-
-        $ fdb perms group jkakar+ntoll njr/private-tag
-
-        $ fdb ls -g private-tag
-        trwcrw----   ntoll+jkakar   njr/private-tag
-
-     Group permission is now ``rw-``, and the group is ``ntoll+jkakar``.
-     (The exception list also includes ``njr``, of course.)
-
-     Now let's set different groups for read and write.
-     We'll let ``ntoll`` have write permission too.
-     To do this we update the write group:
-     ::
-
-        $ fdb perms group-write ntoll private-tag
-
-        $ fdb ls -g njr/private-tag
-        trwcrw----   r:ntoll+jkakar  w:ntoll   njr/private-tag
-
-     When the groups are different, they are shown separately,
-     with ``r:`` prefixing the read group and ``w;`` prefixing the
-     write group.
-    
-
-  #. Longer listing for tag (``njr/rating``), including Fluidinfo-style
-     permissions summary:
-     ::
-    
-      $ fdb ls -L njr/rating
-    
-      njr/rating:
-
-      ABSTRACT TAG (/tags)
-        Write
-          update (metadata):  policy: closed; exceptions [njr]
-          delete (delete):    policy: closed; exceptions [njr]
-        Control
-          control (control):  policy: closed; exceptions [njr]
-
-      TAG (/tag-values)
-        Read
-          read (read):        policy: open; exceptions []
-        Write
-          create (tag):       policy: closed; exceptions [njr]
-          delete (untag):     policy: closed; exceptions [njr]
-        Control
-          control (control):  policy: closed; exceptions [njr]
-
-  #. Long listing for contents of namespace (``njr/index``):
-     ::
-     
-       $ fdb ls -l njr/index
-       trwcr--r--   about
-       trwcr--r--   class
-     
-  #. Group long listing for namespace (``njr/private``), including permissions
-     summary.
-
-     The ``-d`` tells ``ls`` that what you want is not the *content*
-     of the namespace, but the permissions on the namespace itself.
-     (``d`` stands for directory, which is essentially what a
-     namespace is.  You can use ``-n`` if you prefer.)
-
-     The result is very similar to that for tags.   We'll just look at
-     a namespace ``fi``
-     ::
-
-        $ fdb ls -gd njr/fi
-        nrwcrw-r--   r:(world)  w:terrycojones+paparent   njr/fi/
-
-     This is showning that the namespace njr/fi has standard world read
-     permissions (with no special group) but that ``terrycojones``
-     and ``paparent`` have write permission for the namespace.
-
-  #. Long listing for a namespace itself (``njr/index``) (as opposed to
-     its contents),  including Fluidinfo-style permissions summary:
-     ::     
-
-        $ fdb ls -ln njr/index
-        nrwcr--r--   index
-    
-        $ fdb ls -ld njr/index
-        nrwcr--r--   index
-    
-     The first ``n`` indicates that ``njr/index`` is a namespace rather than
-     a tag.   This option may be specified using ``-n`` (for namespace)
-     or ``-d`` (for directory) since the latter will probably be more natural
-     for users familiar with unix-style ``ls``.
-    
-     See the section on permissions for an explanation of the permissions
-     string.
-
-  #. Longer listing for a namespace itself (``njr/index``) (as opposed to
-     its contents):
-     ::
-
-        $ fdb ls -Ld njr/index
-
-        NAMESPACE (/namespaces)
-          Read
-            list (read):        policy: open; exceptions []
-          Write
-            create (create):    policy: closed; exceptions [njr]
-            delete (delete):    policy: closed; exceptions [njr]
-          Control
-            control (control):  policy: closed; exceptions [njr]
-
-
-  #. Long listing including group details (for tag ``njr/rating``)
-     ::
-    
-       $ fdb ls -ln njr/fi
-       nrwcr-----   ceronman+esteve+jkakar+ntoll+terrycojones fi
-    
-     See the section on permissions for an explanation of the permissions
-     string.   In this case
-    
-      * the first ``n`` indicates that this is a namespace
-    
-      * the next three characters indicate that the owner (``njr``)
-        has read, write and control permission on the tag,
-    
-      * the next three characters indicate that members of the
-        exception group exceptions have read ("list") permission
-        on the tag (but not write or control permissions).
-    
-      * the final three characters indicate that Fluidinfo users
-        other than the owner and the people in the exception group
-        do not have any permissions to read, write or control the namespace.
-    
-     The list of users separated by plus signs is the list of
-     users on the exceptions list.
-
-     The next example shows Fluidinfo's native representation of the
-     permissions for this namespace.
-
-  #. Longer listing for namspace (``njr/fi``), including Fluidinfo-style
-     permissions summary:
-     ::
-    
-       $ fdb ls -Ln njr/fi
-    
-       Permissions for namespace njr/fi:
-    
-       READ:
-         list (read):        policy: closed; exceptions: [ceronman, esteve, jkakar, njr, ntoll, terrycojones]
-    
-       WRITE:
-         create (create):    policy: closed; exceptions: [njr]
-         update (metadata):  policy: closed; exceptions: [njr]
-         delete (delete):    policy: closed; exceptions: [njr]
-    
-       CONTROL:
-         control (control):  policy: closed; exceptions: [njr]
-
-  #. List contents of all subnamespaces (recursive descent):
-     ::
-
-       ls -R miro
-       miro:
-       bestsellers-1998-2010/    first_field_id            n_records                
-       bestsellers1998to2010/    first_record_id           next-field-about         
-       books/                    forename                  next-field-id            
-       class                     has-about-links           next_field_about         
-       consistent                has-field-numbers         next_field_id            
-       description               has-id-links              planets/                 
-       elements/                 has-record-numbers        rating                   
-       field-name                has_about_links           small/                   
-       field-number              has_field_numbers         surname                  
-       field_number              has_id_links              table-name               
-       first-field-about         has_record_numbers        testconvtag              
-       first-field-id            message                   testrating               
-       first-record-about        n-fields                  testtable/               
-       first-record-id           n-records                 type                     
-       first_field_about         n_fields                  unit                     
-
-       miro/bestsellers-1998-2010:
-       ASP                       db-next-record-about      rank                     
-       RRP                       db-record-number          title                    
-       author                    imprint                   value                    
-       binding                   productclass              volume                   
-       date                      publisher                
-
-       miro/bestsellers1998to2010:
-
-
-       miro/books:
-       author                    guardian-1000             year                     
-       db-next-record-about      surname                  
-       forename                  title                    
-
-       miro/elements:
-       AtomicWeight              Description               Period                   
-       BoilingPointC             Etymology                 RelativeAtomicMass       
-       BoilingPointF             Group                     Symbol                   
-       ChemicalSeries            MeltingPointC             Z                        
-       Colour                    MeltingPointKelvin        db-next-record-about     
-       Density                   Name                      db-record-number         
-
-       miro/planets:
-       Atmosphere                Mass                      OrbitalRadius            
-       Category                  Moons                     RotationPeriod           
-       EquatorialDiameter        Name                      db-next-record-about     
-       HasRings                  OrbitalEccentricity       db-record-number         
-       Inclination               OrbitalPeriod            
-
-       miro/small:
-       db-record-number    id                  intField           
-
-       miro/testtable:
-       db-next-record-about      db-record-number          i                        
-
-    
-
-
-fdb perms
-*********
-
-The ``perms`` command provides a simple interface for changing the
-permissions on tags and namespaces.   It only supports five cases,
-but there are powerful enough to cover the vast bulk of common
-situations.
-
-**FORM**
-::
-
-    fdb perms permissions-spec list-of-one-or-more-tags-or-namespaces
-
-Here ``permissions-spec`` can be
-
-  * ``private``
-  * ``default``
-  * ``lock``
-  * ``unlock``
-  * ``group list+of+usernames+separated+by+pluses``
-  * ``group-write list+of+usernames+separated+by+pluses``
-  * ``group-read list+of+usernames+separated+by+pluses``
-
-**EXAMPLES**
-
-The eight supported cases are as follows and apply equally namespaces and tags.
-In what follows, we'll use a ``rating`` tag and a namespace called ``friends``.
-
-  * Make a tag or namespace completely private.
-    ::
-
-        $ fdb perms private njr/rating
-	$ fdb perms private njr/fi
-
-    We could also change them together by saying:
-    ::
-
-        $ fdb perms private njr/rating njr/fi
-
-    This sets the permissions so that only the owner of the tag
-    or namespace has permission to do anything with it---``read``, ``write``
-    and ``control`` permission.
-    The abbreviated view of this is shown by
-    ::
-
-        $ fdb ls -ld njr/rating njr/fi
-        trwc------   njr/rating
-        nrwc------   njr/fi/
-
-    (See `fdb ls`_ for an detailed explanation of the permissions codes.)
-
-    The full listing after this is:
-    ::
-
-        $ fdb -F ls -Ld njr/rating njr/fi
-
-        njr/rating:
-
-        ABSTRACT TAG (/tags)
-          Write
-            update (metadata):  policy: closed; exceptions = [njr]
-            delete (delete):    policy: closed; exceptions = [njr]
-          Control
-            control (control):  policy: closed; exceptions = [njr]
-
-        TAG (/tag-values)
-          Read
-            read (read):        policy: closed; exceptions = [njr]
-          Write
-            create (tag):       policy: closed; exceptions = [njr]
-            delete (untag):     policy: closed; exceptions = [njr]
-          Control
-            control (control):  policy: closed; exceptions = [njr]
-
-
-        njr/fi/:
-
-        NAMESPACE (/namespaces)
-          Read
-            list (read):        policy: closed; exceptions = [njr]
-          Write
-            create (create):    policy: closed; exceptions = [njr]
-            delete (delete):    policy: closed; exceptions = [njr]
-          Control
-            control (control):  policy: closed; exceptions = [njr]
-
-  * Restore default permissions to a tag or namespace.
-    The default is that the owner has read, write and control
-    and everyone else has read only:
-    ::
-
-        $ fdb perms default njr/rating njr/fi
-
-        $ fdb -F ls -ld njr/rating njr/fi
-        trwcr--r--   njr/rating
-        nrwcr--r--   njr/fi/
-
-  * Lock a namespace or tag so that it can't be edited (i.e.,
-    remove all write permissions).
-    ::
-
-      $ fdb perms lock njr/rating
-
-      $fdb ls -l njr/rating
-      tr-cr--r--   njr/rating
-
-    This does not alter read or control permissions.
-
-  * Unlock a namespace or tag so that the owner (only) can edit it.
-    ::
-
-      $ fdb perms unlock njr/rating
-
-      $fdb ls -l njr/rating
-      trwcr--r--   njr/rating
-
-    This does not alter read or control permissions.
-
-  * Set the permissions on a tag or namespace so that one or more extra people
-    can write it.   (This does not alter read permissions.)
-    ::
-
-        $ fdb perms group-write ntoll+jkakar njr/rating njr/fi
-
-        $ fdb ls -gd njr/rating njr/fi
-        fdb -F ls -gd njr/rating njr/fi
-        trwcrw-r--   r:(world)  w:ntoll+jkakar   njr/rating
-        nrwcrw-r--   r:(world)  w:ntoll+jkakar   njr/fi/
-
-  * Set the permissions so that only a particular group can read it,
-    leaving write permissions as the are.
-    ::
-
-        $ fdb perms default njr/rating njr/fi
-        $ fdb perms group-read ntoll+jkakar+miro njr/rating njr/fi
-
-        $ fdb -F ls -gd njr/rating njr/fi
-        trwcr-----   r:ntoll+jkakar+miro  w:(world)   njr/rating
-        nrwcr-----   r:ntoll+jkakar+miro  w:(world)   njr/fi/
-
-  * Set permissions so that one group of users can write tge tag
-    or namespace, and another group can read it.
-    In this case, let's allow ``miro`` to write and ``ntoll`` and
-    ``jkakar`` (as well as ``miro``) to read.
-    ::
-
-        $ fdb perms group-read ntoll+jkakar+miro njr/rating njr/fi
-        $ fdb perms group-write miro njr/rating njr/fi
-
-        $ fdb ls -gd njr/rating njr/fi
-        trwcrw----   r:ntoll+jkakar+miro  w:miro   njr/rating
-        nrwcrw----   r:ntoll+jkakar+miro  w:miro   njr/fi/
-
-  * The final case is really just a special case of the previous one,
-    where the read and write groups are the same.
-    Let's make ``miro`` the only user (other the owner, ``njr``)
-    who can read or write the tag and namespace.
-    ::
-
-        $ fdb perms group miro njr/rating njr/fi
-
-        $ fdb ls -gd njr/rating njr/fi
-        trwcrw----   miro   njr/rating
-        nrwcrw----   miro   njr/fi/
-
-**NOTE**
-
-Removing read access to a namespace prevents people from listing
-that namespace but does not stop them working with the contents
-of the namespace if they can find them.   So if you have a
-namespace called ``secret`` and set its permissions to
-``nrwc------`` (owner-only access) and in it have a tag called
-``password`` with its permission set to the default ``trwcr--r--``
-then anyone will be able to read the password if they discover
-it exists.
-
-This is clearly not a good situation; the Fluidinfo team is aware of
-it and I expect some resolution will be forthcoming at some point.
-
-Note also that the *existence* of a tag cannot really be hidden
-in Fluidinfo, so people will be able to find out that you have
-a tag called ``secret/password``.
-
-
-fdb su
-******
-
-Set user: changes the set of credentials in use by ``fdb``.
-
-**FORM**
-::
-
-    fdb su userspec
-
-**EXAMPLES**
-::
-
-    fdb su foo
-
-The ``fdb`` command expects user credentials for Fluidinfo to be stored
-in a file in the users's home directory.   On unix systems, this file
-is ``~/.fluidDBcredentials``; on Windows systems it is
-``fluiddbcredentials.ini`` in the user's home folder..
-
-The the user has access to more than on Fluidinfo account, multiple
-credentials may be stored in variant files.   In unix systems,
-these files have names like ``~/.fluidDBcredentials.foo``;
-on windows they have names like ``fluiddbcredentials-foo.ini``.
-
-A different set of credentials can be used for any one-off command
-by adding ``-u foo`` to the command line; this will cause the credentials
-in the ``foo`` variant of the file to be used.
-
-The ``fdb su command`` changes the default set of credentials to be used
-by copying the specified variant file over the default file.
-Because it is a simple copy, this is a *global* change, i.e. it affects
-all sessions, not just one in the current shell.    So on unix,
-::
-
-    fdb su njr
-
-is exactly equivalent to
-::
-
-   cp ~/.fluidDBcredentials.njr ~/.fluidDBcredentials
-
-
-fdb whoami
-**********
-
-Shows the username name of the current user credentials.
-**FORM**
-::
-
-   fdb whoami
-
-
-**EXAMPLES**
-::
-
-    $ fdb whoami
-
-    $ fdb su greek
-    Credentials set to user Νικολας (file greek).
-
-    $ fdb whoami
-    Νικολας
-
-
-fdb pwd / fdb pwn
-*****************
-
-For the moment, ``fdb pwd`` and ``fdb pwn`` (print working directory/namespace)
-both execute ``fdb whoami``.
-At some point in the future, ``fdb`` may support the notion of a working
-namespace and a ``cd`` command; this is only really relevant if the
-user chooses to use unix-style paths with ``fdb``.
-
-
-.. _fdbtest:
-
-fdb test
-********
-
-Runs fdb's self-tests.
-
-**FORM**
-::
-
-   fdb test [flags] [subset to run]
-   fdb testcli
-   fdb testapi
-   fdb testdb
-
-The only normally relevant flag is ``-s``, to run against the sandbox.
-
-The ``testcli``, ``testdb`` and ``testapi`` variants run subets of the tests.
-
-**EXAMPLE**
-::
-
-  $ fdb test
-  ......................
-  ----------------------------------------------------------------------
-  Ran 22 tests in 47.210s
-
-Everything is running correctly if you get a line of dots with no
-``E`` (error) or ``F`` failures.
-
-
-
-
-fdb help
-********
-
-Shows help information.
-
-
-fdb –V
-******
-
-Reports the version of fdb running; ``--version`` may be used as a long form.
-
-
-
 

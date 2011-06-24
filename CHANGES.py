@@ -257,6 +257,87 @@
 # 2011/06/09 v2.08     Changed all the optparse stuff back not to use
 #                      unicode as a lot of versions of optparse don't
 #                      seem to work with unicode.
+#
+# 2011/06/09 v2.09     Can now use ls -P to list default permissions
+#                      (also known as /policies).
+#
+# 2011/06/09 v2.10     Fixed su command, which got broken by the optparse fix.
+#
+# 2011/06/09 v2.11     Changed fdb back to fdb.py and created new fdb
+#                      that imports it so that it can run.
+#
+# 2011/06/09 v2.12     Changed to use /about wherever possible.
+#                      Added test for get_object_tags; this
+#                      also uses non-ASCII, non-latin-1 tag names
+#                      and values as a test of unicode handling.
+#
+# 2011/06/09 v2.13     Added a test of the values API (which doesn't
+#                      seem to like unicode tag names.
+#
+# 2011/06/09 v2.14     Fixed some problems I introduced in 2.12
+#                      that prevented things working correctly with
+#                      about tags that contained slashes (like URLs).
+#                      This is because the about tag wasn't being
+#                      encoded properly when used with /about.
+#                      Added a couple of tests for that and related,
+#                      potentially problematical about tags.
+#                      Improved the readability of the error message
+#                      printed when fdb fails to find user credentials.
+#
+# 2011/06/09 v2.15     Added -2 flag to force high verbosity on tests
+#                      (to stop me leaving it set high, as I did in 2.14)
+#
+# 2011/06/11 v2.16     Made a set of changes to make things run better
+#                      as a web service.
+#                      Changed the way things work on windows to
+#                      remove the need for win32com
+#                      As a result, it now looks for the credentials file
+#                      in a location specified by the environment variable
+#                      FDB_CREDENTIALS_FILE, or c:\fdb\credentials.txt if
+#                      the variable is not defined.
+#                      Removed use of codecs in win32, since it doesn't
+#                      seem to work (so perhaps not unicode user names
+#                      or passwords on windows).
+#
+# 2011/06/15 v2.17     Added amazon command for getting an about tag
+#                      from an Amazon (US|UK, books/music) product page.
+#
+#                      This adds a dependency on the abouttag lib,
+#                      which might be made conditional.
+#
+#                      Removed leading fdb from top-level help.
+#
+#                      Restored accidentally disable count command
+#
+#                      Added per-command help.
+#
+#                      Changed various things to support the web app
+#                      (shell-fish) like printing, some exceptions etc.
+#                      Added extra arguments to functions such as
+#                      execute command line in support of above.
+#
+#                      Changed core help examples to use Paris rather
+#                      than DADGAD as the example object.
+#
+# 2011/06/15 v2.18     Added rm command (including -r)
+#                      Added touch command and mkns/mkdir commands.
+#                      Changed execute_command_line to catch exceptions
+#                      and made a few more commands throw exceptions.
+#                      (-D suppresses this.)
+#                      Now accept -r or -R for all recursive commands.
+#
+# 2011/06/18 v3.00     Fish being pushed to github for the first time.
+#                      Added support for low-level read, write and control
+#                      arguments to perms command.
+#                      Check the availability of the abouttag library
+#                      before using the amazon command.
+#
+# 2011/06/18 v3.01     Fixed touch, which had a verbose option that broke it.
+#                      Added -X flag to perms to allow even finer-grained
+#                      control of permissions.
+#
+# 2011/06/18 v3.02     Changed fish descriptions of tag controls, as reported
+#                      by ls -L, to acontrol and tcontrol (from control).
 
 
 

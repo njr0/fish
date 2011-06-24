@@ -1,0 +1,359 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>perms &mdash; fish v3.01 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '3.01',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="fish v3.01 documentation" href="index.html" />
+    <link rel="next" title="rm" href="rm.html" />
+    <link rel="prev" title="ls" href="ls.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="rm.html" title="rm"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="ls.html" title="ls"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">fish v3.01 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="perms">
+<h1>perms<a class="headerlink" href="#perms" title="Permalink to this headline">¶</a></h1>
+<p>The <tt class="docutils literal"><span class="pre">perms</span></tt> command provides a simple interface for changing the
+permissions on tags and namespaces.   It only supports five cases,
+but there are powerful enough to cover the vast bulk of common
+situations.</p>
+<p><strong>FORM</strong></p>
+<div class="highlight-python"><pre>fish [flags] perms permissions-spec list-of-one-or-more-tags-or-namespaces</pre>
+</div>
+<p>Here <tt class="docutils literal"><span class="pre">permissions-spec</span></tt> can be one of the short forms:</p>
+<blockquote>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">private</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">default</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">lock</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">unlock</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">group</span> <span class="pre">list+of+usernames+separated+by+pluses</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">group-write</span> <span class="pre">list+of+usernames+separated+by+pluses</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">group-read</span> <span class="pre">list+of+usernames+separated+by+pluses</span></tt></li>
+</ul>
+</blockquote>
+<p>or one of three low-level forms:</p>
+<blockquote>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">read</span> <span class="pre">[open|closed]</span> <span class="pre">[except</span> <span class="pre">list+of+usernames+separated+by+pluses]</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">write</span> <span class="pre">[open|closed]</span> <span class="pre">[except</span> <span class="pre">list+of+usernames+separated+by+pluses]</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">control</span> <span class="pre">[open|closed]</span> <span class="pre">[except</span> <span class="pre">list+of+usernames+separated+by+pluses]</span></tt></li>
+</ul>
+</blockquote>
+<p><strong>FLAGS</strong></p>
+<blockquote>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">-f</span></tt>  The <tt class="docutils literal"><span class="pre">-f</span></tt> flag is used to force <tt class="docutils literal"><span class="pre">fish</span></tt> to set a policy it</dt>
+<dd>would otherwise resist.  In particular, setting any policy that
+does not include owner control always requires use of the <tt class="docutils literal"><span class="pre">-f</span></tt>
+flag.</dd>
+<dt><tt class="docutils literal"><span class="pre">-X</span> <span class="pre">name</span> <span class="pre">-X</span> <span class="pre">name2</span></tt> The <tt class="docutils literal"><span class="pre">-X</span></tt> flag is used two allow fully</dt>
+<dd><p class="first">fine-grained control over permissions.
+If one or more <tt class="docutils literal"><span class="pre">-X</span></tt> flags are used.
+only the finest-grained permissions with
+the fish names specified are changed.
+These are the names shown by ls -L:</p>
+<blockquote>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">metadata</span></tt>, <tt class="docutils literal"><span class="pre">delete</span></tt>, <tt class="docutils literal"><span class="pre">acontrol</span></tt>
+for abstract tags</li>
+<li><tt class="docutils literal"><span class="pre">read</span></tt>, <tt class="docutils literal"><span class="pre">tag</span></tt>, <tt class="docutils literal"><span class="pre">untag</span></tt>, <tt class="docutils literal"><span class="pre">tcontrol</span></tt> for tags</li>
+<li><tt class="docutils literal"><span class="pre">read</span></tt>, <tt class="docutils literal"><span class="pre">create</span></tt>, <tt class="docutils literal"><span class="pre">delete</span></tt>, <tt class="docutils literal"><span class="pre">control</span></tt>
+for namespaces.</li>
+</ul>
+</blockquote>
+<p>For example:</p>
+<div class="highlight-python"><pre>fish perms write -X delete closed except njr fish/z</pre>
+</div>
+<p>Changes the fine-grained write permission
+<tt class="docutils literal"><span class="pre">delete</span></tt> on <tt class="docutils literal"><span class="pre">fish/z</span></tt> so that only <tt class="docutils literal"><span class="pre">njr</span></tt> has
+the permission.</p>
+<p class="last"><tt class="docutils literal"><span class="pre">-X</span></tt> is rarely used.</p>
+</dd>
+</dl>
+</blockquote>
+<p><strong>EXAMPLES</strong></p>
+<p>The eight special cases supported are as follows and apply equally
+namespaces and tags.  In what follows, we&#8217;ll use a <tt class="docutils literal"><span class="pre">rating</span></tt> tag and
+a namespace called <tt class="docutils literal"><span class="pre">friends</span></tt>.</p>
+<blockquote>
+<ul>
+<li><p class="first">Make a tag or namespace completely private.</p>
+<div class="highlight-python"><pre>$ fish perms private njr/rating
+$ fish perms private njr/fi</pre>
+</div>
+<p>We could also change them together by saying:</p>
+<div class="highlight-python"><pre>$ fish perms private njr/rating njr/fi</pre>
+</div>
+<p>This sets the permissions so that only the owner of the tag
+or namespace has permission to do anything with it&#8212;<tt class="docutils literal"><span class="pre">read</span></tt>, <tt class="docutils literal"><span class="pre">write</span></tt>
+and <tt class="docutils literal"><span class="pre">control</span></tt> permission.
+The abbreviated view of this is shown by</p>
+<div class="highlight-python"><pre>$ fish ls -ld njr/rating njr/fi
+trwc------   njr/rating
+nrwc------   njr/fi/</pre>
+</div>
+<p>(See <a class="reference external" href="ls.html#fishls"><em>ls</em></a> for an detailed explanation of the permissions codes.)</p>
+<p>The full listing after this is:</p>
+<div class="highlight-python"><pre>$ fish -F ls -Ld njr/rating njr/fi
+
+njr/rating:
+
+ABSTRACT TAG (/tags)
+  Write
+    update (metadata):  policy: closed; exceptions = [njr]
+    delete (delete):    policy: closed; exceptions = [njr]
+  Control
+    control (control):  policy: closed; exceptions = [njr]
+
+TAG (/tag-values)
+  Read
+    read (read):        policy: closed; exceptions = [njr]
+  Write
+    create (tag):       policy: closed; exceptions = [njr]
+    delete (untag):     policy: closed; exceptions = [njr]
+  Control
+    control (control):  policy: closed; exceptions = [njr]
+
+
+njr/fi/:
+
+NAMESPACE (/namespaces)
+  Read
+    list (read):        policy: closed; exceptions = [njr]
+  Write
+    create (create):    policy: closed; exceptions = [njr]
+    delete (delete):    policy: closed; exceptions = [njr]
+  Control
+    control (control):  policy: closed; exceptions = [njr]</pre>
+</div>
+</li>
+<li><p class="first">Restore default permissions to a tag or namespace.
+The default is that the owner has read, write and control
+and everyone else has read only:</p>
+<div class="highlight-python"><pre>$ fish perms default njr/rating njr/fi
+
+$ fish -F ls -ld njr/rating njr/fi
+trwcr--r--   njr/rating
+nrwcr--r--   njr/fi/</pre>
+</div>
+</li>
+<li><p class="first">Lock a namespace or tag so that it can&#8217;t be edited (i.e.,
+remove all write permissions).</p>
+<div class="highlight-python"><pre>$ fish perms lock njr/rating
+
+$ fish ls -l njr/rating
+tr-cr--r--   njr/rating</pre>
+</div>
+<p>This does not alter read or control permissions.</p>
+</li>
+<li><p class="first">Unlock a namespace or tag so that the owner (only) can edit it.</p>
+<div class="highlight-python"><pre>$ fish perms unlock njr/rating
+
+$ fish ls -l njr/rating
+trwcr--r--   njr/rating</pre>
+</div>
+<p>This does not alter read or control permissions.</p>
+</li>
+<li><p class="first">Set the permissions on a tag or namespace so that one or more extra people
+can write it.   (This does not alter read permissions.)</p>
+<div class="highlight-python"><pre>$ fish perms group-write ntoll+jkakar njr/rating njr/fi
+
+$ fish ls -gd njr/rating njr/fi
+trwcrw-r--   r:(world)  w:ntoll+jkakar   njr/rating
+nrwcrw-r--   r:(world)  w:ntoll+jkakar   njr/fi/</pre>
+</div>
+</li>
+<li><p class="first">Set the permissions so that only a particular group can read it,
+leaving write permissions as the are.</p>
+<div class="highlight-python"><pre>$ fish perms default njr/rating njr/fi
+$ fish perms group-read ntoll+jkakar+miro njr/rating njr/fi
+
+$ fish -F ls -gd njr/rating njr/fi
+trwcr-----   r:ntoll+jkakar+miro  w:(world)   njr/rating
+nrwcr-----   r:ntoll+jkakar+miro  w:(world)   njr/fi/</pre>
+</div>
+</li>
+<li><p class="first">Set permissions so that one group of users can write tge tag
+or namespace, and another group can read it.
+In this case, let&#8217;s allow <tt class="docutils literal"><span class="pre">miro</span></tt> to write and <tt class="docutils literal"><span class="pre">ntoll</span></tt> and
+<tt class="docutils literal"><span class="pre">jkakar</span></tt> (as well as <tt class="docutils literal"><span class="pre">miro</span></tt>) to read.</p>
+<div class="highlight-python"><pre>$ fish perms group-read ntoll+jkakar+miro njr/rating njr/fi
+$ fish perms group-write miro njr/rating njr/fi
+
+$ fish ls -gd njr/rating njr/fi
+trwcrw----   r:ntoll+jkakar+miro  w:miro   njr/rating
+nrwcrw----   r:ntoll+jkakar+miro  w:miro   njr/fi/</pre>
+</div>
+</li>
+<li><p class="first">The final case is really just a special case of the previous one,
+where the read and write groups are the same.
+Let&#8217;s make <tt class="docutils literal"><span class="pre">miro</span></tt> the only user (other the owner, <tt class="docutils literal"><span class="pre">njr</span></tt>)
+who can read or write the tag and namespace.</p>
+<div class="highlight-python"><pre>$ fish perms group miro njr/rating njr/fi
+
+$ fish ls -gd njr/rating njr/fi
+trwcrw----   miro   njr/rating
+nrwcrw----   miro   njr/fi/</pre>
+</div>
+</li>
+</ul>
+</blockquote>
+<p>The three low-level case are exemplified by the following.
+In these forms, the Fluidinfo-style policy is explicitly
+given as <tt class="docutils literal"><span class="pre">open</span></tt> or <tt class="docutils literal"><span class="pre">closed</span></tt>, optionally foollowed by the
+word <tt class="docutils literal"><span class="pre">except</span></tt> and a list of user names on the exception list,
+separated by plus signs.</p>
+<p>Note that the owner is not treated specially, so should normally be included
+in the exception list if the policy is closed.
+If the owner is excluded from control, <tt class="docutils literal"><span class="pre">fish</span></tt> will refuse to make
+the change unless forced with <tt class="docutils literal"><span class="pre">-f</span></tt>.</p>
+<div class="highlight-python"><pre>$ fish perms read open njr/rating
+$ fish perms write closed except njr+miro njr/rating
+$ fish perms control closed except njr+miro njr/rating
+$ fish ls -L njr/rating
+njr/rating:
+
+ABSTRACT TAG (/tags)
+  Write
+    update (metadata):  policy: closed; exceptions = [njr, miro]
+    delete (delete):    policy: closed; exceptions = [njr, miro]
+  Control
+    control (control):  policy: closed; exceptions = [njr, miro]
+
+TAG (/tag-values)
+  Read
+    read (read):        policy: open; exceptions = []
+  Write
+    create (tag):       policy: closed; exceptions = [njr, miro]
+    delete (untag):     policy: closed; exceptions = [njr, miro]
+  Control
+    control (control):  policy: closed; exceptions = [njr, miro]</pre>
+</div>
+<p><strong>NOTES</strong></p>
+<ol class="arabic">
+<li><p class="first"><strong>READ (LIST) PERMISSION ON NAMESPACES</strong>.  Removing read access to
+a namespace prevents people from listing that namespace but does
+not stop them working with the contents of the namespace if they
+can find them.  So if you have a namespace called <tt class="docutils literal"><span class="pre">secret</span></tt> and
+set its permissions to <tt class="docutils literal"><span class="pre">nrwc------</span></tt> (owner-only access) and in it
+have a tag called <tt class="docutils literal"><span class="pre">password</span></tt> with its permission set to the
+default <tt class="docutils literal"><span class="pre">trwcr--r--</span></tt> then anyone will be able to read the
+password if they discover it exists.</p>
+<p>This is clearly not a good situation; the Fluidinfo team is aware
+of it and I expect some resolution will be forthcoming at some point.</p>
+<p>Note also that the <em>existence</em> of a tag cannot really be hidden in
+Fluidinfo, so people will be able to find out that you have a tag
+called <tt class="docutils literal"><span class="pre">secret/password</span></tt>.</p>
+</li>
+<li><p class="first"><strong>LOSING CONTROL</strong>.   If you give someone else write into one of your
+namespaces, you should be aware that any tags or namespaces that person
+creates will, by default be under the control of that user, i.e.
+if <tt class="docutils literal"><span class="pre">alice</span></tt> creates a tag in your namespace, she will have control
+permission and write permission over it and <em>you will not</em>.</p>
+<p>This is a recognized failure, and will be fixed.</p>
+<p>In the meantime, if <tt class="docutils literal"><span class="pre">alice</span></tt> does create a tag called <tt class="docutils literal"><span class="pre">alice/a</span></tt>
+in <tt class="docutils literal"><span class="pre">njr</span></tt>&#8216;s namespace, she can give back shared control to
+<tt class="docutils literal"><span class="pre">njr</span></tt> by saying:</p>
+<div class="highlight-python"><pre>$ fish perms write closed except alice+njr njr/alice/a
+$ fish perms control closed except alice+njr njr/alice/a</pre>
+</div>
+<p>She could also hand back exclusive control by saying:</p>
+<div class="highlight-python"><pre>$ fish perms control closed except njr njr/alice/a</pre>
+</div>
+</li>
+</ol>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/fish-doc-logo.png" alt="Logo"/>
+            </a></p>
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="ls.html"
+                                  title="previous chapter">ls</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="rm.html"
+                                  title="next chapter">rm</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/perms.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="rm.html" title="rm"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="ls.html" title="ls"
+             >previous</a> |</li>
+        <li><a href="index.html">fish v3.01 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2011, Nicholas J. Radcliffe.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.2.
+    </div>
+  </body>
+</html>

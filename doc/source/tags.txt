@@ -1,0 +1,53 @@
+tags
+****
+
+Show the list of tags (and their values) present on an objects
+
+**FORM**
+::
+
+    [fish] tag [flags] <object specifier>
+
+**EXAMPLES**
+::
+
+    $ fish tags -a "Eiffel Tower" njr/rating njr/seen ntoll/seen
+    Object with about="Eiffel Tower":
+    /objects/93bd1999-0998-49cc-8004-af457ce34ce4
+      njr/seen
+      fluiddb/about = "Eiffel Tower"
+      njr/njr/seen
+      njr/rating = 7
+      njr/index/about
+      njr/location = "Paris"
+
+
+Alternative specifications:
+::
+
+    tags -a "Eiffel Tower"
+    tags -i 93bd1999-0998-49cc-8004-af457ce34ce4
+    tags -q 'fluiddb/about matches "Eiffel Tower"'
+
+**NOTE FOR WINDOWS USERS* Working from a Windows command line, single quotes
+do not work as above.   Instead you need to use double quotes and "stutter"
+quotes inside quotes.   So the last example becomes:
+::
+
+    tags -q "fluiddb/about matches """Eiffel Tower"""
+
+
+All of these commands will show the names and values of all the tags
+(for which the user has read permission)
+from the object with about tag "Eiffel Tower"
+and ID ``93bd1999-0998-49cc-8004-af457ce34ce4``;
+The last one may also show other objects since the query
+::
+
+    fluiddb/about matches "Eiffel Tower"
+
+is search-engine-style string match that will match any about tag
+containing the words ``Eiffel`` and ``Tower``, ignoring case, other words
+and punctuation.
+
+

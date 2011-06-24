@@ -1,0 +1,273 @@
+perms
+*****
+
+The ``perms`` command provides a simple interface for changing the
+permissions on tags and namespaces.   It only supports five cases,
+but there are powerful enough to cover the vast bulk of common
+situations.
+
+**FORM**
+::
+
+    fish [flags] perms permissions-spec list-of-one-or-more-tags-or-namespaces
+
+Here ``permissions-spec`` can be one of the short forms:
+
+  * ``private``
+  * ``default``
+  * ``lock``
+  * ``unlock``
+  * ``group list+of+usernames+separated+by+pluses``
+  * ``group-write list+of+usernames+separated+by+pluses``
+  * ``group-read list+of+usernames+separated+by+pluses``
+
+or one of three low-level forms:
+
+  * ``read [open|closed] [except list+of+usernames+separated+by+pluses]``
+  * ``write [open|closed] [except list+of+usernames+separated+by+pluses]``
+  * ``control [open|closed] [except list+of+usernames+separated+by+pluses]``
+
+**FLAGS**
+
+  ``-f``  The ``-f`` flag is used to force ``fish`` to set a policy it
+          would otherwise resist.  In particular, setting any policy that
+          does not include owner control always requires use of the ``-f``
+          flag.
+
+  ``-X name -X name2`` The ``-X`` flag is used two allow fully
+                       fine-grained control over permissions.
+                       If one or more ``-X`` flags are used.
+                       only the finest-grained permissions with
+                       the fish names specified are changed.
+                       These are the names shown by ls -L:
+                        - ``metadata``, ``delete``, ``acontrol``
+                          for abstract tags
+                        - ``read``, ``tag``, ``untag``, ``tcontrol`` for tags
+                        - ``read``, ``create``, ``delete``, ``control``
+                          for namespaces.
+
+                       For example:
+                       ::
+                          fish perms write -X delete closed except njr fish/z
+
+                       Changes the fine-grained write permission
+		       ``delete`` on ``fish/z`` so that only ``njr`` has
+		       the permission.
+
+                       ``-X`` is rarely used.
+
+**EXAMPLES**
+
+The eight special cases supported are as follows and apply equally
+namespaces and tags.  In what follows, we'll use a ``rating`` tag and
+a namespace called ``friends``.
+
+  * Make a tag or namespace completely private.
+    ::
+
+        $ fish perms private njr/rating
+        $ fish perms private njr/fi
+
+    We could also change them together by saying:
+    ::
+
+        $ fish perms private njr/rating njr/fi
+
+    This sets the permissions so that only the owner of the tag
+    or namespace has permission to do anything with it---``read``, ``write``
+    and ``control`` permission.
+    The abbreviated view of this is shown by
+    ::
+
+        $ fish ls -ld njr/rating njr/fi
+        trwc------   njr/rating
+        nrwc------   njr/fi/
+
+    (See :ref:`fishls` for an detailed explanation of the permissions codes.)
+
+    The full listing after this is:
+    ::
+
+        $ fish -F ls -Ld njr/rating njr/fi
+
+        njr/rating:
+
+        ABSTRACT TAG (/tags)
+          Write
+            update (metadata):  policy: closed; exceptions = [njr]
+            delete (delete):    policy: closed; exceptions = [njr]
+          Control
+            control (control):  policy: closed; exceptions = [njr]
+
+        TAG (/tag-values)
+          Read
+            read (read):        policy: closed; exceptions = [njr]
+          Write
+            create (tag):       policy: closed; exceptions = [njr]
+            delete (untag):     policy: closed; exceptions = [njr]
+          Control
+            control (control):  policy: closed; exceptions = [njr]
+
+
+        njr/fi/:
+
+        NAMESPACE (/namespaces)
+          Read
+            list (read):        policy: closed; exceptions = [njr]
+          Write
+            create (create):    policy: closed; exceptions = [njr]
+            delete (delete):    policy: closed; exceptions = [njr]
+          Control
+            control (control):  policy: closed; exceptions = [njr]
+
+  * Restore default permissions to a tag or namespace.
+    The default is that the owner has read, write and control
+    and everyone else has read only:
+    ::
+
+        $ fish perms default njr/rating njr/fi
+
+        $ fish -F ls -ld njr/rating njr/fi
+        trwcr--r--   njr/rating
+        nrwcr--r--   njr/fi/
+
+  * Lock a namespace or tag so that it can't be edited (i.e.,
+    remove all write permissions).
+    ::
+
+      $ fish perms lock njr/rating
+
+      $ fish ls -l njr/rating
+      tr-cr--r--   njr/rating
+
+    This does not alter read or control permissions.
+
+  * Unlock a namespace or tag so that the owner (only) can edit it.
+    ::
+
+      $ fish perms unlock njr/rating
+
+      $ fish ls -l njr/rating
+      trwcr--r--   njr/rating
+
+    This does not alter read or control permissions.
+
+  * Set the permissions on a tag or namespace so that one or more extra people
+    can write it.   (This does not alter read permissions.)
+    ::
+
+        $ fish perms group-write ntoll+jkakar njr/rating njr/fi
+
+        $ fish ls -gd njr/rating njr/fi
+        trwcrw-r--   r:(world)  w:ntoll+jkakar   njr/rating
+        nrwcrw-r--   r:(world)  w:ntoll+jkakar   njr/fi/
+
+  * Set the permissions so that only a particular group can read it,
+    leaving write permissions as the are.
+    ::
+
+        $ fish perms default njr/rating njr/fi
+        $ fish perms group-read ntoll+jkakar+miro njr/rating njr/fi
+
+        $ fish -F ls -gd njr/rating njr/fi
+        trwcr-----   r:ntoll+jkakar+miro  w:(world)   njr/rating
+        nrwcr-----   r:ntoll+jkakar+miro  w:(world)   njr/fi/
+
+  * Set permissions so that one group of users can write tge tag
+    or namespace, and another group can read it.
+    In this case, let's allow ``miro`` to write and ``ntoll`` and
+    ``jkakar`` (as well as ``miro``) to read.
+    ::
+
+        $ fish perms group-read ntoll+jkakar+miro njr/rating njr/fi
+        $ fish perms group-write miro njr/rating njr/fi
+
+        $ fish ls -gd njr/rating njr/fi
+        trwcrw----   r:ntoll+jkakar+miro  w:miro   njr/rating
+        nrwcrw----   r:ntoll+jkakar+miro  w:miro   njr/fi/
+
+  * The final case is really just a special case of the previous one,
+    where the read and write groups are the same.
+    Let's make ``miro`` the only user (other the owner, ``njr``)
+    who can read or write the tag and namespace.
+    ::
+
+        $ fish perms group miro njr/rating njr/fi
+
+        $ fish ls -gd njr/rating njr/fi
+        trwcrw----   miro   njr/rating
+        nrwcrw----   miro   njr/fi/
+
+The three low-level case are exemplified by the following.
+In these forms, the Fluidinfo-style policy is explicitly
+given as ``open`` or ``closed``, optionally foollowed by the
+word ``except`` and a list of user names on the exception list,
+separated by plus signs.
+
+Note that the owner is not treated specially, so should normally be included
+in the exception list if the policy is closed.
+If the owner is excluded from control, ``fish`` will refuse to make
+the change unless forced with ``-f``.
+::
+
+    $ fish perms read open njr/rating
+    $ fish perms write closed except njr+miro njr/rating
+    $ fish perms control closed except njr+miro njr/rating
+    $ fish ls -L njr/rating
+    njr/rating:
+
+    ABSTRACT TAG (/tags)
+      Write
+        update (metadata):  policy: closed; exceptions = [njr, miro]
+        delete (delete):    policy: closed; exceptions = [njr, miro]
+      Control
+        control (control):  policy: closed; exceptions = [njr, miro]
+
+    TAG (/tag-values)
+      Read
+        read (read):        policy: open; exceptions = []
+      Write
+        create (tag):       policy: closed; exceptions = [njr, miro]
+        delete (untag):     policy: closed; exceptions = [njr, miro]
+      Control
+        control (control):  policy: closed; exceptions = [njr, miro]
+
+
+**NOTES**
+
+1. **READ (LIST) PERMISSION ON NAMESPACES**.  Removing read access to
+   a namespace prevents people from listing that namespace but does
+   not stop them working with the contents of the namespace if they
+   can find them.  So if you have a namespace called ``secret`` and
+   set its permissions to ``nrwc------`` (owner-only access) and in it
+   have a tag called ``password`` with its permission set to the
+   default ``trwcr--r--`` then anyone will be able to read the
+   password if they discover it exists.
+
+   This is clearly not a good situation; the Fluidinfo team is aware
+   of it and I expect some resolution will be forthcoming at some point.
+
+   Note also that the *existence* of a tag cannot really be hidden in
+   Fluidinfo, so people will be able to find out that you have a tag
+   called ``secret/password``.
+
+2. **LOSING CONTROL**.   If you give someone else write into one of your
+   namespaces, you should be aware that any tags or namespaces that person
+   creates will, by default be under the control of that user, i.e.
+   if ``alice`` creates a tag in your namespace, she will have control
+   permission and write permission over it and *you will not*.
+
+   This is a recognized failure, and will be fixed.
+
+   In the meantime, if ``alice`` does create a tag called ``alice/a``
+   in ``njr``'s namespace, she can give back shared control to
+   ``njr`` by saying:
+   ::
+
+      $ fish perms write closed except alice+njr njr/alice/a
+      $ fish perms control closed except alice+njr njr/alice/a
+
+   She could also hand back exclusive control by saying:
+   ::
+
+       $ fish perms control closed except njr njr/alice/a

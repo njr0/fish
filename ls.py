@@ -1,11 +1,16 @@
 import math
 import sys
 import types
-import fdblib
+import fishlib
 import cli
+import flags
+from fishlib import Print
 
 if sys.version_info < (2, 6):
-    import simplejson as json
+    try:
+        import simplejson as json
+    except ImportError:
+        from django.utils import simplejson as json
 else:
     import json
 
@@ -16,6 +21,11 @@ class PermissionsError(Exception):
 
 class WisdomFailure(Exception):
     pass
+
+
+class RemoveError(Exception):
+    pass
+
 
 
 class PermissionDesc:
@@ -46,8 +56,8 @@ RAW_PERMS = {
 RAW_PERM_ENTITIES = RAW_PERMS.keys()
 
 READ_NAMES = [u'read']
-WRITE_NAMES = [u'create', u'metadata', 'tag', 'untag', 'delete']
-CONTROL_NAMES = [u'acontrol', u'tcontrol']
+WRITE_NAMES = [u'create', u'metadata', u'tag', u'untag', u'delete']
+CONTROL_NAMES = [u'acontrol', u'tcontrol', u'control']
 ALL_NAMES = READ_NAMES + WRITE_NAMES + CONTROL_NAMES
 
 
@@ -100,11 +110,12 @@ class UnixPerms:
 
 class FluidinfoPerm:
     def __init__(self, owner, policy=None, exceptions=None, hash=None,
-                 name=None, action=None, isTag=None):
+                 name=None, action=None, isTag=None, isPolicy=False):
         self.owner = owner
         self.name = name
         self.action = action
         self.isTag = isTag
+        self.isPolicy = isPolicy
         if hash:
             self.policy=hash[u'policy']
             self.exceptions=hash[u'exceptions']
@@ -125,9 +136,11 @@ class FluidinfoPerm:
 
 
 class FluidinfoPerms:
-    def __init__(self, db, path, isTag, getFromFI=True):
+    def __init__(self, db, path, isTag, getFromFI=True, isPolicy=False):
         self.isTag = isTag
+        self.isPolicy = isPolicy
         self.path = path
+        self.valid = True
         self.entities = [u'abstract-tag', u'tag'] if isTag else [u'namespace']
 
         self.owner = path.split(u'/')[1]
@@ -135,15 +148,22 @@ class FluidinfoPerms:
             desc = RAW_PERMS[entity]
             for (action, name) in zip(desc.actions, desc.names):
                 if getFromFI:
-                    self.__dict__[name] = db.get_raw_perm(entity, path[1:],
-                                                          action, isTag)
+                    if isPolicy:
+                        p = db.get_raw_policy(entity, path[1:], action)
+                        
+                    else:
+                        p = db.get_raw_perm(entity, path[1:], action, isTag)
+                    self.__dict__[name] = p
+                    if type(p) == int:
+                        self.value = False
                 else:
                     # figure out defaults etc.
                     policy = u'open' if name in READ_NAMES else u'closed'
                     exceptions = [] if name in READ_NAMES else [self.owner]
                     self.__dict__[name] = FluidinfoPerm(self.owner, policy,
                                                         exceptions, None,
-                                                        name, action, isTag)
+                                                        name, action, isTag,
+                                                        isPolicy)
 
     def set_to_private(self):
         for name in ALL_NAMES:
@@ -185,25 +205,33 @@ class FluidinfoPerms:
                 self.__dict__[name].policy = u'closed'
                 self.__dict__[name].exceptions = [self.owner]
 
-    def update_fluidinfo(self, db):
+    def check_owner_control(self, p):
+        if ((p.policy == 'open' and self.owner in p.exceptions)
+                or (p.policy == 'closed' and not self.owner in p.exceptions)):
+            raise PermissionsError(u'You are attempting to set permissions '
+                                   u'that do not include owner control.\n'
+                                   u'  If you are sure you know what you are '
+                                   u'doing, you can force this with -f.')
 
+    def update_fluidinfo(self, db, permsToSet=None, force=False,
+                         restrict_to=None):
+        permsToSet = permsToSet or ALL_NAMES
         # check owner has control permissions
-        for name in CONTROL_NAMES:
-            if hasattr(self, name):
-                if self.__dict__[name].policy == 'open':
-                    assert not self.owner in self.__dict__[name].exceptions
-                else:
-                    assert self.owner in self.__dict__[name].exceptions
-
+        if not force:
+            for name in CONTROL_NAMES:
+                if hasattr(self, name):
+                    self.check_owner_control(self.__dict__[name])
         entities = (u'abstract-tag', u'tag') if self.isTag else (u'namespace',)
         for entity in entities:
             for name in RAW_PERMS[entity].names:
-                action = RAW_PERMS[entity].action(name)
-                err = db.set_raw_perm(entity, self.path[1:], action,
-                                      self.__dict__[name].policy,
-                                      self.__dict__[name].exceptions)
-                if err:
-                    cli.warning(cli.error_code(err))
+                if name in permsToSet and (restrict_to is None
+                                           or name in restrict_to):
+                    action = RAW_PERMS[entity].action(name)
+                    err = db.set_raw_perm(entity, self.path[1:], action,
+                                          self.__dict__[name].policy,
+                                          self.__dict__[name].exceptions)
+                    if err:
+                        cli.warning(cli.error_code(err))
 
     def fi_tag_desc(self):
         s = []
@@ -211,20 +239,22 @@ class FluidinfoPerms:
         controls = (self.acontrol, self.tcontrol)
         for kind in (u'ABSTRACT TAG', u'TAG'):
             desc = RAW_PERMS[u'tag' if kind == u'TAG' else u'abstract-tag']
+            L = u't' if kind == u'TAG' else u'a'
             s.append(kind + u' (/%s)' % desc.path)
             if kind == u'TAG':
                 s.append(u'  Read')
-                s.append(u'    %-18s  %s' % (u'read (read):',
+                s.append(u'    %-19s  %s' % (u'read (read):',
                                              unicode(self.read)))
 
             s.append(u'  Write')
             for (fi, fdb) in zip(desc.actions, desc.names):
                 if fdb in writes:
-                    s.append(u'    %-18s  %s' % (u'%s (%s):' % (fi, fdb),
+                    s.append(u'    %-19s  %s' % (u'%s (%s):' % (fi, fdb),
                                                  unicode(self.__dict__[fdb])))
             s.extend([u'  Control'])
             c = self.tcontrol if kind == u'TAG' else self.acontrol
-            s.append(u'    %-18s  %s' % (u'control (control):', unicode(c)))
+            s.append(u'    %-19s  %s' % (u'control (%scontrol):' % L,
+                                         unicode(c)))
             s.append(u'')
         return u'\n'.join(s)
 
@@ -249,6 +279,8 @@ class FluidinfoPerms:
     def __unicode__(self):
         if self.isTag is None:
             raise Exception
+        if not self.valid:
+            return ' (denied) '
         return self.fi_tag_desc() if self.isTag else self.fi_ns_desc() 
 
 
@@ -280,10 +312,10 @@ def to_string_grid(items, pageWidth=78, maxCols=9):
                                    for row in range(nRows)])
 
 
-class ExtendedFluidDB(fdblib.FluidDB):
+class ExtendedFluidDB(fishlib.FluidDB):
     def __init__(self, credentials=None, host=None, debug=False,
-                 encoding=fdblib.DEFAULT_ENCODING, unixStylePaths=None):
-        fdblib.FluidDB.__init__(self, credentials, host, debug,
+                 encoding=fishlib.DEFAULT_ENCODING, unixStylePaths=None):
+        fishlib.FluidDB.__init__(self, credentials, host, debug,
                                 encoding, unixStylePaths)
 
     def list_namespace(self, ns, returnDescription=True,
@@ -292,12 +324,12 @@ class ExtendedFluidDB(fdblib.FluidDB):
                                     returnDescription=returnDescription,
                                     returnNamespaces=returnNamespaces,
                                     returnTags=returnTags)
-        return content if status == fdblib.STATUS.OK else status
+        return content if status == fishlib.STATUS.OK else status
 
     def list_r_namespace(self, rootns):
         L = self.list_namespace(rootns, returnDescription=False)
-        if L == fdblib.STATUS.NOT_FOUND:
-            return fdblib.STATUS.NOT_FOUND
+        if L == fishlib.STATUS.NOT_FOUND:
+            return fishlib.STATUS.NOT_FOUND
         if type(L) == int:
             return {u'namespaceNames': [], u'tagNames': [], u'failures': True}
         failures = False
@@ -322,7 +354,7 @@ class ExtendedFluidDB(fdblib.FluidDB):
 
     def rm_r(self, rootns):
         L = self.list_r_namespace(rootns)
-        if L == fdblib.STATUS.NOT_FOUND:
+        if L == fishlib.STATUS.NOT_FOUND:
             return L
         elif L[u'failures']:
             return 1            # non-zero failure code
@@ -333,13 +365,17 @@ class ExtendedFluidDB(fdblib.FluidDB):
             z = [(len(s), i) for (s, i) in si]
             z.sort()
             z.reverse()
-            failed = False
+            failed = 0
             for (n, i) in z:
-                r = self.delete_abstract_tag(u'/%s' % i)
-                failed = failed or (r != fdblib.STATUS.NO_CONTENT)
+                r = fn(u'/%s' % i)
+                failed = failed or (r if r != fishlib.STATUS.NO_CONTENT
+                                    else 0)
         if failed:
-            return 1
+            return failed
         return self.delete_namespace(u'/' + rootns)
+
+    def rm_all_tag_values(self, tag):
+        self.untag_by_query()
 
     def list_sorted_ns(self, ns, long_=False, columns=True, recurse=False,
                        prnt=False, longer=False):
@@ -350,7 +386,7 @@ class ExtendedFluidDB(fdblib.FluidDB):
     def list_sorted_nshash(self, h, ns, long_=False, columns=True,
                            recurse=False, prnt=False, longer=False):
         if type(h) == types.IntType:
-            if h == fdblib.STATUS.UNAUTHORIZED:
+            if h == fishlib.STATUS.UNAUTHORIZED:
                 return u'Permission denied.'
             else:
                 return u'Error status %s' % h
@@ -364,23 +400,23 @@ class ExtendedFluidDB(fdblib.FluidDB):
         if items:
             fmt = string_format(max([len(item) for item in items]))
         if recurse:
-            print u'\n%s:' % ns
+            Print(u'\n%s:' % ns)
         if long_ or longer:
             res = []
             for item in items:
                 r = self.full_perms(ns + u'/' + fmt % item, longer)
                 res.append(r)
                 if prnt:
-                    print r
+                    Print(r)
             result = u'\n'.join(res)
         elif columns == False:
             result = u'\n'.join(items)
             if prnt:
-                print result
+                Print(result)
         else:
             result = to_string_grid(items)
             if prnt:
-                print result
+                Print(result)
         if recurse:
             others = u'\n'.join([self.list_sorted_ns(u'%s/%s' % (ns, space),
                                                      long_, columns, recurse,
@@ -399,7 +435,17 @@ class ExtendedFluidDB(fdblib.FluidDB):
         status, content = self.call(u'GET', path, None, action=action)
         return (FluidinfoPerm(owner, hash=content, name=name, action=action,
                               isTag=isTag)
-                if status == fdblib.STATUS.OK else status)
+                if status == fishlib.STATUS.OK else status)
+
+    def get_raw_policy(self, entity, owner, action):
+        assert entity in RAW_PERM_ENTITIES
+        perm = RAW_PERMS[entity]
+        assert action in perm.actions
+        path = u'/policies/%s/%s/%s' % (owner, perm.path, action)
+        status, content = self.call(u'GET', path, None, action=action)
+        return (FluidinfoPerm(owner, hash=content, name=owner, action=action,
+                              isPolicy=True)
+                if status == fishlib.STATUS.OK else status)
 
     def get_tag_perms_hash(self, tag):
         h = {}
@@ -466,6 +512,9 @@ class ExtendedFluidDB(fdblib.FluidDB):
 
     def ns_perms_string(self, ns, group=False):
         h = self.get_ns_perms_hash(ns)
+        for k in h:
+            if type(h[k]) == int:
+                return ' (denied) '
         s = []
         owner = ns.split(u'/')[0]
         r = h[u'read']
@@ -518,8 +567,6 @@ class ExtendedFluidDB(fdblib.FluidDB):
             gs = u'r:%s  w:%s' % (gr, gw)
         return gs
 
-
-
     def perms_string(self, tagOrNS, longer=False, group=False):
         tagOrNS = tagOrNS.strip()
         if tagOrNS.endswith(u'/'):
@@ -533,7 +580,11 @@ class ExtendedFluidDB(fdblib.FluidDB):
                 return unicode(FluidinfoPerms(self, u'/' + tagOrNS,
                                               isTag=True))
             else:
-                return self.tag_perms_string(tagOrNS, group)
+                try:
+                    return self.tag_perms_string(tagOrNS, group)
+                except AttributeError:
+                    raise PermissionsError(u'Forbidden (you don\'t appear to'
+                        u' have control permission for %s)' % tagOrNS)
 
     def full_perms(self, tagOrNS, longer, group=False):
         perms = self.perms_string(tagOrNS, longer, group)
@@ -551,9 +602,9 @@ class ExtendedFluidDB(fdblib.FluidDB):
         body = json.dumps({u'policy': policy, u'exceptions': exceptions})
         path = u'/permissions/%s/%s' % (perm.path, path)
         if self.debug:
-            print path, body, action
+            Print(path, body, action)
         status, content = self.call(u'PUT', path, body, action=action)
-        return 0 if status == fdblib.STATUS.NO_CONTENT else status
+        return 0 if status == fishlib.STATUS.NO_CONTENT else status
 
 
 def write_status(writes):
@@ -563,12 +614,22 @@ def write_status(writes):
          return u'-' if all(w == u'-' for w in writes) else u'/'
 
 
-def execute_ls_command(objs, tags, options):
-    credentials = Credentials(options.user[0]) if options.user else None
+def execute_ls_command(objs, tags, options, credentials, unixPaths=None):
+    unixPaths = (fishlib.path_style(options)
+                 if fishlib.path_style(options) is not None else unixPaths)
     db = ExtendedFluidDB(host=options.hostname, credentials=credentials,
                          debug=options.debug,
-                         unixStylePaths=fdblib.path_style(options))
+                         unixStylePaths=unixPaths)
     long_ = options.long or options.group
+    if options.policy:
+        if len(tags) > 0:
+            Print(u'Form: ls -P')
+        else:
+            Print(unicode(FluidinfoPerms(db, u'/' + db.credentials.username,
+                                   isTag=False, isPolicy=True)))
+            Print(unicode(FluidinfoPerms(db, u'/' + db.credentials.username,
+                                   isTag=True, isPolicy=True)))
+        return
     if len(tags) == 0:
         tags = [(u'/' if db.unixStyle else u'') + db.credentials.username]
     for tag in tags:
@@ -580,7 +641,7 @@ def execute_ls_command(objs, tags, options):
                                              options.longer, options.group)
                 else:
                     nsResult = fulltag
-                print nsResult
+                Print(nsResult)
             else:
                 nsResult = u'Not Found'
         else:
@@ -590,77 +651,158 @@ def execute_ls_command(objs, tags, options):
         tagExists = db.tag_exists(fulltag)
         if nsResult == u'Error status 404':
             if not tagExists:
-                print u'%s not found' % fulltag
+                Print(u'%s not found' % fulltag)
         if tagExists:
             if long_ or options.longer:
-                print db.full_perms(fulltag[1:], options.longer, options.group)
+                Print(db.full_perms(fulltag[1:], options.longer, options.group))
             else:
-                print tag
+                Print(tag)
 
 
-def execute_chmod_command(objs, args, options):
-    cli.warning('Not implemented yet.')
-    return
-    credentials = Credentials(options.user[0]) if options.user else None
+def execute_rm_command(objs, tags, options, credentials, unixPaths=None):
+    unixPaths = (fishlib.path_style(options)
+                 if fishlib.path_style(options) is not None else unixPaths)
     db = ExtendedFluidDB(host=options.hostname, credentials=credentials,
                          debug=options.debug,
-                         unixStylePaths=fdblib.path_style(options))
+                         unixStylePaths=unixPaths)
+    if len(tags) == 0:
+        raise RemoveError('Remove what?')
+    failures = []
+    for tag in tags:
+        nsDone = tagDone = False
+        fulltag = db.abs_tag_path(tag, inPref=True)
+        if db.ns_exists(fulltag):
+            if options.recurse:
+                nsResult = db.rm_r(fulltag[1:])
+            else:
+                nsResult = db.delete_namespace(fulltag)
+            if nsResult:
+                raise RemoveError(fishlib.human_status(nsResult, 
+                                        db.abs_tag_path(tag, True, True),
+                                        {412: '(probably not empty)'}))
+            nsDone = True
+
+        if db.tag_exists(fulltag):
+            if options.force or options.recurse:
+                fishlib.untag_by_query(db, u'has %s' % fulltag[1:],
+                                       [fulltag[1:]])
+            else:
+                ids = db.query(u'has %s' % fulltag[1:])
+                if type(ids) == int:
+                    raise RemoveError(fishlib.human_status(ids))
+                elif len(ids) > 0:
+                    raise RemoveError(u'%s tagged with %s:\n%s'
+                                      % (flags.Plural(len(ids),
+                                                 'object').decode('UTF-8'),
+                                         db.abs_tag_path(tag, True, True),
+                                          u'  Use -f to force removal'))
+            tagResult = db.delete_abstract_tag(fulltag)
+            if tagResult:
+                raise RemoveError(fishlib.human_status(tagResult,
+                                         db.abs_tag_path(tag, True, True)))
+            tagDone = True
+
+        if not nsDone and not tagDone:
+            failures.append(tag)
+
+    if failures:
+        if not options.force:
+            raise RemoveError(u'No tag or namespace found for: %s'
+                              % u' '.join(failures))
+
+
+
+
+def execute_chmod_command(objs, args, options, credentials, unixPaths=None):
+    cli.warning('Not implemented yet.')
+    return
+    unixPaths = (fishlib.path_style(options)
+                 if fishlib.path_style(options) is not None else unixPaths)
+    db = ExtendedFluidDB(host=options.hostname, credentials=credentials,
+                         debug=options.debug,
+                         unixStylePaths=unixPaths)
+    db = ExtendedFluidDB(host=options.hostname, credentials=credentials,
+                         debug=options.debug,
+                         unixStylePaths=fishlib.path_style(options))
     if len(args) < 2:
-        print u'Form: chmod [perms-spec] list-of-tags-and-namespaces'
+        Print(u'Form: chmod [perms-spec] list-of-tags-and-namespaces')
         return
     spec = args[0]
     if not all(u'0' <= p<= u'7' for p in spec) or len(spec) != 3:
-        print (u'Permissions specifier must have for ddd with each d between '
-               u'0 and 7')
+        Print((u'Permissions specifier must have for ddd with each d between '
+               u'0 and 7'))
     new_perms = UnixPerms(spec, db.credentials.username)
     fullpaths = (db.abs_tag_path(t, inPref=True) for t in args[1:])
-    print unicode(new_perms)
-    print 'READ:', unicode(new_perms.read)
-    print 'WRITE:', unicode(new_perms.write)
-    print 'CONTROL:', unicode(new_perms.control)
+    Print(unicode(new_perms))
+    Print(u'READ: %s' %  unicode(new_perms.read))
+    Print(u'WRITE: %s' % unicode(new_perms.write))
+    Print(u'CONTROL: %s' % unicode(new_perms.control))
     new_perms.check_owner_control_ok()
     for path in fullpaths:
         done = False
         if db.tag_exists(path):
             inPerms = FluidinfoPerms(db, path, isTag=True)
-            print unicode(inPerms)
+            Print(unicode(inPerms))
             new_perms.isTag = True
 #            outPerms = new_perms.new_fi_tag_perms(inTagPerms)
             done = True
         if db.ns_exists(path):
             inPerms = FluidinfoPerms(db, path, isTag=False)
-            print unicode(inPerms)
+            Print(unicode(inPerms))
             new_perms.isTag = False
 #            outPerms = new_perms.new_fi_ns_perms(inTagPerms)
             done = True
         if not done:
-            print 'No tag or namespace %s found' % db.abs_tag_path(path,
-                                                                  outPref=True)
+            Print('No tag or namespace %s found' % db.abs_tag_path(path,
+                                                                 outPref=True))
 
-def execute_perms_command(objs, args, options):
-    credentials = Credentials(options.user[0]) if options.user else None
+def execute_perms_command(objs, args, options, credentials, unixPaths=None):
+    unixPaths = (fishlib.path_style(options)
+                 if fishlib.path_style(options) is not None else unixPaths)
     db = ExtendedFluidDB(host=options.hostname, credentials=credentials,
                          debug=options.debug,
-                         unixStylePaths=fdblib.path_style(options))
+                         unixStylePaths=unixPaths)
     if len(args) < 2:
-        print u'Form: perms SPEC list of tags and namespaces'
+        Print(u'Form: perms SPEC list of tags and namespaces')
         return
     spec = args[0]
-    assert spec in (u'private', u'default', u'group', u'group-write',
-                    u'group-read', u'lock', u'unlock')
+    primitives = [u'write', u'read', u'control']
+    if not (spec in [u'private', u'default', u'group', u'group-write',
+                     u'group-read', u'lock', u'unlock'] + primitives):
+        raise PermissionsError(u'perms must be followed by one of:\n%s'
+                                % u', '.join(spec + primitives))
     isGroup = spec.startswith(u'group')
     if isGroup:
         group = args[1].split(u'+')
         if len(args) < 3:
-            print (u'Group form: perms %s list+of+group+members list of tags '
-                   u'and namespaces' % spec)
-    fullpaths = (db.abs_tag_path(t, inPref=True) for t in args[1 + isGroup:])
+            raise PermissionsError(
+                    u'Group form: perms %s list+of+group+members list of tags '
+                    u'and namespaces' % spec)
+
+    if spec in primitives:
+        errorText = (u'%s form: perms %s [open|closed]'
+                     u'[except list+of+group+members list'
+                     u'of tags and namespaces]' % (spec, spec))
+        if len(args) < 3 or not args[1] in (u'open', u'closed'):
+            raise PermissionsError(errorText)
+        policy = args[1]
+        exceptions = args[3].split(u'+') if args[2] == u'except' else []
+        fullpaths = (db.abs_tag_path(t, inPref=True)
+                     for t in args[2 + 2 * bool(exceptions):])
+        if options.extravals:
+            for v in options.extravals:
+                assert v in ALL_NAMES
+    else:
+        fullpaths = (db.abs_tag_path(t, inPref=True)
+                     for t in args[1 + isGroup:])
     for path in fullpaths:
         done = False
         owner = path.split(u'/')[1]
+        permsToSet = ALL_NAMES
         for (exists, isTag) in ((db.tag_exists, True), (db.ns_exists, False)):
             if exists(path):
-                inPerms = FluidinfoPerms(db, path, isTag=isTag, getFromFI=False)
+                inPerms = FluidinfoPerms(db, path, isTag=isTag,
+                                         getFromFI=False)
                 if spec == u'private':
                     inPerms.set_to_private()
                 elif spec == u'default':
@@ -673,6 +815,17 @@ def execute_perms_command(objs, args, options):
                     inPerms = FluidinfoPerms(db, path, isTag=isTag,
                                              getFromFI=True)
                     inPerms.unlock()
+                elif spec in primitives:
+                    if spec == u'control':
+                        permsToSet = CONTROL_NAMES
+                    elif spec == u'write':
+                        permsToSet = WRITE_NAMES
+                    else:
+                        permsToSet = READ_NAMES
+                    for name in permsToSet:
+                        if hasattr(inPerms, name):
+                            inPerms.__dict__[name].policy = policy
+                            inPerms.__dict__[name].exceptions = exceptions
                 else:  # group
                     inPerms = FluidinfoPerms(db, path, isTag=isTag,
                                              getFromFI=True)
@@ -680,8 +833,9 @@ def execute_perms_command(objs, args, options):
                          inPerms.set_group_readable(group)
                     if spec in (u'group', u'group-write'):
                          inPerms.set_group_writable(group)
-                inPerms.update_fluidinfo(db)
+                inPerms.update_fluidinfo(db, permsToSet, options.force,
+                                         restrict_to=options.extravals)
                 done = True
         if not done:
-            print 'No tag or namespace %s found' % db.abs_tag_path(path,
-                                                                  outPref=True)
+            Print('No tag or namespace %s found' % db.abs_tag_path(path,
+                                                                outPref=True))

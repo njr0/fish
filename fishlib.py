@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-# fdbcore.py
+# fdblib.py
 #
 # Copyright (c) Nicholas J. Radcliffe 2009-2011 and other authors specified
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'2.08'
+__version__ = u'3.02'
 VERSION = __version__
 
 import codecs
@@ -19,12 +19,16 @@ from functools import wraps
 from httplib2 import Http
 
 if sys.version_info < (2, 6):
-    import simplejson as json
+    try:
+        import simplejson as json
+    except ImportError:
+        from django.utils import simplejson as json
 else:
     import json
 
 
 DADGAD_ID = u'ca0f03b5-3c0d-4c00-aa62-bdb07f29599c'
+PARIS_ID = u'17ecdfbc-c148-41d3-b898-0b5396ebe6cc'
 UNICODE = True
 DEFAULT_UNIX_STYLE_PATHS = False
 toStr = unicode if UNICODE else str
@@ -82,9 +86,12 @@ class STATUS:
     OK = 200
     CREATED = 201
     NO_CONTENT = 204
-    INTERNAL_SERVER_ERROR = 500
-    NOT_FOUND = 404
+    BAD_REQUEST= 400
     UNAUTHORIZED = 401
+    PRECONDITION_FAILED = 402
+    NOT_FOUND = 404
+    PRECONDITION_FAILED = 412
+    INTERNAL_SERVER_ERROR = 500
 
 
 FLUIDDB_PATH = u'http://fluiddb.fluidinfo.com'
@@ -93,6 +100,10 @@ UNIX_CREDENTIALS_FILE = u'.fluidDBcredentials'
 WINDOWS_CREDENTIALS_FILE = u'fluidDBcredentials.ini'
 UNIX_USER_CREDENTIALS_FILE = u'.fluidDBcredentials.%s'
 WINDOWS_USER_CREDENTIALS_FILE = u'fluidDBcredentials-%s.ini'
+
+CRED_FILE_VAR = 'FDB_CREDENTIALS_FILE'
+WIN_CRED_FILE = 'c:\\fish\\credentials.txt'
+
 HTTP_TIMEOUT = 300.123456       # unlikey the user will choose this
 PRIMITIVE_CONTENT_TYPE = u'application/vnd.fluiddb.value+json'
 
@@ -107,6 +118,16 @@ IDS_SAND = {u'DADGAD': DADGAD_ID}
 DEFAULT_ENCODING = sys.getfilesystemencoding()
 
 
+class SaveOut:
+    def __init__(self):
+        self.buffer = []
+
+    def write(self, msg):
+        self.buffer.append(msg)
+
+    def clear(self):
+        self.buffer = []
+
 class UnicodeOut:
     def __init__(self, std):
         self.std = std
@@ -114,22 +135,46 @@ class UnicodeOut:
     def write(self, msg):
         self.std.write((msg.encode('UTF-8') if type(msg) == unicode else msg))
             
-sys.stdout = UnicodeOut(sys.stdout)
-sys.stderr = UnicodeOut(sys.stderr)
+
+def human_status(c, extra=None, trans=None):
+    extras = u'; [%s]' % extra if extra else ''
+    translation = u' %s' % trans[c] if trans and c in trans else ''
+        
+    if c in STATUS.__dict__.values():
+        for k in STATUS.__dict__:
+            if STATUS.__dict__[k] == c:
+                return u'Error Status %d (%s%s)' % (c, k, translation) + extras
+    return u'Error Status %d%s' % (c, translation) + extras
 
 
 def quote_u_u(s):
     """Quote a unicode string s using %-encoding.
-       Returns unicode
+
+       If s is a list, each part is quoted then return, joined by slashes.
+
+       Returns unicode.
     """
-    return urllib.quote(s.encode('UTF-8')).decode('UTF-8')
+    if type(s) in (list, tuple):
+        u8parts = (part.encode('UTF-8') for part in s)
+        return u'/'.join(urllib.quote(p, safe='').decode('UTF-8')
+                         for p in u8parts)
+    else:
+        return urllib.quote(s.encode('UTF-8')).decode('UTF-8')
     
 
 def quote_u_8(s):
     """Quote a unicode string s using %-encoding.
+
+       If s is a list, each part is quoted then return, joined by slashes.
+
        Returns UTF-8.
     """
-    return urllib.quote(s.encode('UTF-8')).decode('UTF-8')
+    if type(s) in (list, tuple):
+        u8parts = (part.encode('UTF-8') for part in s)
+        return '/'.join(urllib.quote(p, safe='') for p in u8parts)
+                        
+    else:
+        return urllib.quote(s.encode('UTF-8'))
 
 
 def urlencode_hash_u_8(hash):
@@ -214,7 +259,10 @@ class Credentials:
                 filename = get_credentials_file(username=username)
             if os.path.exists(filename):
                 try:
-                    f = codecs.open(filename, 'UTF-8')
+                    if os.name == 'posix':
+                        f = codecs.open(filename, 'UTF-8')
+                    else:
+                        f = open(filename)
                     lines = f.readlines()
                     self.username = lines[0].strip().decode('UTF-8')
                     self.password = lines[1].strip().decode('UTF-8')
@@ -234,8 +282,9 @@ class Credentials:
                     raise ProblemReadingCredentialsFileError(u'Failed to read'
                             ' credentials from %s.' % toStr(filename))
             else:
-                raise CredentialsFileNotFoundError(u'Couldn\'t find or '
-                            'read credentials from %s.' % toStr(filename))
+                raise CredentialsFileNotFoundError(u'\nCouldn\'t find or '
+                          'read credentials from the expected location:\n%s'
+                           % toStr(filename))
 
         self.id = id
 
@@ -291,7 +340,6 @@ class FluidDB:
                                        format_param(kw[k])) for k in kw)
 
             url = '%s?%s' % (url, kwds)
-            
         return url.decode('UTF-8')
 
     def set_connection_from_global(self):
@@ -328,26 +376,27 @@ class FluidDB:
         url = self._get_url(self.host, path, hash, kw)
 
         if self.debug:
-            print(u'\nmethod: %r\nurl: %r\nbody: %s\nheaders:' %
+            Print(u'\nmethod: %r\nurl: %r\nbody: %s\nheaders:' %
                    (method, url, body))
             for k in headers:
                 if not k == u'Authorization':
-                    print u'  %s=%s' % (k, headers[k])
+                    Print(u'  %s=%s' % (k, headers[k]))
+        body8 = body.encode('UTF-8') if type(body) == unicode else body
 
         http = _get_http(self.timeout)
-        response, content = http.request(url, method, body, headers)
+        response, content = http.request(url, method, body8, headers)
         status = response.status
         if response[u'content-type'].startswith(u'application/json'):
             result = json.loads(content)
         else:
             result = content
         if self.debug:
-            print u'status: %d; content: %s' % (status, toStr(result))
+            Print(u'status: %d; content: %s' % (status, toStr(result)))
             if status >= 400:
                 for header in response:
                     if header.lower().startswith(u'x-fluiddb-'):
-                        print u'\t%s=%s' % (header.decode('UTF-8'),
-                                            response[header].decode('UTF-8'))
+                        Print(u'\t%s=%s' % (header.decode('UTF-8'),
+                                            response[header].decode('UTF-8')))
 
         return status, result
 
@@ -356,7 +405,7 @@ class FluidDB:
         url = self._get_url(self.host, path, hash=None, kw=None)
         http = _get_http(self.timeout)
         if self.debug:
-            print u'\nShow URL:', url
+            Print(u'\nShow URL: %s' % url)
         response, content = http.request(url, u'GET', None, headers)
         content_type = response[u'content-type']
         if content_type == PRIMITIVE_CONTENT_TYPE:
@@ -375,8 +424,8 @@ class FluidDB:
         url = self._get_url(self.host, path, hash=None, kw=None)
         http = _get_http(self.timeout)
         if self.debug:
-            print u'\nTag URL:', url
-            print u'Value:', value
+            Print(u'\nTag URL: %s' % url)
+            Print(u'Value: %s' % value)
         response, content = http.request(url, u'PUT', value.encode('UTF-8'),
                                          headers)
         return response.status, content
@@ -432,14 +481,13 @@ class FluidDB:
         containingNS = u'/namespaces/%s' % parent
         subNS = parts[-1]
         body = json.dumps({u'name': subNS,
-                           u'description': description})
+                           u'description': description or u''})
         status, result = self.call(u'POST', containingNS, body)
         if status == STATUS.CREATED:
             id = result[u'id']
             if verbose:
-                print u'Created namespace /%s/%s with ID %s' % (parent,
-                                                                subNS, id)
-#            return self.encode(id)
+                Print(u'Created namespace /%s/%s with ID %s' % (parent,
+                                                                subNS, id))
             return id
         elif status == STATUS.NOT_FOUND:    # parent namespace doesn't exist
             if not createParentIfNeeded:
@@ -454,8 +502,8 @@ class FluidDB:
                                            u'/%s not writable' % (user, user))
         else:
             if verbose:
-                print u'Failed to create namespace %s (%d)' % (fullPath,
-                                                                status)
+                Print(u'Failed to create namespace %s (%d)' % (fullPath,
+                                                                status))
             return status
 
     def delete_namespace(self, path, recurse=False, force=False,
@@ -474,10 +522,10 @@ class FluidDB:
         status, result = self.call('DELETE', fullPath)
         if verbose:
             if status == STATUS.NO_CONTENT:
-                print u'Removed namespace %s' % absPath
+                Print(u'Removed namespace %s' % absPath)
             else:
-                print u'Failed to remove namespace %s (%d)' % (absPath, status)
-        return status
+                Print(u'Failed to remove namespace %s (%d)' % (absPath, status))
+        return 0 if status == STATUS.NO_CONTENT else status
 
     def describe_namespace(self, path):
         """Returns an object describing the namespace specified by the path.
@@ -498,7 +546,8 @@ class FluidDB:
                                    returnTags=True, returnNamespaces=True)
         return O(result) if status == STATUS.OK else status
 
-    def create_abstract_tag(self, tag, description=None, indexed=True):
+    def create_abstract_tag(self, tag, description=None, indexed=True,
+                            inPref=False):
         """Creates an (abstract) tag with the name (full path) given.
            The tag is not applied to any object.
            If the tag's name (tag) contains slashes, namespaces are created
@@ -509,7 +558,8 @@ class FluidDB:
            Returns (O) object corresponding to the tag if successful,
            otherwise an integer error code.
         """
-        (user, subnamespace, tagname) = self.tag_path_split(tag)
+        absTag = self.abs_tag_path(tag, inPref=inPref)
+        (user, subnamespace, tagname) = self.tag_path_split(absTag)
         if subnamespace:
             fullnamespace = u'/tags/%s/%s' % (user, subnamespace)
         else:
@@ -540,70 +590,93 @@ class FluidDB:
         (status, o) = self.call('DELETE', fullTag)
         return 0 if status == STATUS.NO_CONTENT else status
 
-    def tag_object_by_id(self, id, tag, value=None, value_type=None,
-                         createAbstractTagIfNeeded=True,
-                         inPref=False):
+    def path_parts(self, byAbout, spec, tag=None, inPref=False):
+        path = u'about' if byAbout else u'objects'
+        base = [u'', path, spec]
+        if tag:
+            return base + self.abs_tag_path(tag, inPref=inPref).split(u'/')[1:]
+        else:
+            return base
+
+    def tag_object(self, spec, tag, byAbout, value=None, value_type=None,
+                   createAbstractTagIfNeeded=True, inPref=False):
+                         
         """Tags the object with the given id with the tag
            given, and the value given, if present.
            If the (abstract) tag with corresponding to the
            tag given doesn't exist, it is created unless
            createAbstractTagIfNeeded is set to False.
         """
-        fullTag = self.abs_tag_path(tag, inPref=inPref)
-        objTag = u'/objects/%s%s' % (id, fullTag)
-
-        (status, o) = self._set_tag_value(objTag, value, value_type)
+        objTagParts = self.path_parts(byAbout, spec, tag, inPref)
+        (status, o) = self._set_tag_value(objTagParts, value, value_type)
         if status == STATUS.NOT_FOUND and createAbstractTagIfNeeded:
-            o = self.create_abstract_tag(tag)
+            o = self.create_abstract_tag(tag, inPref=inPref)
             if type(o) == types.IntType:       # error code
                 return o
             else:
-                return self.tag_object_by_id(id, tag, value, value_type, False)
+                return self.tag_object(spec, tag, byAbout, value, value_type,
+                                       False, inPref=inPref)
         else:
             return 0 if status == STATUS.NO_CONTENT else status
 
-    tag_object_by_about = by_about(tag_object_by_id)
+    def tag_object_by_id(self, id, tag, value=None, value_type=None,
+                         createAbstractTagIfNeeded=True, inPref=False):
+        return self.tag_object(id, tag, False, value, value_type,
+                               createAbstractTagIfNeeded, inPref)
 
-    def untag_object_by_id(self, id, tag, missingConstitutesSuccess=True,
-                           inPref=False):
-        """Removes the tag from the object with id if present.
+    def tag_object_by_about(self, about, tag, value=None, value_type=None,
+                            createAbstractTagIfNeeded=True, inPref=False):
+        return self.tag_object(about, tag, True, value, value_type,
+                               createAbstractTagIfNeeded, inPref)
+
+    def untag_object(self, spec, tag, byAbout, missingConstitutesSuccess=True,
+                     inPref=False):
+        """Removes the tag from the object f present.
            If the tag, or the object, doesn't exist,
            the default is that this is considered successful,
            but missingConstitutesSuccess can be set to False
            to override this behaviour.
 
+           spec is the id or about tag for the object, and with
+           with byAbout being true if it is an about tag.
+
            Returns 0 for success, non-zero error code otherwise.
         """
-        fullTag = self.abs_tag_path(tag, inPref=inPref)
-        objTag = u'/objects/%s%s' % (id, fullTag)
-        (status, o) = self.call('DELETE', objTag)
+        objTagParts = self.path_parts(byAbout, spec, tag, inPref)
+        (status, o) = self.call('DELETE', objTagParts)
         ok = (status == STATUS.NO_CONTENT
-                or status == STATUS.NOT_FOUND and missingConstitutesSuccess)
+              or status == STATUS.NOT_FOUND and missingConstitutesSuccess)
         return 0 if ok else status
 
-    untag_object_by_about = by_about(untag_object_by_id)
+    def untag_object_by_id(self, id, tag, missingConstitutesSuccess=True,
+                           inPref=False):
+        return self.untag_object(id, tag, False, True, inPref)
 
-    def get_tag_value_by_id(self, id, tag, inPref=False):
+    def untag_object_by_about(self, about, tag, missingConstitutesSuccess=True,
+                              inPref=False):
+        return self.untag_object(about, tag, True, True, inPref)
+
+
+    def get_tag_value(self, spec, tag, byAbout, inPref=False):
         """Gets the value of a tag on an object identified by the
-           object's ID.
+           object's ID or about value..
+
+           spec is the id or about tag for the object, and with
+           with byAbout being true if it is an about tag.
 
            Returns  returns a 2-tuple, in which the first component
            is the status, and the second is either the tag value,
            if the return stats is STATUS.OK, or None otherwise.
         """
-        fullTag = self.abs_tag_path(tag, inPref=inPref)
-        objTag = u'/objects/%s%s' % (id, fullTag)
-        status, (value, value_type) = self._get_tag_value(objTag)
-        if status == STATUS.OK:
-            if value_type is None:
-                # A primitive Python value.
-                return status, value
-            else:
-                raise status(value, value_type)
-        else:
-            return status, None
+        objTagParts = self.path_parts(byAbout, spec, tag, inPref)
+        status, (value, value_type) = self._get_tag_value(objTagParts)
+        return status, (value if status == STATUS.OK else None)
 
-    get_tag_value_by_about = by_about(get_tag_value_by_id)
+    def get_tag_value_by_id(self, id, tag, inPref=False):
+        return self.get_tag_value(id, tag, False, inPref)
+    
+    def get_tag_value_by_about(self, about, tag, inPref=False):
+        return self.get_tag_value(about, tag, True, inPref)
 
     def get_tag_values_by_id(self, id, tags):
         return [self.get_tag_value_by_id(id, tag) for tag in tags]
@@ -611,20 +684,24 @@ class FluidDB:
     def get_tag_values_by_about(self, about, tags):
         return [self.get_tag_value_by_about(about, tag) for tag in tags]
 
-    def get_object_tags_by_id(self, id):
+    def get_object_tags(self, spec, byAbout):
         """Gets the tags on an tag identified by the object's ID.
 
            Returns list of tags.
         """
-        obj = u'/objects/%s' % id
-        status, (value, value_type) = self._get_tag_value(obj)
+        objParts = self.path_parts(byAbout, spec)
+        status, (value, value_type) = self._get_tag_value(objParts)
         if status == STATUS.OK:
             result = json.loads(value)
             return result[u'tagPaths']
         else:
             raise ObjectNotFoundError(u'Couldn\'t find object %s' % obj)
 
-    get_object_tags_by_about = by_about(get_tag_value_by_id)
+    def get_object_tags_by_id(self, id):
+        return self.get_object_tags(id, False)
+
+    def get_object_tags_by_about(self, about):
+        return self.get_object_tags(about, True)
 
     def query(self, query):
         """Runs the query to get the IDs of objects satisfying the query.
@@ -769,11 +846,8 @@ def get_credentials_file(unixFile=None, windowsFile=None, username=None):
                 else UNIX_CREDENTIALS_FILE)
         return os.path.join(homeDir, file)
     elif os.name:
-        from win32com.shell import shellcon, shell
-        homeDir = shell.SHGetFolderPath(0, shellcon.CSIDL_APPDATA, 0, 0)
-        file = ((WINDOWS_USER_CREDENTIALS_FILE % username) if username
-                else WINDOWS_CREDENTIALS_FILE)
-        return os.path.join(homeDir, file)
+        e = os.environ
+        return e[CRED_FILE_VAR] if CRED_FILE_VAR in e else WIN_CRED_FILE
     else:
         return None
 
@@ -812,7 +886,7 @@ def choose_host():
     if u'options' in globals():
         host = options.hostname
         if options.verbose:
-            print u"Chosen %s as host" % host
+            Print(u"Chosen %s as host" % host)
         return host
     else:
         return FLUIDDB_PATH
@@ -829,7 +903,7 @@ def choose_http_timeout():
 #
 # VALUES API:
 #
-# Note: these calls are different from the rest of fdb.py (at present)
+# Note: these calls are different from the rest of fish.py (at present)
 # in that (1) they used full Fluidinfo paths with no leading slash,
 # and (2) they use unicode throughout (3) tags must exist before being used.
 # Things will be made more consistent over time.
@@ -848,6 +922,8 @@ def format_val(s):
             return u'"%s"' % s
     elif type(s) == bool:
         return unicode(s).lower()
+    elif s is None:
+        return u'null'
     else:
         return unicode(s)
 
@@ -897,8 +973,8 @@ def tag_by_query(db, query, tagsToSet):
 
     sets an njr/rated tag to True for every object having an njr/rating.
 
-    NOTE: Unlike in much of the rest of fdb.py, tags need to be full paths
-    without a leading slash.   (This will change.)
+    NOTE: Unlike in much of the rest of fish.py, tags need to be full paths
+    without a leading slash.
 
     NOTE: Tags must exist before being used.   (This will change.)
 
@@ -913,12 +989,44 @@ def tag_by_query(db, query, tagsToSet):
     assert_status(v, STATUS.NO_CONTENT)
 
 
+def untag_by_query(db, query, tags):
+    """
+    Deletes one or more tags on objects that match a query.
+
+    db         is an instantiated FluidDB instance.
+
+    query      is a unicode string representing a valid Fluidinfo query.
+               e.g. 'has njr/rating'
+
+    tags       a list tag names to delete.
+
+    Example:
+
+        db = FluidDB()
+        untag_by_query(db, u'has njr/rating', ['njr/rating'])
+
+    removes an njr/rating tag from every object that has one.
+
+    NOTE: Unlike in much of the rest of fish.py, tags need to be full paths
+    without a leading slash.   (This will change.)
+
+    NOTE: All strings must be (and will be) unicode.
+
+
+    """
+    if not tags:
+        return
+    kw = {u'tag': tags, u'query': query}
+    (v, r) = db.call(u'DELETE', u'/values', None, kw)
+    assert_status(v, STATUS.NO_CONTENT)
+
+
 def assert_status(v, s):
     if not v == s:
         raise BadStatusError(u'Bad status %d (expected %d)' % (v, s))
 
 
-def get_values(db, query, tags):
+def get_values_by_query(db, query, tags):
     """
     Gets the values of a set of tags satisfying a given query.
     Returns them as a dictionary (hash) keyed on object ID.
@@ -938,8 +1046,8 @@ def get_values(db, query, tags):
         db = FluidDB()
         tag_by_query(db, u'has njr/rating < 3', ('fluiddb/about',))
 
-    NOTE: Unlike in much of the rest of fdb.py, tags need to be full paths
-    without a leading slash.   (This will change.)
+    NOTE: Unlike in much of the rest of fish.py, tags need to be full paths
+    without a leading slash.
 
     NOTE: All strings must be (and will be) unicode.
 
@@ -953,7 +1061,8 @@ def get_values(db, query, tags):
         o = O()
         o.__dict__[u'id'] = id
         for tag in tags:
-            o.__dict__[tag] = H[id][tag][u'value']
+            if tag in H[id]:
+                o.__dict__[tag] = H[id][tag][u'value']
         results.append(o)
     return results      # hash of objects, keyed on ID, with attributes
                         # corresponding to tags, inc id.
@@ -974,4 +1083,12 @@ def version():
 
 
 def uprint(s):
-    print s.encode('UTF-8') if type(s) == unicode else s
+    Print(s.encode('UTF-8') if type(s) == unicode else s)
+
+out = SaveOut()
+def Print(s):
+    if hasattr(Print, 'save'):
+        out.write(s)
+    else:
+        print s
+

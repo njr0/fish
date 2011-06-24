@@ -34,9 +34,12 @@
 # rating                                           --- the short tag name
 #
 
-from testfdb import *
+from testfish import *
 
-if __name__ == '__main__':
+sys.stdout = UnicodeOut(sys.stdout)
+sys.stderr = UnicodeOut(sys.stderr)
+
+def go():
     action, args, options, parser = parse_args()
 
     if action.startswith('test'):
@@ -53,6 +56,10 @@ if __name__ == '__main__':
         for c in cases.values():
             s = unittest.TestLoader().loadTestsFromTestCase(c)
             suite.addTest(s)
-        unittest.TextTestRunner(verbosity=1).run(suite)
+        v = 2 if options.hightestverbosity else 1
+        unittest.TextTestRunner(verbosity=v).run(suite)
     else:
         execute_command_line(action, args, options, parser)
+
+if __name__ == '__main__':
+    go()

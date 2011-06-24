@@ -1,0 +1,5 @@
+
+version
+*******
+
+Reports the version of fish running; ``--version`` may also be used.

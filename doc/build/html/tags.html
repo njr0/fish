@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>tags &mdash; fish v3.01 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '3.01',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="fish v3.01 documentation" href="index.html" />
+    <link rel="next" title="count" href="count.html" />
+    <link rel="prev" title="show" href="show.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="count.html" title="count"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="show.html" title="show"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">fish v3.01 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="tags">
+<h1>tags<a class="headerlink" href="#tags" title="Permalink to this headline">¶</a></h1>
+<p>Show the list of tags (and their values) present on an objects</p>
+<p><strong>FORM</strong></p>
+<div class="highlight-python"><pre>[fish] tag [flags] &lt;object specifier&gt;</pre>
+</div>
+<p><strong>EXAMPLES</strong></p>
+<div class="highlight-python"><pre>$ fish tags -a "Eiffel Tower" njr/rating njr/seen ntoll/seen
+Object with about="Eiffel Tower":
+/objects/93bd1999-0998-49cc-8004-af457ce34ce4
+  njr/seen
+  fluiddb/about = "Eiffel Tower"
+  njr/njr/seen
+  njr/rating = 7
+  njr/index/about
+  njr/location = "Paris"</pre>
+</div>
+<p>Alternative specifications:</p>
+<div class="highlight-python"><pre>tags -a "Eiffel Tower"
+tags -i 93bd1999-0998-49cc-8004-af457ce34ce4
+tags -q 'fluiddb/about matches "Eiffel Tower"'</pre>
+</div>
+<p><a href="#id1"><span class="problematic" id="id2">**</span></a>NOTE FOR WINDOWS USERS* Working from a Windows command line, single quotes
+do not work as above.   Instead you need to use double quotes and &#8220;stutter&#8221;
+quotes inside quotes.   So the last example becomes:</p>
+<div class="highlight-python"><pre>tags -q "fluiddb/about matches """Eiffel Tower"""</pre>
+</div>
+<p>All of these commands will show the names and values of all the tags
+(for which the user has read permission)
+from the object with about tag &#8220;Eiffel Tower&#8221;
+and ID <tt class="docutils literal"><span class="pre">93bd1999-0998-49cc-8004-af457ce34ce4</span></tt>;
+The last one may also show other objects since the query</p>
+<div class="highlight-python"><pre>fluiddb/about matches "Eiffel Tower"</pre>
+</div>
+<p>is search-engine-style string match that will match any about tag
+containing the words <tt class="docutils literal"><span class="pre">Eiffel</span></tt> and <tt class="docutils literal"><span class="pre">Tower</span></tt>, ignoring case, other words
+and punctuation.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/fish-doc-logo.png" alt="Logo"/>
+            </a></p>
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="show.html"
+                                  title="previous chapter">show</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="count.html"
+                                  title="next chapter">count</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/tags.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="count.html" title="count"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="show.html" title="show"
+             >previous</a> |</li>
+        <li><a href="index.html">fish v3.01 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2011, Nicholas J. Radcliffe.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.2.
+    </div>
+  </body>
+</html>

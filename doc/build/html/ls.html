@@ -1,0 +1,418 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ls &mdash; fish v3.01 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '3.01',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="fish v3.01 documentation" href="index.html" />
+    <link rel="next" title="perms" href="perms.html" />
+    <link rel="prev" title="count" href="count.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="perms.html" title="perms"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="count.html" title="count"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">fish v3.01 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="ls">
+<span id="fishls"></span><h1>ls<a class="headerlink" href="#ls" title="Permalink to this headline">¶</a></h1>
+<p>The <tt class="docutils literal"><span class="pre">ls</span></tt> command is used to view a sorted list of tags or namespaces,
+potentially with additional information.</p>
+<p><strong>FORM</strong></p>
+<div class="highlight-python"><pre>[fish] ls [flags] [&lt;namespace&gt;|&lt;tag&gt;]</pre>
+</div>
+<p><strong>FLAGS</strong></p>
+<blockquote>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">-l</span></tt> long listing (one per line; showing permissions)</li>
+<li><tt class="docutils literal"><span class="pre">-g</span></tt> group listing (one per line; showing exception groups and permissions)</li>
+<li><tt class="docutils literal"><span class="pre">-L</span></tt> longer listing (show full Fluidinfo-style permissions listing)</li>
+<li><tt class="docutils literal"><span class="pre">-n</span></tt> list the namesace as an object, rather than the contents of the namespace</li>
+<li><tt class="docutils literal"><span class="pre">-d</span></tt> same as <tt class="docutils literal"><span class="pre">-n</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">-R</span></tt> recursive (show contents of all subnamespaces, recursively)</li>
+</ul>
+</blockquote>
+<p>as well as the standard flags like <tt class="docutils literal"><span class="pre">-s</span></tt> etc.</p>
+<p><strong>EXAMPLES</strong></p>
+<blockquote>
+<ol class="arabic">
+<li><p class="first">List the tags in the user&#8217;s namespace:</p>
+<p>(Here, we assume we are authenticated as user <tt class="docutils literal"><span class="pre">miro</span></tt>):</p>
+<div class="highlight-python"><pre>$ fish ls
+bestsellers-1998-2010/    first_field_id            n_records
+bestsellers1998to2010/    first_record_id           next-field-about
+books/                    forename                  next-field-id
+class                     has-about-links           next_field_about
+consistent                has-field-numbers         next_field_id
+description               has-id-links              planets/
+elements/                 has-record-numbers        rating
+field-name                has_about_links           small/
+field-number              has_field_numbers         surname
+field_number              has_id_links              table-name
+first-field-about         has_record_numbers        testconvtag
+first-field-id            message                   testrating
+first-record-about        n-fields                  testtable/
+first-record-id           n-records                 type
+first_field_about         n_fields                  unit</pre>
+</div>
+<p>Note that namespaces are shown with a trailing <tt class="docutils literal"><span class="pre">/</span></tt>; for users familiar
+with the unix <tt class="docutils literal"><span class="pre">ls</span></tt> command, this is modelled on <tt class="docutils literal"><span class="pre">ls</span> <span class="pre">-F</span></tt>.</p>
+</li>
+<li><p class="first">List the tags and subnamespaces in a given namespace:</p>
+<div class="highlight-python"><pre>$ fish ls miro/planets
+Atmosphere                Mass                      OrbitalRadius
+Category                  Moons                     RotationPeriod
+EquatorialDiameter        Name                      db-next-record-about
+HasRings                  OrbitalEccentricity       db-record-number
+Inclination               OrbitalPeriod</pre>
+</div>
+<p>Sort order is case-sensitive, e.g. (in English) all lower-case letters
+follow upper-case letters.</p>
+</li>
+<li><p class="first">List a single tag (report presence or absence of that tag).</p>
+<div class="highlight-python"><pre>$ fish ls miro/planets/Mass
+miro/planets/Mass
+
+$ fish ls -F miro/planets/NoMass
+miro/planets/NoMass not found</pre>
+</div>
+</li>
+<li><p class="first">Long listing for tag (<tt class="docutils literal"><span class="pre">njr/rating</span></tt>), including permissions summary:</p>
+<div class="highlight-python"><pre>$ fish ls -l njr/rating
+trwcr--r--   rating</pre>
+</div>
+<p>Here:</p>
+<blockquote>
+<ul>
+<li><p class="first">the first <tt class="docutils literal"><span class="pre">t</span></tt> indicates that this is a tag rather
+than a namespace</p>
+</li>
+<li><p class="first">the next three characters indicate that the owner (<tt class="docutils literal"><span class="pre">njr</span></tt>)
+has <tt class="docutils literal"><span class="pre">read</span></tt>, <tt class="docutils literal"><span class="pre">write</span></tt> and <tt class="docutils literal"><span class="pre">control</span></tt> permission on the tag,</p>
+</li>
+<li><p class="first">the <em>final</em> three characters indicate that everyone (world)
+has read permission but not write or control permission
+on the tag.</p>
+</li>
+<li><p class="first">the &#8220;middle&#8221; three characters (<tt class="docutils literal"><span class="pre">r--</span></tt>) show group
+permissions.  Their meaning depends on the world permissions.
+Because the world has read permission the only thing that an
+exception list can do is to remove it; so in this case, the
+<tt class="docutils literal"><span class="pre">r</span></tt> in the middle <tt class="docutils literal"><span class="pre">r--</span></tt> block indicates that no one is losing
+read permission as a result of being on an exception list.  If
+there were an exception list that excluded some people, then
+the group read permission would be shown as <tt class="docutils literal"><span class="pre">-</span></tt>.</p>
+<p>If the world did not have read permission, an <tt class="docutils literal"><span class="pre">r</span></tt> would
+mean that at least one person has read permission
+in addition to the owner; and a <tt class="docutils literal"><span class="pre">-</span></tt> would indicate
+that no one except the owner had read permission.</p>
+</li>
+<li><p class="first">the final thing to know about this way of describing permissions
+is that Fluidinfo actually has more than one kind of write
+permission for both tags and namespaces, and more than one
+kind of control permission for tags.
+Normally, all the write permissions are set consistently,
+as are the two control permissions for tags.
+If this is not the case, the permission will be shown as
+a <tt class="docutils literal"><span class="pre">/</span></tt>.</p>
+</li>
+<li><p class="first">Use the <tt class="docutils literal"><span class="pre">-g</span></tt> flag to find out who is in the group/exception list,
+or <tt class="docutils literal"><span class="pre">-L</span></tt> for the even longer, full Fluidinfo description of
+the permissions.</p>
+</li>
+</ul>
+</blockquote>
+</li>
+<li><p class="first">Group long listing for tag (<tt class="docutils literal"><span class="pre">njr/rating</span></tt>), including permissions
+summary.</p>
+<p>Let&#8217;s start with a tag with default permissions.</p>
+<div class="highlight-python"><pre>$ fish ls -g private-tag
+trwcr--r--   (world)   njr/private-tag</pre>
+</div>
+<p>When no one has been given any unusual permissions, in effect
+there is no group; or to say it another way, group permissions
+can be considered to be the same as world permissions.</p>
+<p>Now let&#8217;s grant read and write access to <tt class="docutils literal"><span class="pre">jkakar</span></tt> and <tt class="docutils literal"><span class="pre">ntoll</span></tt></p>
+<div class="highlight-python"><pre>$ fish perms group jkakar+ntoll njr/private-tag
+
+$ fish ls -g private-tag
+trwcrw----   ntoll+jkakar   njr/private-tag</pre>
+</div>
+<p>Group permission is now <tt class="docutils literal"><span class="pre">rw-</span></tt>, and the group is <tt class="docutils literal"><span class="pre">ntoll+jkakar</span></tt>.
+(The exception list also includes <tt class="docutils literal"><span class="pre">njr</span></tt>, of course.)</p>
+<p>Now let&#8217;s set different groups for read and write.
+We&#8217;ll let <tt class="docutils literal"><span class="pre">ntoll</span></tt> have write permission too.
+To do this we update the write group:</p>
+<div class="highlight-python"><pre>$ fish perms group-write ntoll private-tag
+
+$ fish ls -g njr/private-tag
+trwcrw----   r:ntoll+jkakar  w:ntoll   njr/private-tag</pre>
+</div>
+<p>When the groups are different, they are shown separately,
+with <tt class="docutils literal"><span class="pre">r:</span></tt> prefixing the read group and <tt class="docutils literal"><span class="pre">w;</span></tt> prefixing the
+write group.</p>
+</li>
+<li><p class="first">Longer listing for tag (<tt class="docutils literal"><span class="pre">njr/rating</span></tt>), including Fluidinfo-style
+permissions summary:</p>
+<div class="highlight-python"><pre>$ fish ls -L njr/rating
+
+njr/rating:
+
+ABSTRACT TAG (/tags)
+  Write
+    update (metadata):  policy: closed; exceptions [njr]
+    delete (delete):    policy: closed; exceptions [njr]
+  Control
+    control (control):  policy: closed; exceptions [njr]
+
+TAG (/tag-values)
+  Read
+    read (read):        policy: open; exceptions []
+  Write
+    create (tag):       policy: closed; exceptions [njr]
+    delete (untag):     policy: closed; exceptions [njr]
+  Control
+    control (control):  policy: closed; exceptions [njr]</pre>
+</div>
+</li>
+<li><p class="first">Long listing for contents of namespace (<tt class="docutils literal"><span class="pre">njr/index</span></tt>):</p>
+<div class="highlight-python"><pre>$ fish ls -l njr/index
+trwcr--r--   about
+trwcr--r--   class</pre>
+</div>
+</li>
+<li><p class="first">Group long listing for namespace (<tt class="docutils literal"><span class="pre">njr/private</span></tt>), including permissions
+summary.</p>
+<p>The <tt class="docutils literal"><span class="pre">-d</span></tt> tells <tt class="docutils literal"><span class="pre">ls</span></tt> that what you want is not the <em>content</em>
+of the namespace, but the permissions on the namespace itself.
+(<tt class="docutils literal"><span class="pre">d</span></tt> stands for directory, which is essentially what a
+namespace is.  You can use <tt class="docutils literal"><span class="pre">-n</span></tt> if you prefer.)</p>
+<p>The result is very similar to that for tags.   We&#8217;ll just look at
+a namespace <tt class="docutils literal"><span class="pre">fi</span></tt></p>
+<div class="highlight-python"><pre>$ fish ls -gd njr/fi
+nrwcrw-r--   r:(world)  w:terrycojones+paparent   njr/fi/</pre>
+</div>
+<p>This is showning that the namespace njr/fi has standard world read
+permissions (with no special group) but that <tt class="docutils literal"><span class="pre">terrycojones</span></tt>
+and <tt class="docutils literal"><span class="pre">paparent</span></tt> have write permission for the namespace.</p>
+</li>
+<li><p class="first">Long listing for a namespace itself (<tt class="docutils literal"><span class="pre">njr/index</span></tt>) (as opposed to
+its contents),  including Fluidinfo-style permissions summary:</p>
+<div class="highlight-python"><pre>$ fish ls -ln njr/index
+nrwcr--r--   index
+
+$ fish ls -ld njr/index
+nrwcr--r--   index</pre>
+</div>
+<p>The first <tt class="docutils literal"><span class="pre">n</span></tt> indicates that <tt class="docutils literal"><span class="pre">njr/index</span></tt> is a namespace rather than
+a tag.   This option may be specified using <tt class="docutils literal"><span class="pre">-n</span></tt> (for namespace)
+or <tt class="docutils literal"><span class="pre">-d</span></tt> (for directory) since the latter will probably be more natural
+for users familiar with unix-style <tt class="docutils literal"><span class="pre">ls</span></tt>.</p>
+<p>See the section on permissions for an explanation of the permissions
+string.</p>
+</li>
+<li><p class="first">Longer listing for a namespace itself (<tt class="docutils literal"><span class="pre">njr/index</span></tt>) (as opposed to
+its contents):</p>
+<div class="highlight-python"><pre>$ fish ls -Ld njr/index
+
+NAMESPACE (/namespaces)
+  Read
+    list (read):        policy: open; exceptions []
+  Write
+    create (create):    policy: closed; exceptions [njr]
+    delete (delete):    policy: closed; exceptions [njr]
+  Control
+    control (control):  policy: closed; exceptions [njr]</pre>
+</div>
+</li>
+<li><p class="first">Long listing including group details (for tag <tt class="docutils literal"><span class="pre">njr/rating</span></tt>)</p>
+<div class="highlight-python"><pre>$ fish ls -ln njr/fi
+nrwcr-----   ceronman+esteve+jkakar+ntoll+terrycojones fi</pre>
+</div>
+<p>See the section on permissions for an explanation of the permissions
+string.   In this case</p>
+<blockquote>
+<ul class="simple">
+<li>the first <tt class="docutils literal"><span class="pre">n</span></tt> indicates that this is a namespace</li>
+<li>the next three characters indicate that the owner (<tt class="docutils literal"><span class="pre">njr</span></tt>)
+has read, write and control permission on the tag,</li>
+<li>the next three characters indicate that members of the
+exception group exceptions have read (&#8220;list&#8221;) permission
+on the tag (but not write or control permissions).</li>
+<li>the final three characters indicate that Fluidinfo users
+other than the owner and the people in the exception group
+do not have any permissions to read, write or control the namespace.</li>
+</ul>
+</blockquote>
+<p>The list of users separated by plus signs is the list of
+users on the exceptions list.</p>
+<p>The next example shows Fluidinfo&#8217;s native representation of the
+permissions for this namespace.</p>
+</li>
+<li><p class="first">Longer listing for namspace (<tt class="docutils literal"><span class="pre">njr/fi</span></tt>), including Fluidinfo-style
+permissions summary:</p>
+<div class="highlight-python"><pre>$ fish ls -Ln njr/fi
+
+Permissions for namespace njr/fi:
+
+READ:
+  list (read):        policy: closed; exceptions: [ceronman, esteve, jkakar, njr, ntoll, terrycojones]
+
+WRITE:
+  create (create):    policy: closed; exceptions: [njr]
+  update (metadata):  policy: closed; exceptions: [njr]
+  delete (delete):    policy: closed; exceptions: [njr]
+
+CONTROL:
+  control (control):  policy: closed; exceptions: [njr]</pre>
+</div>
+</li>
+<li><p class="first">List contents of all subnamespaces (recursive descent):</p>
+<div class="highlight-python"><pre>ls -R miro
+miro:
+bestsellers-1998-2010/    first_field_id            n_records
+bestsellers1998to2010/    first_record_id           next-field-about
+books/                    forename                  next-field-id
+class                     has-about-links           next_field_about
+consistent                has-field-numbers         next_field_id
+description               has-id-links              planets/
+elements/                 has-record-numbers        rating
+field-name                has_about_links           small/
+field-number              has_field_numbers         surname
+field_number              has_id_links              table-name
+first-field-about         has_record_numbers        testconvtag
+first-field-id            message                   testrating
+first-record-about        n-fields                  testtable/
+first-record-id           n-records                 type
+first_field_about         n_fields                  unit
+
+miro/bestsellers-1998-2010:
+ASP                       db-next-record-about      rank
+RRP                       db-record-number          title
+author                    imprint                   value
+binding                   productclass              volume
+date                      publisher
+
+miro/bestsellers1998to2010:
+
+
+miro/books:
+author                    guardian-1000             year
+db-next-record-about      surname
+forename                  title
+
+miro/elements:
+AtomicWeight              Description               Period
+BoilingPointC             Etymology                 RelativeAtomicMass
+BoilingPointF             Group                     Symbol
+ChemicalSeries            MeltingPointC             Z
+Colour                    MeltingPointKelvin        db-next-record-about
+Density                   Name                      db-record-number
+
+miro/planets:
+Atmosphere                Mass                      OrbitalRadius
+Category                  Moons                     RotationPeriod
+EquatorialDiameter        Name                      db-next-record-about
+HasRings                  OrbitalEccentricity       db-record-number
+Inclination               OrbitalPeriod
+
+miro/small:
+db-record-number    id                  intField
+
+miro/testtable:
+db-next-record-about      db-record-number          i</pre>
+</div>
+</li>
+</ol>
+</blockquote>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/fish-doc-logo.png" alt="Logo"/>
+            </a></p>
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="count.html"
+                                  title="previous chapter">count</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="perms.html"
+                                  title="next chapter">perms</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/ls.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="perms.html" title="perms"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="count.html" title="count"
+             >previous</a> |</li>
+        <li><a href="index.html">fish v3.01 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2011, Nicholas J. Radcliffe.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.2.
+    </div>
+  </body>
+</html>

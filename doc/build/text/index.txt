@@ -1,0 +1,32 @@
+
+The fish Command Line for Fluidinfo
+***********************************
+
+**Contents**
+
+* The fish Command Line for Fluidinfo
+**Commands**
+
+* tag
+* untag
+* show
+* tags
+* count
+* ls
+* perms
+* rm
+* touch
+* mkns
+* mkdir
+* pwd
+* pwn
+* su
+* amazon
+* help
+* commands
+* version
+* test
+**Installation and Configuration**
+
+* Using Unix-Like Paths
+* Installation and Configuration

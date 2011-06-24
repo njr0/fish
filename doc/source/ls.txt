@@ -1,0 +1,348 @@
+.. _fishls:
+
+ls
+**
+
+The ``ls`` command is used to view a sorted list of tags or namespaces,
+potentially with additional information.
+
+**FORM**
+::
+
+    [fish] ls [flags] [<namespace>|<tag>]
+
+**FLAGS**
+
+  * ``-l`` long listing (one per line; showing permissions)
+  * ``-g`` group listing (one per line; showing exception groups and permissions)
+  * ``-L`` longer listing (show full Fluidinfo-style permissions listing)
+  * ``-n`` list the namesace as an object, rather than the contents of the namespace
+  * ``-d`` same as ``-n``
+  * ``-R`` recursive (show contents of all subnamespaces, recursively)
+
+as well as the standard flags like ``-s`` etc.
+
+**EXAMPLES**
+
+  #. List the tags in the user's namespace:
+
+     (Here, we assume we are authenticated as user ``miro``):
+     ::
+  
+       $ fish ls
+       bestsellers-1998-2010/    first_field_id            n_records                
+       bestsellers1998to2010/    first_record_id           next-field-about         
+       books/                    forename                  next-field-id            
+       class                     has-about-links           next_field_about         
+       consistent                has-field-numbers         next_field_id            
+       description               has-id-links              planets/                 
+       elements/                 has-record-numbers        rating                   
+       field-name                has_about_links           small/                   
+       field-number              has_field_numbers         surname                  
+       field_number              has_id_links              table-name               
+       first-field-about         has_record_numbers        testconvtag              
+       first-field-id            message                   testrating               
+       first-record-about        n-fields                  testtable/               
+       first-record-id           n-records                 type                     
+       first_field_about         n_fields                  unit
+     
+     Note that namespaces are shown with a trailing ``/``; for users familiar
+     with the unix ``ls`` command, this is modelled on ``ls -F``.
+
+  #. List the tags and subnamespaces in a given namespace:
+     ::
+     
+       $ fish ls miro/planets
+       Atmosphere                Mass                      OrbitalRadius            
+       Category                  Moons                     RotationPeriod           
+       EquatorialDiameter        Name                      db-next-record-about     
+       HasRings                  OrbitalEccentricity       db-record-number         
+       Inclination               OrbitalPeriod
+   
+     Sort order is case-sensitive, e.g. (in English) all lower-case letters
+     follow upper-case letters.
+
+  #. List a single tag (report presence or absence of that tag).
+     ::
+
+       $ fish ls miro/planets/Mass
+       miro/planets/Mass
+
+       $ fish ls -F miro/planets/NoMass
+       miro/planets/NoMass not found
+
+  #. Long listing for tag (``njr/rating``), including permissions summary:
+     ::
+    
+       $ fish ls -l njr/rating
+       trwcr--r--   rating
+    
+     Here:
+    
+      * the first ``t`` indicates that this is a tag rather
+        than a namespace
+    
+      * the next three characters indicate that the owner (``njr``)
+        has ``read``, ``write`` and ``control`` permission on the tag,
+    
+      * the *final* three characters indicate that everyone (world)
+        has read permission but not write or control permission
+        on the tag.
+
+      * the "middle" three characters (``r--``) show group
+        permissions.  Their meaning depends on the world permissions.
+        Because the world has read permission the only thing that an
+        exception list can do is to remove it; so in this case, the
+        ``r`` in the middle ``r--`` block indicates that no one is losing
+        read permission as a result of being on an exception list.  If
+        there were an exception list that excluded some people, then
+        the group read permission would be shown as ``-``.
+
+	If the world did not have read permission, an ``r`` would
+        mean that at least one person has read permission
+	in addition to the owner; and a ``-`` would indicate
+        that no one except the owner had read permission.
+
+      * the final thing to know about this way of describing permissions
+        is that Fluidinfo actually has more than one kind of write
+        permission for both tags and namespaces, and more than one
+	kind of control permission for tags.
+	Normally, all the write permissions are set consistently,
+	as are the two control permissions for tags.
+	If this is not the case, the permission will be shown as
+	a ``/``.
+
+      * Use the ``-g`` flag to find out who is in the group/exception list,
+        or ``-L`` for the even longer, full Fluidinfo description of
+	the permissions.
+
+  #. Group long listing for tag (``njr/rating``), including permissions
+     summary.
+
+     Let's start with a tag with default permissions.
+     ::
+
+        $ fish ls -g private-tag
+        trwcr--r--   (world)   njr/private-tag
+
+     When no one has been given any unusual permissions, in effect
+     there is no group; or to say it another way, group permissions
+     can be considered to be the same as world permissions.
+
+     Now let's grant read and write access to ``jkakar`` and ``ntoll``
+     ::
+
+        $ fish perms group jkakar+ntoll njr/private-tag
+
+        $ fish ls -g private-tag
+        trwcrw----   ntoll+jkakar   njr/private-tag
+
+     Group permission is now ``rw-``, and the group is ``ntoll+jkakar``.
+     (The exception list also includes ``njr``, of course.)
+
+     Now let's set different groups for read and write.
+     We'll let ``ntoll`` have write permission too.
+     To do this we update the write group:
+     ::
+
+        $ fish perms group-write ntoll private-tag
+
+        $ fish ls -g njr/private-tag
+        trwcrw----   r:ntoll+jkakar  w:ntoll   njr/private-tag
+
+     When the groups are different, they are shown separately,
+     with ``r:`` prefixing the read group and ``w;`` prefixing the
+     write group.
+    
+
+  #. Longer listing for tag (``njr/rating``), including Fluidinfo-style
+     permissions summary:
+     ::
+    
+      $ fish ls -L njr/rating
+    
+      njr/rating:
+
+      ABSTRACT TAG (/tags)
+        Write
+          update (metadata):  policy: closed; exceptions [njr]
+          delete (delete):    policy: closed; exceptions [njr]
+        Control
+          control (control):  policy: closed; exceptions [njr]
+
+      TAG (/tag-values)
+        Read
+          read (read):        policy: open; exceptions []
+        Write
+          create (tag):       policy: closed; exceptions [njr]
+          delete (untag):     policy: closed; exceptions [njr]
+        Control
+          control (control):  policy: closed; exceptions [njr]
+
+  #. Long listing for contents of namespace (``njr/index``):
+     ::
+     
+       $ fish ls -l njr/index
+       trwcr--r--   about
+       trwcr--r--   class
+     
+  #. Group long listing for namespace (``njr/private``), including permissions
+     summary.
+
+     The ``-d`` tells ``ls`` that what you want is not the *content*
+     of the namespace, but the permissions on the namespace itself.
+     (``d`` stands for directory, which is essentially what a
+     namespace is.  You can use ``-n`` if you prefer.)
+
+     The result is very similar to that for tags.   We'll just look at
+     a namespace ``fi``
+     ::
+
+        $ fish ls -gd njr/fi
+        nrwcrw-r--   r:(world)  w:terrycojones+paparent   njr/fi/
+
+     This is showning that the namespace njr/fi has standard world read
+     permissions (with no special group) but that ``terrycojones``
+     and ``paparent`` have write permission for the namespace.
+
+  #. Long listing for a namespace itself (``njr/index``) (as opposed to
+     its contents),  including Fluidinfo-style permissions summary:
+     ::     
+
+        $ fish ls -ln njr/index
+        nrwcr--r--   index
+    
+        $ fish ls -ld njr/index
+        nrwcr--r--   index
+    
+     The first ``n`` indicates that ``njr/index`` is a namespace rather than
+     a tag.   This option may be specified using ``-n`` (for namespace)
+     or ``-d`` (for directory) since the latter will probably be more natural
+     for users familiar with unix-style ``ls``.
+    
+     See the section on permissions for an explanation of the permissions
+     string.
+
+  #. Longer listing for a namespace itself (``njr/index``) (as opposed to
+     its contents):
+     ::
+
+        $ fish ls -Ld njr/index
+
+        NAMESPACE (/namespaces)
+          Read
+            list (read):        policy: open; exceptions []
+          Write
+            create (create):    policy: closed; exceptions [njr]
+            delete (delete):    policy: closed; exceptions [njr]
+          Control
+            control (control):  policy: closed; exceptions [njr]
+
+
+  #. Long listing including group details (for tag ``njr/rating``)
+     ::
+    
+       $ fish ls -ln njr/fi
+       nrwcr-----   ceronman+esteve+jkakar+ntoll+terrycojones fi
+    
+     See the section on permissions for an explanation of the permissions
+     string.   In this case
+    
+      * the first ``n`` indicates that this is a namespace
+    
+      * the next three characters indicate that the owner (``njr``)
+        has read, write and control permission on the tag,
+    
+      * the next three characters indicate that members of the
+        exception group exceptions have read ("list") permission
+        on the tag (but not write or control permissions).
+    
+      * the final three characters indicate that Fluidinfo users
+        other than the owner and the people in the exception group
+        do not have any permissions to read, write or control the namespace.
+    
+     The list of users separated by plus signs is the list of
+     users on the exceptions list.
+
+     The next example shows Fluidinfo's native representation of the
+     permissions for this namespace.
+
+  #. Longer listing for namspace (``njr/fi``), including Fluidinfo-style
+     permissions summary:
+     ::
+    
+       $ fish ls -Ln njr/fi
+    
+       Permissions for namespace njr/fi:
+    
+       READ:
+         list (read):        policy: closed; exceptions: [ceronman, esteve, jkakar, njr, ntoll, terrycojones]
+    
+       WRITE:
+         create (create):    policy: closed; exceptions: [njr]
+         update (metadata):  policy: closed; exceptions: [njr]
+         delete (delete):    policy: closed; exceptions: [njr]
+    
+       CONTROL:
+         control (control):  policy: closed; exceptions: [njr]
+
+  #. List contents of all subnamespaces (recursive descent):
+     ::
+
+       ls -R miro
+       miro:
+       bestsellers-1998-2010/    first_field_id            n_records                
+       bestsellers1998to2010/    first_record_id           next-field-about         
+       books/                    forename                  next-field-id            
+       class                     has-about-links           next_field_about         
+       consistent                has-field-numbers         next_field_id            
+       description               has-id-links              planets/                 
+       elements/                 has-record-numbers        rating                   
+       field-name                has_about_links           small/                   
+       field-number              has_field_numbers         surname                  
+       field_number              has_id_links              table-name               
+       first-field-about         has_record_numbers        testconvtag              
+       first-field-id            message                   testrating               
+       first-record-about        n-fields                  testtable/               
+       first-record-id           n-records                 type                     
+       first_field_about         n_fields                  unit                     
+
+       miro/bestsellers-1998-2010:
+       ASP                       db-next-record-about      rank                     
+       RRP                       db-record-number          title                    
+       author                    imprint                   value                    
+       binding                   productclass              volume                   
+       date                      publisher                
+
+       miro/bestsellers1998to2010:
+
+
+       miro/books:
+       author                    guardian-1000             year                     
+       db-next-record-about      surname                  
+       forename                  title                    
+
+       miro/elements:
+       AtomicWeight              Description               Period                   
+       BoilingPointC             Etymology                 RelativeAtomicMass       
+       BoilingPointF             Group                     Symbol                   
+       ChemicalSeries            MeltingPointC             Z                        
+       Colour                    MeltingPointKelvin        db-next-record-about     
+       Density                   Name                      db-record-number         
+
+       miro/planets:
+       Atmosphere                Mass                      OrbitalRadius            
+       Category                  Moons                     RotationPeriod           
+       EquatorialDiameter        Name                      db-next-record-about     
+       HasRings                  OrbitalEccentricity       db-record-number         
+       Inclination               OrbitalPeriod            
+
+       miro/small:
+       db-record-number    id                  intField           
+
+       miro/testtable:
+       db-next-record-about      db-record-number          i                        
+
+    
+
+

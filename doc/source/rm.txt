@@ -1,0 +1,63 @@
+rm
+--
+
+The ``rm`` command is used to remove (delete) tags and namespaces.
+Namespaces normally have to be empty for this to work (unless
+the ``-r`` options is specified) and tags have to be unused
+(unless the ``-f`` option is used).
+
+**FORM**
+::
+
+    [fish] rm [flags] [<namespace>|<tag>]
+
+**FLAGS**
+
+  * ``-r`` recurse (remove all tags and subnamespaces)
+  * ``-f`` force (currently, don't complain if it doesn't exist or if
+    in the case of a tag, the tag is in use.   In future, this will
+    also override permissions if necessary, where possible.)
+
+
+**EXAMPLES**
+
+  #. Remove an unused tag ``njr/unused``:
+     ::
+
+        $ rm njr/unused
+
+  #. Remove a used tag ``njr/used``, in the process removing that tag
+     from all objects to which it is attached:
+     ::
+
+	$ rm -f njr/used
+
+  #. Remove an empty namespace ``njr/empty``:
+     ::
+
+        $ rm njr/empty
+
+  #. Remove a non-empty namespace ``njr/inUse`` and all the tags and
+     namespaces under it:
+     ::
+
+        $ rm -r njr/inUse
+
+**NOTES**
+
+``-R`` may also be used for recurse.   (``-R`` and ``-r`` are interchangeable
+on all commands in ``fish``.)
+
+Strictly, following Unix's lead, you shouldn't have to force ``rm`` to
+remove a tag that is in use, just as you can remove empty files
+without a ``force`` option in Unix.  However, since a tag may be
+attached to millions of objects, it seems prudent to insist.  The
+flag ``-r`` can also be used to force the removal of a non-empty tag since
+there is also a sense in which this is a recursive remove.
+
+The ``fish rm`` command effectively takes the place of ``rmdir`` from Unix,
+as well as ``rm``.
+
+There is no ``unrm`` command: once it's gone, it's gone.
+Use the ``-r`` and ``-f`` flags carefully.
+

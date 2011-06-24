@@ -3,15 +3,51 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Documentation for the fdb Command Line
-======================================
+The fish Command Line for Fluidinfo
+===================================
 
-Contents:
+**Contents**
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    cli.txt
+
+**Commands**
+
+.. toctree::
+   :maxdepth: 1
+
+   tag.txt
+   untag.txt
+   show.txt
+   tags.txt
+   count.txt
+
+   ls.txt
+   perms.txt
+   rm.txt
+   touch.txt
+   mkns.txt
+   mkdir.txt
+   pwd.txt
+   pwn.txt
+
+   su.txt
+   whoami.txt
+   amazon.txt
+
+   help.txt
+   commands.txt
+   version.txt
+
+   test.txt   
+
+**Installation and Configuration**
+
+.. toctree::
+   :maxdepth: 1
+
    unixlike.txt
    install.txt
 

@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>amazon &mdash; fish v3.01 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '3.01',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="fish v3.01 documentation" href="index.html" />
+    <link rel="next" title="help" href="help.html" />
+    <link rel="prev" title="su" href="su.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="help.html" title="help"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="su.html" title="su"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">fish v3.01 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="amazon">
+<h1>amazon<a class="headerlink" href="#amazon" title="Permalink to this headline">¶</a></h1>
+<p>Gets the about tag for a recognized book, ebook, CD, record or MP3 track
+from an Amazon US or UK URL.</p>
+<p><strong>FORM</strong></p>
+<div class="highlight-python"><pre>amazon url-of-amazon-product-page</pre>
+</div>
+<p><strong>EXAMPLES</strong></p>
+<div class="highlight-python"><pre>$ fish amazon 'http://www.amazon.com/Renbourn-Stefan-Grossman-Live-Concert/dp/B000000E8R/ref=sr_1_7?ie=UTF8&amp;qid=1308066155&amp;sr=8-7'
+
+album:john renbourn and stefan grossman live in concert (john renbourn &amp; stefan grossman)
+
+$ fish amazon 'http://www.amazon.co.uk/Hundred-Solitude-Gabriel-Garcia-Marquez/dp/014103243X/ref=sr_1_1?ie=UTF8&amp;qid=1307974975&amp;sr=8-1'
+
+book:one hundred years of solitude (gabriel garcia marquez)</pre>
+</div>
+<p><strong>NOTE</strong></p>
+<p>The <tt class="docutils literal"><span class="pre">amazon</span></tt> command requires the abouttag library to be installed and
+available on your python path (<tt class="docutils literal"><span class="pre">PYTHONPATH</span></tt>).
+The library is available from <a class="reference external" href="http://github.com/njr0/abouttag">http://github.com/njr0/abouttag</a>.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/fish-doc-logo.png" alt="Logo"/>
+            </a></p>
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="su.html"
+                                  title="previous chapter">su</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="help.html"
+                                  title="next chapter">help</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/whoami.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="help.html" title="help"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="su.html" title="su"
+             >previous</a> |</li>
+        <li><a href="index.html">fish v3.01 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2011, Nicholas J. Radcliffe.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,9 @@
+
+pwn
+***
+
+For the moment, ``pwd`` and ``pwn`` (print working
+directory/namespace) both execute ``whoami``. At some point in the
+future, ``fish`` may support the notion of a working namespace and a
+``cd`` command; this is only really relevant if the user chooses to
+use unix-style paths with ``fish``.

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# fdb documentation build configuration file, created by
+# fish documentation build configuration file, created by
 # sphinx-quickstart on Tue Apr 19 09:08:11 2011.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -12,7 +12,7 @@
 # serve to show the default.
 
 import sys, os
-from fluiddb.fdblib import VERSION
+from fluiddb.fishlib import VERSION
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -41,7 +41,7 @@ source_suffix = '.txt'
 master_doc = 'index'
 
 # General information about the project.
-project = u'fdb'
+project = u'fish'
 copyright = u'2011, Nicholas J. Radcliffe'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -112,6 +112,8 @@ html_theme = 'default'
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
 #html_logo = None
+html_logo = 'image/fish-doc-logo.png'
+
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
@@ -165,7 +167,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'fdbdoc'
+htmlhelp_basename = 'fishdoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -179,7 +181,7 @@ htmlhelp_basename = 'fdbdoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'fdb.tex', u'fdb Documentation',
+  ('index', 'fish.tex', u'fish Documentation',
    u'Nicholas J. Radcliffe', 'manual'),
 ]
 
@@ -212,6 +214,6 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'fdb', u'fdb Documentation',
+    ('index', 'fish', u'fish Documentation',
      [u'Nicholas J. Radcliffe'], 1)
 ]
