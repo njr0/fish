@@ -1,0 +1,31 @@
+Script started on Wed Jul  6 19:07:38 2011
+zero:$ . abouttag.txt
+book:gödel escher bach an eternal golden braid (douglas r hofstader)
+book:gödel escher bach an eternal golden braid (douglas r hofstader)
+book:one hundred years of solitude (gabriel garcía márquez)
+book:one hundred years of solitude (gabriel garcía márquez)
+book:the feynman lectures on physics (richard p feynman; robert b leighton; matthew sands)
+book:the oxford english dictionary second edition volume 3 (john simpson; edmund weiner)
+book:the oxford english dictionary second edition volume 3 (john simpson; edmund weiner)
+author:gabriel garcia marquez (1927-03-06)
+author:douglas r hofstadter (1945-02-15)
+track:bamboulé (bensusan and malherbe)
+album:solilaï (pierre bensusan)
+artist:crosby stills nash & young
+isrc:USPR37300012
+http://fluiddb.fluidinfo.com
+https://fluiddb.fluidinfo.com/one/two
+http://fluiddb.fluidinfo.com/one/two
+http://test.com/one/two/?referrer=http://a.b/c
+Object for the user named njr
+Object for the namespace njr/misc
+Object for the namespace njr/rating
+Object for the namespace njr/private
+Object for the attribute terrycojones/private/rating
+table:elements
+field:name in table:elements
+planet:Mars
+element:Helium
+zero:$ exit
+
+Script done on Wed Jul  6 19:08:06 2011

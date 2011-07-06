@@ -35,6 +35,7 @@ import ls
 import flags
 try:
     import abouttag.amazon
+    import abouttag.generic
 except ImportError:
     pass
 
@@ -325,6 +326,17 @@ def execute_amazon_command(db, args):
     Print(abouttag.amazon.get_about_tag_for_item(args[0]))
 
 
+def execute_abouttag_command(db, args):
+    try:
+        abouttag.amazon
+    except:
+        raise CommandError(u'You need the abouttag library to use the abouttag'
+                           u' command.\n'
+                           u'This is available from '
+                           u'http://github.com/njr0/abouttag.')
+    
+    Print(abouttag.generic.abouttag(*args))
+
 def execute_http_request(action, args, db, options):
     """Executes a raw HTTP command (GET, PUT, POST, DELETE or HEAD)
        as specified on the command line."""
@@ -578,6 +590,8 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
         'testapi',
         'whoami',
         'su',
+        'abouttag',
+        'about',
     ]
 
     objs = [O({'mode': 'about', 'specifier': a}) for a in options.about] + \
@@ -644,6 +658,8 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
             execute_su_command(db, args)
         elif action == 'amazon':
             execute_amazon_command(db, args)
+        elif action in ('abouttag', 'about'):
+            execute_abouttag_command(db, args)
         elif action in ['get', 'put', 'post', 'delete']:
             execute_http_request(action, args, db, options)
         else:

@@ -6,12 +6,13 @@
 The fish Command Line for Fluidinfo
 ===================================
 
-**Contents**
+**Overview**
 
 .. toctree::
    :maxdepth: 1
 
    cli.txt
+   shell-fish.txt
 
 **Commands**
 
@@ -35,6 +36,8 @@ The fish Command Line for Fluidinfo
 
    su.txt
    whoami.txt
+
+   abouttag.txt
    amazon.txt
 
    help.txt

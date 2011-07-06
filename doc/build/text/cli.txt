@@ -1,6 +1,6 @@
 
-The fish Command Line for Fluidinfo
-***********************************
+An Overview of the fish Command Line for Fluidinfo
+**************************************************
 
 
 A Brief Overview of Fluidinfo
@@ -29,8 +29,8 @@ tag values, finding tags, querying Fluidinfo and clearing (removing
 tags). It also has some facilities for listing tags and viewing and
 altering their permissions.
 
-Assuming you have installed fish.py, set up a credentials file, and
-created an alias ``fish`` to run it, basic use is exemplified as
+Assuming you have installed ``fish.py``, set up a credentials file,
+and created an alias ``fish`` to run it, basic use is exemplified as
 follows.   In the examples that follow, I assume that the Fluidinfo
 user has username ``njr``.   All tags belonging to njr start ``njr/``.
 (``fish`` actually has a configuration option to allow this to be

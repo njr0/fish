@@ -1,0 +1,43 @@
+Shell-Fish: The Online version of Fish
+--------------------------------------
+
+There is a version of ``fish`` available online at
+http://shell-fish.appspot.com.
+
+This version provides full access to the whole of ``fish`` with very few
+exceptions and changes.
+
+Key things to know are:
+
+  * You can log into Shell-Fish, the on-line version, with any Google account.
+    (Shell-Fish does not see your password.)
+    If you do this, you can go into Settings and store one or more sets of
+    Fluidinfo credentials; thereafter, when you are logged in through your
+    Google account, you will be able to interact with Fluidinfo using those
+    credentials.   (The su command will switch between users.)   You can
+    also specify whether you wish to use full Fluidinfo-style paths or
+    abbreviated Unix-style paths with fish online.
+
+  * If you don't log in, you will be able to interact with Fluidinfo
+    using the ``fish``.   This user has restricted permissions, meaning
+    that you can perform any normal read operations, and can tag things
+    with tags ``fish/a`` through ``fish/z``, but not create new tags
+    or namespaces, or delete tags.
+
+  * This help is available using the Help link at the top of the Shell-Fish
+    page.
+
+  * There is a bookmarklet called ``az-fish`` towards top right of the screen.
+    If you drag this to your browser's tool bar and the then click on it
+    when you are on an Amazon UK or Amazon US product page for a book,
+    e-book, CD or MP3 track, it will take you into Shell-Fish and attempt
+    to conrstruct the appropriate about tag for that item using the
+    ``amazon`` command anf the ``abouttag`` library.
+
+  * The ``Shell-Fish`` service runs on Google's App Engine, which has
+    limits on how long HTTP calls can take.   The practical result of this
+    is that complex ``fish`` commands may time out; for example,
+    running the tests would be ill-advised.
+    Timeouts will obviously be more common at times when Fluidinfo is
+    under particularly heavy load.
+

@@ -338,6 +338,10 @@
 #
 # 2011/06/18 v3.02     Changed fish descriptions of tag controls, as reported
 #                      by ls -L, to acontrol and tcontrol (from control).
+#
+# 2011/07/06 v3.04     Added abouttag command (aka about).
+#                      Repaired whoami documentation.
+
 
 
 
