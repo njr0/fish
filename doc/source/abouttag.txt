@@ -15,8 +15,8 @@ and available to ``fish`` on the ``PYTHONPATH``.
 
 **EXAMPLES**
 
-  #. Books and related items using the ``book-u`` convention
-     (``book``, ``author``)
+  #. Books and related items using the book-u convention
+     (book, author)
      ::
 
        $ fish abouttag book 'Gödel, Escher, Bach: An Eternal Golden Braid' 'Douglas R. Hofstader'
@@ -31,7 +31,7 @@ and available to ``fish`` on the ``PYTHONPATH``.
        $ fish abouttag author 'Douglas R. Hofstadter' 1945 2  15
        author:douglas r hofstadter (1945-02-15)
 
-  #. Music-related items (``track``, ``album``, ``artist``, ``isrc-recording``)
+  #. Music-related items (track, album, artist, isrc-recording)
      ::
 
        $ fish abouttag track 'Bamboulé' 'Bensusan and Malherbe'
@@ -46,7 +46,7 @@ and available to ``fish`` on the ``PYTHONPATH``.
        $ fish abouttag isrc-recording 'US-PR3-73-00012'
        isrc:USPR37300012
 
-  #. URLs and URIs (``URI``, ``URL``)
+  #. URLs and URIs (URI, URL)
      ::
 
        $ fish abouttag uri FluidDB.fluidinfo.com
@@ -61,7 +61,7 @@ and available to ``fish`` on the ``PYTHONPATH``.
        $ fish abouttag URL 'http://test.com/one/two/?referrer=http://a.b/c'
        http://test.com/one/two/?referrer=http://a.b/c
 
-  #. Fluidinfo objects (``fi-user``, ``fi-namespace``, ``fi-tag``)
+  #. Fluidinfo objects (fi-user, fi-namespace, fi-tag)
      ::
 
        $ fish abouttag fi-user njr
@@ -76,7 +76,7 @@ and available to ``fish`` on the ``PYTHONPATH``.
        $ fish abouttag fi-tag terrycojones/private/rating
        Object for the attribute terrycojones/private/rating
 
-  #. Database components (``db-table``, ``db-field``)
+  #. Database components (db-table, db-field)
      ::
 
        $ fish abouttag db-table 'elements'
@@ -85,7 +85,7 @@ and available to ``fish`` on the ``PYTHONPATH``.
        $ fish abouttag db-field 'name' 'elements'
        field:name in table:elements
 
-  #. Miscellaneous (``planet``, ``element``)
+  #. Miscellaneous (planet, element)
      ::
 
        $ fish abouttag planet 'Mars'

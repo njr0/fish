@@ -607,8 +607,10 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
         if action == 'help':
             if args and args[0] in command_list:
                 base = docbase or sys.path[0]
-                f = open(os.path.join(base, 'doc/build/text/%s.txt' % args[0]))
-                Print(f.read())
+                path = os.path.join(base, 'doc/build/text/%s.txt' % args[0])
+                f = open(path)
+                s = f.read()
+                Print(s.decode('UTF-8'))
                 f.close()
             else:
                 Print(USAGE if db.unixStyle else USAGE_FI)
