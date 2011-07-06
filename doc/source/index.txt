@@ -14,7 +14,7 @@ The fish Command Line for Fluidinfo
    cli.txt
    shell-fish.txt
 
-**Commands**
+**Commands for Reading and Writing Tags**
 
 .. toctree::
    :maxdepth: 1
@@ -25,6 +25,11 @@ The fish Command Line for Fluidinfo
    tags.txt
    count.txt
 
+**Commands for Listing and Managing Tags and Namespaces**
+
+.. toctree::
+   :maxdepth: 1
+
    ls.txt
    perms.txt
    rm.txt
@@ -34,15 +39,24 @@ The fish Command Line for Fluidinfo
    pwd.txt
    pwn.txt
 
-   su.txt
-   whoami.txt
+**Commands for Finding About Tags**
+
+.. toctree::
+   :maxdepth: 1
 
    abouttag.txt
    amazon.txt
 
+**Miscellaneous Commands**
+
+.. toctree::
+   :maxdepth: 1
+
    help.txt
    commands.txt
    version.txt
+   su.txt
+   whoami.txt
 
    test.txt   
 

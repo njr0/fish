@@ -6,7 +6,7 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'3.04'
+__version__ = u'3.05'
 VERSION = __version__
 
 import codecs
@@ -177,13 +177,26 @@ def quote_u_8(s):
         return urllib.quote(s.encode('UTF-8'))
 
 
-def urlencode_hash_u_8(hash):
-    """Applies urllib.urlencode to a hash that may contain unicode values."""
+def hash8(hash):
     h8 = {}
     for key in hash:
         v = hash[key]
-        h8[key] = v.encode('UTF-8') if type(v) == unicode else v
-    return urllib.urlencode(h8, True)
+        key8 = key.encode('UTF-8') if type(key) == unicode else key
+        if type(v) == dict:
+            h8[key8] = hash8(v)
+        else:
+            h8[key8] = v.encode('UTF-8') if type(v) == unicode else v
+    return h8
+    
+def urlencode_hash_u_8(hash):
+    """Applies urllib.urlencode to a hash that may contain unicode values."""
+#     h8 = {}
+#     for key in hash:
+#         v = hash[key]
+#         key8 = key.encode('UTF-8') if type(key) == unicode else key
+#         h8[key8] = v.encode('UTF-8') if type(v) == unicode else v
+    return urllib.urlencode(hash8(hash), True)
+
 
 
 def id(about, host):

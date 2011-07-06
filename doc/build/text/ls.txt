@@ -1,6 +1,6 @@
 
-ls
-**
+ls — lists tags and namespaces and their properties
+***************************************************
 
 The ``ls`` command is used to view a sorted list of tags or
 namespaces, potentially with additional information.

@@ -6,27 +6,38 @@ The fish Command Line for Fluidinfo
 
 * An Overview of the fish Command Line for Fluidinfo
 * Shell-Fish: The Online version of Fish
-**Commands**
+**Commands for Reading and Writing Tags**
 
-* tag
-* untag
-* show
-* tags
-* count
-* ls
-* perms
-* rm
-* touch
-* mkns
-* mkdir
-* pwd
-* pwn
-* su
-* amazon
-* help
-* commands
-* version
-* test
+* tag — adds tags to objects
+* untag — removes tags from objects
+* show — shows the values of tags on objects
+* tags — shows all the tags on an object with their values
+* count — counts the number of objects satisfying a query
+**Commands for Listing and Managing Tags and Namespaces**
+
+* ls — lists tags and namespaces and their properties
+* perms — sets access permissions on tags and namespaces
+* rm — removes tags and namespaces
+* touch — creates a tags and optionally sets their descriptions
+* mkns — makes a new namespace
+* mkdir - makes a new namespace (the Fluidinfo equivalent of a
+  directory)
+* pwd — prints the name of the working directory (root user namespace)
+* pwn — prints the name of the working namespace (root user directory)
+**Commands for Finding About Tags**
+
+* abouttag — returns the canonical about tag for an object based on
+  properties
+* amazon — finds the about tag for an item specified by an Amazon
+  product page
+**Miscellaneous Commands**
+
+* help — provides help overview or help with a specific fish command
+* commands — lists the fish commands available
+* version — prints fish's version number
+* su — sets the Fluidinfo user
+* whoami — prints the name of the current Fluidinfo user
+* test — runs fish's test suite
 **Installation and Configuration**
 
 * Using Unix-Like Paths

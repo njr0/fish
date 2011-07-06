@@ -1,6 +1,6 @@
 
-tag
-***
+tag — adds tags to objects
+**************************
 
 Adds one or more tags (with optional values) to the object or objects
 specified.

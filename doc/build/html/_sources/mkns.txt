@@ -1,5 +1,5 @@
-mkns
-----
+mkns — makes a new namespace
+****************************
 
 The ``mkns`` command may be used to create a namespace, and optionally
 to set its description.

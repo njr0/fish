@@ -1,37 +1,91 @@
-fish abouttag book 'Gödel, Escher, Bach: An Eternal Golden Braid' 'Douglas R. Hofstader'
-fish abouttag book 'Gödel, Escher, Bach: An Eternal Golden Braid' 'Douglas R. Hofstader'
+abouttag — returns the canonical about tag for an object based on properties
+****************************************************************************
 
-fish abouttag book 'One Hundred Years of Solitude' 'Gabriel García Márquez'
-fish abouttag book 'One Hundred Years of Solitude', 'Gabriel García Márquez'
+The ``abouttag`` command is used to find the normalized about tag
+for various classes of objects according the the conventions in the
+abouttag.py library, available from http://github.com/njr0/abouttag.
+The abouttag command is only available if this library is installed
+and available to ``fish`` on the ``PYTHONPATH``.
 
-fish abouttag book 'The Feynman Lectures on Physics' 'Richard P. Feynman' 'Robert B. Leighton' 'Matthew Sands'
+**FORM**
+::
 
-fish abouttag book 'The Oxford English Dictionary: second edition, volume 3', 'John Simpson', 'Edmund Weiner'
-fish abouttag book 'The Oxford English Dictionary: second edition, volume 3', 'John Simpson', 'Edmund Weiner'
+    [fish] aboutag object-type <object specifiers>
+    [fish] about object-type <object specifiers>
 
-fish abouttag author 'Gabriel García Márquez' 1927 3 6
-fish abouttag author 'Douglas R. Hofstadter' 1945 2  15
+**EXAMPLES**
 
-fish abouttag track 'Bamboulé' 'Bensusan and Malherbe'
-fish abouttag album 'Solilaï' 'Pierre Bensusan'
-fish abouttag artist 'Crosby, Stills, Nash & Young'
-fish abouttag isrc-recording 'US-PR3-73-00012'
+  #. Books and related items using the ``book-u`` convention
+     (``book``, ``author``)
+     ::
 
+       $ fish abouttag book 'Gödel, Escher, Bach: An Eternal Golden Braid' 'Douglas R. Hofstader'
+       book:gödel escher bach an eternal golden braid (douglas r hofstader)
 
-fish abouttag uri FluidDB.fluidinfo.com
-fish abouttag url https://FluidDB.fluidinfo.com/one/two/
-fish abouttag URI http://fluiddb.fluidinfo.com/one/two/
-fish abouttag URL 'http://test.com/one/two/?referrer=http://a.b/c'
+       $ fish abouttag book 'The Feynman Lectures on Physics' 'Richard P. Feynman' 'Robert B. Leighton' 'Matthew Sands'
+       book:the feynman lectures on physics (richard p feynman; robert b leighton; matthew sands)
 
-fish abouttag fi-user njr
-fish abouttag fi-namespace njr/misc
-fish abouttag fi-ns njr/rating
-fish abouttag fi-ns njr/private
-fish abouttag fi-tag terrycojones/private/rating
+       $ fish abouttag book 'The Oxford English Dictionary: second edition, volume 3', 'John Simpson', 'Edmund Weiner'
+       book:the oxford english dictionary second edition volume 3 (john simpson; edmund weiner)
 
-fish abouttag db-table 'elements'
-fish abouttag db-field 'name' 'elements'
+       $ fish abouttag author 'Douglas R. Hofstadter' 1945 2  15
+       author:douglas r hofstadter (1945-02-15)
 
-fish abouttag planet 'Mars'
-fish abouttag element 'Helium'
+  #. Music-related items (``track``, ``album``, ``artist``, ``isrc-recording``)
+
+       $ fish abouttag track 'Bamboulé' 'Bensusan and Malherbe'
+       track:bamboulé (bensusan and malherbe)
+
+       $ fish abouttag album 'Solilaï' 'Pierre Bensusan'
+       album:solilaï (pierre bensusan)
+
+       $ fish abouttag artist 'Crosby, Stills, Nash & Young'
+       artist:crosby stills nash & young
+
+       $ fish abouttag isrc-recording 'US-PR3-73-00012'
+       isrc:USPR37300012
+
+  #. URLs and URIs (``URI``, ``URL``)
+
+       $ fish abouttag uri FluidDB.fluidinfo.com
+       http://fluiddb.fluidinfo.com
+
+       $ fish abouttag url https://FluidDB.fluidinfo.com/one/two/
+       https://fluiddb.fluidinfo.com/one/two
+
+       $ fish abouttag URI http://fluiddb.fluidinfo.com/one/two/
+       http://fluiddb.fluidinfo.com/one/two
+
+       $ fish abouttag URL 'http://test.com/one/two/?referrer=http://a.b/c'
+       http://test.com/one/two/?referrer=http://a.b/c
+
+  #. Fluidinfo objects (``fi-user``, ``fi-namespace``, ``fi-tag``)
+
+       $ fish abouttag fi-user njr
+       Object for the user named njr
+
+       $ fish abouttag fi-namespace njr/misc
+       Object for the namespace njr/misc
+
+       $ fish abouttag fi-ns njr/private
+       Object for the namespace njr/private
+
+       $ fish abouttag fi-tag terrycojones/private/rating
+       Object for the attribute terrycojones/private/rating
+
+  #. Database components (``db-table``, ``db-field``)
+
+       $ fish abouttag db-table 'elements'
+       table:elements
+
+       $ fish abouttag db-field 'name' 'elements'
+       field:name in table:elements
+
+  #. Miscellaneous (``planet``, ``element``)
+
+       $ fish abouttag planet 'Mars'
+       planet:Mars
+
+       $ fish abouttag element 'Helium'
+       element:Helium
 

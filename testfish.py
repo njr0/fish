@@ -72,11 +72,11 @@ class TestFluidDB(unittest.TestCase):
         db = self.db
         user = db.credentials.username
         pairs = {
-#            u'αβγδε': u'αβγδε',
-#            u'ζηθικ': 1,
-#            u'φχψω': 2.5,
-#            u'λμνξο': True,
-#            u'πρστυ': None,
+            u'αβγδε': u'αβγδε',
+            u'ζηθικ': 1,
+            u'φχψω': 2.5,
+            u'λμνξο': True,
+            u'πρστυ': None,
             u'testrating': u'αβγδε',
             u'testrating2': 1,
             u'testrating3': 2.5,
@@ -84,12 +84,14 @@ class TestFluidDB(unittest.TestCase):
             u'testrating5': None,
         }
         tagsToSet = {}
+#        object_about = u'ΔΑΔΓΑΔ'
+        object_about = u'DADGAD'
         for tag in pairs:
-            db.tag_object_by_about(u'ΔΑΔΓΑΔ', tag, None)   # make sure 
-                                                           # tag exists
+            db.tag_object_by_about(object_about, tag, None)   # make sure 
+                                                              # tag exists
             tagsToSet[db.abs_tag_path(tag)[1:]] = pairs[tag]
 
-        query = u'fluiddb/about = "ΔΑΔΓΑΔ"'
+        query = u'fluiddb/about = "%s"' % object_about
         tag_by_query(db, query, tagsToSet)
         objects = get_values_by_query(db, query, tagsToSet)
         self.assertEqual(len(objects), 1)

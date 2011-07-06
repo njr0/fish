@@ -1,5 +1,5 @@
-perms
-*****
+perms — sets access permissions on tags and namespaces
+******************************************************
 
 The ``perms`` command provides a simple interface for changing the
 permissions on tags and namespaces.   It only supports five cases,

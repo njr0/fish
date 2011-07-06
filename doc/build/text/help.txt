@@ -1,6 +1,6 @@
 
-help
-****
+help — provides help overview or help with a specific fish command
+******************************************************************
 
 **FORM**
 

@@ -1,6 +1,6 @@
 
-rm
-**
+rm — removes tags and namespaces
+********************************
 
 The ``rm`` command is used to remove (delete) tags and namespaces.
 Namespaces normally have to be empty for this to work (unless the

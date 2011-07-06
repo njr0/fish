@@ -1,6 +1,6 @@
 
-mkdir
-*****
+mkdir - makes a new namespace (the Fluidinfo equivalent of a directory)
+***********************************************************************
 
 The ``mkdir`` command may be used to create a namespace, and
 optionally to set its description.

@@ -1,5 +1,5 @@
-amazon
-******
+amazon — finds the about tag for an item specified by an Amazon product page
+****************************************************************************
 
 Gets the about tag for a recognized book, ebook, CD, record or MP3 track
 from an Amazon US or UK URL.

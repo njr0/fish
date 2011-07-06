@@ -1,6 +1,6 @@
 
-touch
-*****
+touch — creates a tags and optionally sets their descriptions
+*************************************************************
 
 The ``touch`` command may be used to create a tag, and optionally to
 set its description.

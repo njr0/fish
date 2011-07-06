@@ -1,5 +1,5 @@
-commands
-********
+commands — lists the fish commands available
+********************************************
 
 Lists the commands available in fish.
 

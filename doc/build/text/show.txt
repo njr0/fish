@@ -1,6 +1,6 @@
 
-show
-****
+show — shows the values of tags on objects
+******************************************
 
 Shows the values of the tags nominated from the objects specified.
 

@@ -1,5 +1,5 @@
-count
-*****
+count — counts the number of objects satisfying a query
+*******************************************************
 
 Counts the number of objects matching a set of conditions
 

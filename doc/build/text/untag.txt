@@ -1,6 +1,6 @@
 
-untag
-*****
+untag — removes tags from objects
+*********************************
 
 Removes one or more tags from the object or objects specified.
 

@@ -1,5 +1,5 @@
-pwn
-***
+pwn — prints the name of the working namespace (root user directory)
+********************************************************************
 
 For the moment, ``pwd`` and ``pwn`` (print working directory/namespace)
 both execute ``whoami``.

@@ -1,5 +1,5 @@
-whoami
-******
+whoami — prints the name of the current Fluidinfo user
+******************************************************
 
 Prints the name of the current authenticated user.
 

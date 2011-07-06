@@ -341,6 +341,8 @@
 #
 # 2011/07/06 v3.04     Added abouttag command (aka about).
 #                      Repaired whoami documentation.
+#
+# 2011/07/06 v3.05     Merged v3.03 and v3.04
 
 
 

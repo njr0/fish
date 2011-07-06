@@ -593,6 +593,7 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
         'abouttag',
         'about',
     ]
+    command_list.sort()
 
     objs = [O({'mode': 'about', 'specifier': a}) for a in options.about] + \
             [O({'mode': 'id', 'specifier': id}) for id in ids]
@@ -607,7 +608,7 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
             if args and args[0] in command_list:
                 base = docbase or sys.path[0]
                 f = open(os.path.join(base, 'doc/build/text/%s.txt' % args[0]))
-                Print (f.read())
+                Print(f.read())
                 f.close()
             else:
                 Print(USAGE if db.unixStyle else USAGE_FI)

@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>perms &mdash; fish v3.02 documentation</title>
+    <title>perms — sets access permissions on tags and namespaces &mdash; fish v3.05 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '3.02',
+        VERSION:     '3.05',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,9 +19,10 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="fish v3.02 documentation" href="index.html" />
-    <link rel="next" title="rm" href="rm.html" />
-    <link rel="prev" title="ls" href="ls.html" /> 
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="top" title="fish v3.05 documentation" href="index.html" />
+    <link rel="next" title="rm — removes tags and namespaces" href="rm.html" />
+    <link rel="prev" title="ls — lists tags and namespaces and their properties" href="ls.html" /> 
   </head>
   <body>
     <div class="related">
@@ -31,12 +32,12 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="rm.html" title="rm"
+          <a href="rm.html" title="rm — removes tags and namespaces"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="ls.html" title="ls"
+          <a href="ls.html" title="ls — lists tags and namespaces and their properties"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fish v3.02 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v3.05 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -45,8 +46,8 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="perms">
-<h1>perms<a class="headerlink" href="#perms" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="perms-sets-access-permissions-on-tags-and-namespaces">
+<h1>perms — sets access permissions on tags and namespaces<a class="headerlink" href="#perms-sets-access-permissions-on-tags-and-namespaces" title="Permalink to this headline">¶</a></h1>
 <p>The <tt class="docutils literal"><span class="pre">perms</span></tt> command provides a simple interface for changing the
 permissions on tags and namespaces.   It only supports five cases,
 but there are powerful enough to cover the vast bulk of common
@@ -127,7 +128,7 @@ The abbreviated view of this is shown by</p>
 trwc------   njr/rating
 nrwc------   njr/fi/</pre>
 </div>
-<p>(See <a class="reference external" href="ls.html#fishls"><em>ls</em></a> for an detailed explanation of the permissions codes.)</p>
+<p>(See <a class="reference external" href="ls.html#fishls"><em>ls — lists tags and namespaces and their properties</em></a> for an detailed explanation of the permissions codes.)</p>
 <p>The full listing after this is:</p>
 <div class="highlight-python"><pre>$ fish -F ls -Ld njr/rating njr/fi
 
@@ -310,10 +311,10 @@ $ fish perms control closed except alice+njr njr/alice/a</pre>
             </a></p>
             <h4>Previous topic</h4>
             <p class="topless"><a href="ls.html"
-                                  title="previous chapter">ls</a></p>
+                                  title="previous chapter">ls — lists tags and namespaces and their properties</a></p>
             <h4>Next topic</h4>
             <p class="topless"><a href="rm.html"
-                                  title="next chapter">rm</a></p>
+                                  title="next chapter">rm — removes tags and namespaces</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
               <li><a href="_sources/perms.txt"
@@ -343,12 +344,12 @@ $ fish perms control closed except alice+njr njr/alice/a</pre>
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="rm.html" title="rm"
+          <a href="rm.html" title="rm — removes tags and namespaces"
              >next</a> |</li>
         <li class="right" >
-          <a href="ls.html" title="ls"
+          <a href="ls.html" title="ls — lists tags and namespaces and their properties"
              >previous</a> |</li>
-        <li><a href="index.html">fish v3.02 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v3.05 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

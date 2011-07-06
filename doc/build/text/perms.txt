@@ -1,6 +1,6 @@
 
-perms
-*****
+perms — sets access permissions on tags and namespaces
+******************************************************
 
 The ``perms`` command provides a simple interface for changing the
 permissions on tags and namespaces.   It only supports five cases, but
@@ -91,7 +91,8 @@ a namespace called ``friends``.
         trwc------   njr/rating
         nrwc------   njr/fi/
 
-     (See *ls* for an detailed explanation of the permissions codes.)
+     (See *ls — lists tags and namespaces and their properties* for an
+     detailed explanation of the permissions codes.)
 
      The full listing after this is:
 

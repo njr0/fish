@@ -1,6 +1,6 @@
 
-pwd
-***
+pwd — prints the name of the working directory (root user namespace)
+********************************************************************
 
 For the moment, ``pwd`` and ``pwn`` (print working
 directory/namespace) both execute ``whoami``. At some point in the

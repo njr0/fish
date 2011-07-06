@@ -1,5 +1,5 @@
-su
-**
+su — sets the Fluidinfo user
+****************************
 
 Set user: changes the set of credentials in use by ``fish``.
 

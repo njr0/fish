@@ -1,7 +1,7 @@
 .. _fishtest:
 
-test
-****
+test — runs fish's test suite
+*****************************
 
 Runs fish's self-tests.
 

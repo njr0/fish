@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>The fish Command Line for Fluidinfo &mdash; fish v3.02 documentation</title>
+    <title>The fish Command Line for Fluidinfo &mdash; fish v3.05 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '3.02',
+        VERSION:     '3.05',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,8 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="fish v3.02 documentation" href="" />
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="top" title="fish v3.05 documentation" href="" />
     <link rel="next" title="An Overview of the fish Command Line for Fluidinfo" href="cli.html" /> 
   </head>
   <body>
@@ -32,7 +33,7 @@
         <li class="right" >
           <a href="cli.html" title="An Overview of the fish Command Line for Fluidinfo"
              accesskey="N">next</a> |</li>
-        <li><a href="">fish v3.02 documentation</a> &raquo;</li> 
+        <li><a href="">fish v3.05 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -48,27 +49,38 @@
 <li class="toctree-l1"><a class="reference external" href="cli.html">An Overview of the fish Command Line for Fluidinfo</a></li>
 <li class="toctree-l1"><a class="reference external" href="shell-fish.html">Shell-Fish: The Online version of Fish</a></li>
 </ul>
-<p><strong>Commands</strong></p>
+<p><strong>Commands for Reading and Writing Tags</strong></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="tag.html">tag</a></li>
-<li class="toctree-l1"><a class="reference external" href="untag.html">untag</a></li>
-<li class="toctree-l1"><a class="reference external" href="show.html">show</a></li>
-<li class="toctree-l1"><a class="reference external" href="tags.html">tags</a></li>
-<li class="toctree-l1"><a class="reference external" href="count.html">count</a></li>
-<li class="toctree-l1"><a class="reference external" href="ls.html">ls</a></li>
-<li class="toctree-l1"><a class="reference external" href="perms.html">perms</a></li>
-<li class="toctree-l1"><a class="reference external" href="rm.html">rm</a></li>
-<li class="toctree-l1"><a class="reference external" href="touch.html">touch</a></li>
-<li class="toctree-l1"><a class="reference external" href="mkns.html">mkns</a></li>
-<li class="toctree-l1"><a class="reference external" href="mkdir.html">mkdir</a></li>
-<li class="toctree-l1"><a class="reference external" href="pwd.html">pwd</a></li>
-<li class="toctree-l1"><a class="reference external" href="pwn.html">pwn</a></li>
-<li class="toctree-l1"><a class="reference external" href="su.html">su</a></li>
-<li class="toctree-l1"><a class="reference external" href="whoami.html">amazon</a></li>
-<li class="toctree-l1"><a class="reference external" href="help.html">help</a></li>
-<li class="toctree-l1"><a class="reference external" href="commands.html">commands</a></li>
-<li class="toctree-l1"><a class="reference external" href="version.html">version</a></li>
-<li class="toctree-l1"><a class="reference external" href="test.html">test</a></li>
+<li class="toctree-l1"><a class="reference external" href="tag.html">tag — adds tags to objects</a></li>
+<li class="toctree-l1"><a class="reference external" href="untag.html">untag — removes tags from objects</a></li>
+<li class="toctree-l1"><a class="reference external" href="show.html">show — shows the values of tags on objects</a></li>
+<li class="toctree-l1"><a class="reference external" href="tags.html">tags — shows all the tags on an object with their values</a></li>
+<li class="toctree-l1"><a class="reference external" href="count.html">count — counts the number of objects satisfying a query</a></li>
+</ul>
+<p><strong>Commands for Listing and Managing Tags and Namespaces</strong></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="ls.html">ls — lists tags and namespaces and their properties</a></li>
+<li class="toctree-l1"><a class="reference external" href="perms.html">perms — sets access permissions on tags and namespaces</a></li>
+<li class="toctree-l1"><a class="reference external" href="rm.html">rm — removes tags and namespaces</a></li>
+<li class="toctree-l1"><a class="reference external" href="touch.html">touch — creates a tags and optionally sets their descriptions</a></li>
+<li class="toctree-l1"><a class="reference external" href="mkns.html">mkns — makes a new namespace</a></li>
+<li class="toctree-l1"><a class="reference external" href="mkdir.html">mkdir - makes a new namespace (the Fluidinfo equivalent of a directory)</a></li>
+<li class="toctree-l1"><a class="reference external" href="pwd.html">pwd — prints the name of the working directory (root user namespace)</a></li>
+<li class="toctree-l1"><a class="reference external" href="pwn.html">pwn — prints the name of the working namespace (root user directory)</a></li>
+</ul>
+<p><strong>Commands for Finding About Tags</strong></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="abouttag.html">abouttag — returns the canonical about tag for an object based on properties</a></li>
+<li class="toctree-l1"><a class="reference external" href="amazon.html">amazon — finds the about tag for an item specified by an Amazon product page</a></li>
+</ul>
+<p><strong>Miscellaneous Commands</strong></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="help.html">help — provides help overview or help with a specific fish command</a></li>
+<li class="toctree-l1"><a class="reference external" href="commands.html">commands — lists the fish commands available</a></li>
+<li class="toctree-l1"><a class="reference external" href="version.html">version — prints fish&#8217;s version number</a></li>
+<li class="toctree-l1"><a class="reference external" href="su.html">su — sets the Fluidinfo user</a></li>
+<li class="toctree-l1"><a class="reference external" href="whoami.html">whoami — prints the name of the current Fluidinfo user</a></li>
+<li class="toctree-l1"><a class="reference external" href="test.html">test — runs fish&#8217;s test suite</a></li>
 </ul>
 <p><strong>Installation and Configuration</strong></p>
 <ul>
@@ -120,7 +132,7 @@
         <li class="right" >
           <a href="cli.html" title="An Overview of the fish Command Line for Fluidinfo"
              >next</a> |</li>
-        <li><a href="">fish v3.02 documentation</a> &raquo;</li> 
+        <li><a href="">fish v3.05 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
