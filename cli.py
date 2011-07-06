@@ -579,6 +579,7 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
         'whoami',
         'su',
     ]
+    command_list.sort()
 
     objs = [O({'mode': 'about', 'specifier': a}) for a in options.about] + \
             [O({'mode': 'id', 'specifier': id}) for id in ids]
