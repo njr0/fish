@@ -38,50 +38,52 @@ class TestFluidDB(unittest.TestCase):
 
     def testCreateTag(self):
         db = self.db
-        o = db.delete_abstract_tag(u'testrating')
+        o = db.delete_abstract_tag(u'test-fish/testrating')
         # doesn't really matter if this works or not
 
-        o = db.create_abstract_tag(u'testrating',
-                        u"%s's testrating (0-10; more is better)" % self.user)
+        o = db.create_abstract_tag(u'test-fish/testrating',
+                        u"%s's test-fish/testrating (0-10; more is better)"
+                        % self.user)
         self.assertEqual(type(o.id) in types.StringTypes, True)
         self.assertEqual(unicode(urllib.unquote(o.URI.encode('UTF-8')),
                                  'UTF-8'),
-                         tag_uri(db.credentials.username, u'testrating'))
+                         tag_uri(db.credentials.username,
+                         u'test-fish/testrating'))
                                                 
 
     def testTags(self):
         db = self.db
         user = db.credentials.username
-        o = db.tag_object_by_about(u'αβγδε', u'ζηθικ', u'φχψω')
-        o = db.tag_object_by_about(u'αβγδε', u'λμνξο', u'πρστυ')
+        o = db.tag_object_by_about(u'αβγδε', u'test-fish/ζηθικ', u'φχψω')
+        o = db.tag_object_by_about(u'αβγδε', u'test-fish/λμνξο', u'πρστυ')
 
         # check tags function OK
         tags = db.get_object_tags_by_about(u'αβγδε')
-        self.assertEqual(u'%s/ζηθικ' % user in tags, True)
-        self.assertEqual(u'%s/λμνξο' % user in tags, True)
+        self.assertEqual(u'%s/test-fish/ζηθικ' % user in tags, True)
+        self.assertEqual(u'%s/test-fish/λμνξο' % user in tags, True)
 
         # check tag values are OK
-        status, v = db.get_tag_value_by_about(u'αβγδε', u'ζηθικ')
+        status, v = db.get_tag_value_by_about(u'αβγδε', u'test-fish/ζηθικ')
         self.assertEqual(v, u'φχψω')
 
         # clean up
-        o = db.untag_object_by_about(u'αβγδε', u'ζηθικ')
-        o = db.untag_object_by_about(u'αβγδε', u'λμνξο')
+        o = db.untag_object_by_about(u'αβγδε', u'test-fish/ζηθικ')
+        o = db.untag_object_by_about(u'αβγδε', u'test-fish/λμνξο')
 
     def testValuesAPISetGet(self):
         db = self.db
         user = db.credentials.username
         pairs = {
-            u'αβγδε': u'αβγδε',
-            u'ζηθικ': 1,
-            u'φχψω': 2.5,
-            u'λμνξο': True,
-            u'πρστυ': None,
-            u'testrating': u'αβγδε',
-            u'testrating2': 1,
-            u'testrating3': 2.5,
-            u'testrating4': True,
-            u'testrating5': None,
+            u'test-fish/αβγδε': u'αβγδε',
+            u'test-fish/ζηθικ': 1,
+            u'test-fish/φχψω': 2.5,
+            u'test-fish/λμνξο': True,
+            u'test-fish/πρστυ': None,
+            u'test-fish/testrating': u'αβγδε',
+            u'test-fish/testrating2': 1,
+            u'test-fish/testrating3': 2.5,
+            u'test-fish/testrating4': True,
+            u'test-fish/testrating5': None,
         }
         tagsToSet = {}
 #        object_about = u'ΔΑΔΓΑΔ'
@@ -103,61 +105,68 @@ class TestFluidDB(unittest.TestCase):
     def testSetTagByID(self):
         db = self.db
         user = db.credentials.username
-        o = db.delete_abstract_tag(u'testrating')
-        o = db.create_abstract_tag(u'testrating',
-                         u"%s's testrating (0-10; more is better)" % self.user)
-        o = db.tag_object_by_id(self.dadgadID, u'/%s/testrating' % user, 5)
+        o = db.delete_abstract_tag(u'test-fish/testrating')
+        o = db.create_abstract_tag(u'test-fish/testrating',
+               u"%s's test-fish/testrating (0-10; more is better)" % self.user)
+        o = db.tag_object_by_id(self.dadgadID,
+                                u'/%s/test-fish/testrating' % user, 5)
         self.assertEqual(o, 0)
-        _status, v = db.get_tag_value_by_id(self.dadgadID, u'testrating')
+        _status, v = db.get_tag_value_by_id(self.dadgadID,
+                                            u'test-fish/testrating')
         self.assertEqual(v, 5)
 
     def testSetTagByAbout(self):
         db = self.db
         user = db.credentials.username
-        o = db.delete_abstract_tag(u'testrating')
+        o = db.delete_abstract_tag(u'test-fish/testrating')
         o = db.tag_object_by_about(u'http://dadgad.com',
-                                   u'/%s/testrating' % user, u'five')
+                                   u'/%s/test-fish/testrating' % user, u'five')
         o = db.tag_object_by_about('DAD +GAD',
-                                   u'/%s/testrating' % user, u'five')
+                                   u'/%s/test-fish/testrating' % user, u'five')
         self.assertEqual(o, 0)
         _status, v = db.get_tag_value_by_about(u'http://dadgad.com',
-                                               u'testrating')
-        _status, v = db.get_tag_value_by_about(u'DAD +GAD', u'testrating')
+                                               u'test-fish/testrating')
+        _status, v = db.get_tag_value_by_about(u'DAD +GAD',
+                                               u'test-fish/testrating')
 
         self.assertEqual(v, u'five')
 
     def testDeleteNonExistentTag(self):
         db = self.db
-        o = db.delete_abstract_tag(u'testrating')
-        o = db.delete_abstract_tag(u'testrating')  # definitely doesn't exist
+        o = db.delete_abstract_tag(u'test-fish/testrating')
+        o = db.delete_abstract_tag(u'test-fish/testrating')  # definitely
+                                                             # doesn't exist
 
     def testSetNonExistentTag(self):
         db = self.db
-        o = db.delete_abstract_tag(u'testrating')
-        o = db.tag_object_by_id(self.dadgadID, u'testrating', 5)
+        o = db.delete_abstract_tag(u'test-fish/testrating')
+        o = db.tag_object_by_id(self.dadgadID, u'test-fish/testrating', 5)
         self.assertEqual(o, 0)
-        status, v = db.get_tag_value_by_id(self.dadgadID, u'testrating')
+        status, v = db.get_tag_value_by_id(self.dadgadID,
+                                           u'test-fish/testrating')
         self.assertEqual(v, 5)
 
     def testUntagObjectByID(self):
         db = self.db
 
         # First tag something
-        o = db.tag_object_by_id(self.dadgadID, u'testrating', 5)
+        o = db.tag_object_by_id(self.dadgadID, u'test-fish/testrating', 5)
         self.assertEqual(o, 0)
 
         # Now untag it
-        error = db.untag_object_by_id(self.dadgadID, u'testrating')
+        error = db.untag_object_by_id(self.dadgadID, u'test-fish/testrating')
         self.assertEqual(error, 0)
-        status, v = db.get_tag_value_by_id(self.dadgadID, u'testrating')
+        status, v = db.get_tag_value_by_id(self.dadgadID,
+                                           u'test-fish/testrating')
         self.assertEqual(status, STATUS.NOT_FOUND)
 
         # Now untag it again (should be OK)
-        error = db.untag_object_by_id(self.dadgadID, u'testrating')
+        error = db.untag_object_by_id(self.dadgadID, u'test-fish/testrating')
         self.assertEqual(error, 0)
 
         # And again, but this time asking for error if untagged
-        error = db.untag_object_by_id(self.dadgadID, u'testrating', False)
+        error = db.untag_object_by_id(self.dadgadID, u'test-fish/testrating',
+                                      False)
         self.assertEqual(error, 0)  # The API has changed so that in fact
                                     # a 204 (NO CONTENT) is always returned,
                                     # so this test and the flag are now
@@ -170,23 +179,25 @@ class TestFluidDB(unittest.TestCase):
         db = self.db
 
         # First tag something
-        o = db.tag_object_by_id(self.dadgadID, u'testrating', 5)
+        o = db.tag_object_by_id(self.dadgadID, u'test-fish/testrating', 5)
         self.assertEqual(o, 0)
 
         # Now untag it
-        error = db.untag_object_by_about(u'DADGAD', u'testrating')
+        error = db.untag_object_by_about(u'DADGAD', u'test-fish/testrating')
         self.assertEqual(error, 0)
-        status, v = db.get_tag_value_by_about(u'DADGAD', u'testrating')
+        status, v = db.get_tag_value_by_about(u'DADGAD',
+                                              u'test-fish/testrating')
         self.assertEqual(status, STATUS.NOT_FOUND)
 
     def testAddValuelessTag(self):
         db = self.db
-        o = db.delete_abstract_tag(u'testconvtag')
-        o = db.create_abstract_tag(u'testconvtag',
+        o = db.delete_abstract_tag(u'test-fish/testconvtag')
+        o = db.create_abstract_tag(u'test-fish/testconvtag',
                                    u"a conventional (valueless) tag")
-        o = db.tag_object_by_id(self.dadgadID, u'testconvtag')
+        o = db.tag_object_by_id(self.dadgadID, u'test-fish/testconvtag')
         self.assertEqual(o, 0)
-        status, v = db.get_tag_value_by_id(self.dadgadID, u'testconvtag')
+        status, v = db.get_tag_value_by_id(self.dadgadID,
+                                           u'test-fish/testconvtag')
         self.assertEqual(v, None)
 
 

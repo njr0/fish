@@ -6,7 +6,7 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'3.05'
+__version__ = u'3.06'
 VERSION = __version__
 
 import codecs
@@ -177,24 +177,29 @@ def quote_u_8(s):
         return urllib.quote(s.encode('UTF-8'))
 
 
+def to_utf8(thing):
+    """Returns version of thing with all unicode strings converted to UTF8"""
+    if type(thing) == dict:
+        return hash8(thing)
+    elif type(thing) in (list, tuple):
+        return [v.encode('UTF-8') if type(v) == unicode else to_utf8(v)
+                for v in thing]
+    elif type(thing) == unicode:
+        return thing.encode('UTF-8')
+    else:
+        return thing
+
+    
 def hash8(hash):
+    """Returns version of hash with all unicode strings converted to UTF-8"""
     h8 = {}
     for key in hash:
-        v = hash[key]
-        key8 = key.encode('UTF-8') if type(key) == unicode else key
-        if type(v) == dict:
-            h8[key8] = hash8(v)
-        else:
-            h8[key8] = v.encode('UTF-8') if type(v) == unicode else v
+        h8[to_utf8(key)] = to_utf8(hash[key])
     return h8
-    
+
+
 def urlencode_hash_u_8(hash):
     """Applies urllib.urlencode to a hash that may contain unicode values."""
-#     h8 = {}
-#     for key in hash:
-#         v = hash[key]
-#         key8 = key.encode('UTF-8') if type(key) == unicode else key
-#         h8[key8] = v.encode('UTF-8') if type(v) == unicode else v
     return urllib.urlencode(hash8(hash), True)
 
 
