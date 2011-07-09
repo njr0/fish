@@ -118,7 +118,7 @@ execute the file testfish.py or say
 
    python fish.py test
 
-See *test*.
+See *test — runs fish's test suite*.
 
 
 Using the Library
