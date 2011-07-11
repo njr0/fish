@@ -301,7 +301,7 @@ def execute_mkns_command(db, args, options):
         if not db.ns_exists(fullpath):
             id = db.create_namespace(fullpath,
                                      description=options.description,
-                                     verbose=True)
+                                     verbose=options.verbose)
 
 
 def execute_su_command(db, args):
@@ -507,6 +507,9 @@ def parse_args(args=None):
     general.add_option('-L', '--longer', action='store_true',
                        default=False,
             help='longer listing (for ls).')
+    general.add_option('-G', '--longest', action='store_true',
+                       default=False,
+            help='longest listing (for ls).')
     general.add_option('-g', '--group', action='store_true',
                        default=False,
             help='long listing with groups (for ls).')
@@ -671,5 +674,5 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
         if options.debug:
             raise
         else:
-            Print('Fish failure:\n  %s' % e)
+            Print(u'Fish failure:\n  %s' % unicode(e))
 

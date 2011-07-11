@@ -344,16 +344,24 @@
 #
 # 2011/07/06 v3.05     Merged v3.03 and v3.04
 #
-# 2011/07/06 v3.06     Changed tests so that all tags used/created live in
+# 2011/07/09 v3.06     Changed tests so that all tags used/created live in
 #                      a test-fish namespace under the user.
 #                      Improved some unicode/UTF8 conversions to fix problem
 #                      with removing αβγδε from the command line.
 #                      Fixed at least some problems that had been introduced
 #                      into the perms command.
 #                      Made -v do something with perms command
-
-
-
-
-
+#
+# 2011/07/09 v3.07     Added a couple of new CLI tests and a new, simpler
+#                      mechanism for testing CLI command sequences.
+#                      Added -G option to ls for longest listing, which now
+#                      does what ls -L used to do; ls -L now compresses
+#                      the output to show simple read/write/control
+#                      if this is possible. 
+#                      Fixed a bug that prevented ls -L from showing
+#                      the update (metadata) permission for namespaces.
+#                      Fixed an amazing bug that broke most of the
+#                      perms command.
+#                      Fixed a problem preventing ls -d from complaining
+#                      if the namespace did not exist.
 

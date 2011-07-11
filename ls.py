@@ -142,6 +142,7 @@ class FluidinfoPerms:
         self.path = path
         self.valid = True
         self.entities = [u'abstract-tag', u'tag'] if isTag else [u'namespace']
+        self.compressIfPoss = True              # used by ls -L / -G
 
         self.owner = path.split(u'/')[1]
         for entity in self.entities:
@@ -228,7 +229,7 @@ class FluidinfoPerms:
                                            or name in restrict_to):
                     action = RAW_PERMS[entity].action(name)
                     if verbose:
-                        print (u'Setting %s %s\'s %s permission to %s '
+                        Print (u'Setting %s %s\'s %s permission to %s '
                                u'except %s' % (entity, self.path[1:], action,
                                self.__dict__[name].policy,
                                unicode(self.__dict__[name].exceptions)))
@@ -239,9 +240,10 @@ class FluidinfoPerms:
                         cli.warning(cli.error_code(err))
 
     def fi_tag_desc(self):
-        s = []
+        s = [u'']
         writes = (u'metadata', u'delete', u'tag', u'untag')
         controls = (self.acontrol, self.tcontrol)
+        wPerms = []
         for kind in (u'ABSTRACT TAG', u'TAG'):
             desc = RAW_PERMS[u'tag' if kind == u'TAG' else u'abstract-tag']
             L = u't' if kind == u'TAG' else u'a'
@@ -250,34 +252,48 @@ class FluidinfoPerms:
                 s.append(u'  Read')
                 s.append(u'    %-19s  %s' % (u'read (read):',
                                              unicode(self.read)))
-
             s.append(u'  Write')
             for (fi, fdb) in zip(desc.actions, desc.names):
                 if fdb in writes:
-                    s.append(u'    %-19s  %s' % (u'%s (%s):' % (fi, fdb),
-                                                 unicode(self.__dict__[fdb])))
+                    w = unicode(self.__dict__[fdb])
+                    wPerms.append(w)
+                    s.append(u'    %-19s  %s' % (u'%s (%s):' % (fi, fdb), w))
             s.extend([u'  Control'])
             c = self.tcontrol if kind == u'TAG' else self.acontrol
             s.append(u'    %-19s  %s' % (u'control (%scontrol):' % L,
                                          unicode(c)))
             s.append(u'')
+
+        if self.compressIfPoss:
+            if (all(w == wPerms[0] for w in wPerms[1:])
+                  and unicode(self.acontrol) == unicode(self.tcontrol)):
+                s = [u'     read: %s' % unicode(self.read),
+                     u'    write: %s' % unicode(wPerms[0]),
+                     u'  control: %s' % unicode(self.acontrol),
+                     u'']
         return u'\n'.join(s)
 
     def fi_ns_desc(self):
-        s = []
-        writes = (u'create', u'update', u'delete')
+        s = [u'']
+        writes = (u'create', u'metadata', u'delete')
         desc = RAW_PERMS[u'namespace']
         s.append(u'NAMESPACE (/%s)' % desc.path)
         s.append(u'  Read')
         s.append(u'    %-18s  %s' % (u'list (read):', unicode(self.read)))
                                      
         s.append(u'  Write')
+        wPerms = []
         for (fi, fdb) in zip(desc.actions, desc.names):
             if fdb in writes:
-                s.append(u'    %-18s  %s' % (u'%s (%s):' % (fi, fdb),
-                                             unicode(self.__dict__[fdb])))
+                w = unicode(self.__dict__[fdb])
+                wPerms.append(w)
+                s.append(u'    %-18s  %s' % (u'%s (%s):' % (fi, fdb), w))
         s.append(u'  Control')
         s.append(u'    %-18s  %s' % (u'control (control):', self.control))
+        if self.compressIfPoss and all(w == wPerms[0] for w in wPerms[1:]):
+            s = [u'     read: %s' % unicode(self.read),
+                 u'    write: %s' % unicode(wPerms[0]),
+                 u'  control: %s' % unicode(self.control)]
         s.append(u'')
         return u'\n'.join(s)
 
@@ -383,13 +399,15 @@ class ExtendedFluidDB(fishlib.FluidDB):
         self.untag_by_query()
 
     def list_sorted_ns(self, ns, long_=False, columns=True, recurse=False,
-                       prnt=False, longer=False):
+                       prnt=False, longer=False, longest=False):
         h = self.list_namespace(ns)
         return self.list_sorted_nshash(h, ns, long_, columns, recurse,
-                                       prnt=prnt, longer=longer)
+                                       prnt=prnt, longer=longer,
+                                       longest=longest)
 
     def list_sorted_nshash(self, h, ns, long_=False, columns=True,
-                           recurse=False, prnt=False, longer=False):
+                           recurse=False, prnt=False, longer=False,
+                           longest=False):
         if type(h) == types.IntType:
             if h == fishlib.STATUS.UNAUTHORIZED:
                 return u'Permission denied.'
@@ -406,10 +424,11 @@ class ExtendedFluidDB(fishlib.FluidDB):
             fmt = string_format(max([len(item) for item in items]))
         if recurse:
             Print(u'\n%s:' % ns)
-        if long_ or longer:
+        if long_ or longer or longest:
             res = []
             for item in items:
-                r = self.full_perms(ns + u'/' + fmt % item, longer)
+                r = self.full_perms(ns + u'/' + fmt % item, longer,
+                                    longest=longest)
                 res.append(r)
                 if prnt:
                     Print(r)
@@ -425,7 +444,8 @@ class ExtendedFluidDB(fishlib.FluidDB):
         if recurse:
             others = u'\n'.join([self.list_sorted_ns(u'%s/%s' % (ns, space),
                                                      long_, columns, recurse,
-                                                     prnt=prnt, longer=longer)
+                                                     prnt=prnt, longer=longer,
+                                                     longest=longest)
                                  for space in spaces])
             return u'%s:\n%s\n\n%s' % (ns, result, others)
         else:
@@ -572,18 +592,20 @@ class ExtendedFluidDB(fishlib.FluidDB):
             gs = u'r:%s  w:%s' % (gr, gw)
         return gs
 
-    def perms_string(self, tagOrNS, longer=False, group=False):
+    def perms_string(self, tagOrNS, longer=False, group=False, longest=False):
         tagOrNS = tagOrNS.strip()
         if tagOrNS.endswith(u'/'):
-            if longer:
-                return unicode(FluidinfoPerms(self, u'/' + tagOrNS[:-1],
-                                              isTag=False))
+            if longer or longest:
+                p = FluidinfoPerms(self, u'/' + tagOrNS[:-1], isTag=False)
+                p.compressIfPoss = not longest
+                return unicode(p)
             else:
                 return self.ns_perms_string(tagOrNS[:-1], group)
         else:
-            if longer:
-                return unicode(FluidinfoPerms(self, u'/' + tagOrNS,
-                                              isTag=True))
+            if longer or longest:
+                p = FluidinfoPerms(self, u'/' + tagOrNS, isTag=True)
+                p.compressIfPoss = not longest
+                return unicode(p)
             else:
                 try:
                     return self.tag_perms_string(tagOrNS, group)
@@ -591,10 +613,10 @@ class ExtendedFluidDB(fishlib.FluidDB):
                     raise PermissionsError(u'Forbidden (you don\'t appear to'
                         u' have control permission for %s)' % tagOrNS)
 
-    def full_perms(self, tagOrNS, longer, group=False):
-        perms = self.perms_string(tagOrNS, longer, group)
-        if longer:
-            return u'\n%s:\n\n%s' % (tagOrNS, perms)
+    def full_perms(self, tagOrNS, longer, group=False, longest=False):
+        perms = self.perms_string(tagOrNS, longer, group, longest)
+        if longer or longest:
+            return u'\n%s:\n%s' % (tagOrNS, perms)
         else:
             return u'%s   %s' % (perms, tagOrNS)
                 
@@ -625,7 +647,7 @@ def execute_ls_command(objs, tags, options, credentials, unixPaths=None):
     db = ExtendedFluidDB(host=options.hostname, credentials=credentials,
                          debug=options.debug,
                          unixStylePaths=unixPaths)
-    long_ = options.long or options.group
+    long_ = options.long or options.group or options.longest
     if options.policy:
         if len(tags) > 0:
             Print(u'Form: ls -P')
@@ -641,25 +663,28 @@ def execute_ls_command(objs, tags, options, credentials, unixPaths=None):
         fulltag = db.abs_tag_path(tag, inPref=True)
         if options.namespace or options.ns:
             if db.ns_exists(fulltag):
-                if long_ or options.longer:
+                if long_ or options.longer or options.longest:
                     nsResult = db.full_perms(fulltag[1:] + u'/',
-                                             options.longer, options.group)
+                                             options.longer, options.group,
+                                             options.longest)
                 else:
                     nsResult = fulltag
                 Print(nsResult)
             else:
-                nsResult = u'Not Found'
+                nsResult = u'Error status 404'
         else:
             nsResult = db.list_sorted_ns(fulltag[1:], long_=long_,
                                          recurse=options.recurse, prnt=True,
-                                         longer=options.longer)
+                                         longer=options.longer,
+                                         longest=options.longest)
         tagExists = db.tag_exists(fulltag)
-        if nsResult == u'Error status 404':
+        if nsResult == 'Error status 404':
             if not tagExists:
                 Print(u'%s not found' % fulltag)
         if tagExists:
-            if long_ or options.longer:
-                Print(db.full_perms(fulltag[1:], options.longer, options.group))
+            if long_ or options.longer or options.longest:
+                Print(db.full_perms(fulltag[1:], options.longer, options.group,
+                                    options.longest))
             else:
                 Print(tag)
 
@@ -780,7 +805,14 @@ def execute_perms_command(objs, args, options, credentials, unixPaths=None):
                     inPerms = FluidinfoPerms(db, path, isTag=isTag,
                                              getFromFI=True)
                     inPerms.unlock()
-                elif spec in primitives:
+                elif isGroup:
+                    inPerms = FluidinfoPerms(db, path, isTag=isTag,
+                                             getFromFI=True)
+                    if spec in (u'group', u'group-read'):
+                         inPerms.set_group_readable(group)
+                    if spec in (u'group', u'group-write'):
+                         inPerms.set_group_writable(group)
+                else:  # if spec in primitives:
                     if spec == u'control':
                         permsToSet = CONTROL_NAMES
                     elif spec == u'write':
@@ -791,12 +823,6 @@ def execute_perms_command(objs, args, options, credentials, unixPaths=None):
                         if hasattr(inPerms, name):
                             inPerms.__dict__[name].policy = policy
                             inPerms.__dict__[name].exceptions = exceptions
-                    inPerms = FluidinfoPerms(db, path, isTag=isTag,
-                                             getFromFI=True)
-                    if spec in (u'group', u'group-read'):
-                         inPerms.set_group_readable(group)
-                    if spec in (u'group', u'group-write'):
-                         inPerms.set_group_writable(group)
                 inPerms.update_fluidinfo(db, permsToSet, options.force,
                                          restrict_to=options.extravals,
                                          verbose=options.verbose)

@@ -327,6 +327,7 @@ class TestCLI(unittest.TestCase):
         self.stdout = sys.stdout
         self.stderr = sys.stderr
         self.stealOutput()
+        self.hostname = ['--hostname', choose_host()]
 
     def stealOutput(self):
         self.out = SaveOut()
@@ -353,8 +354,7 @@ class TestCLI(unittest.TestCase):
         (flag, spec) = specify_DADGAD(mode, self.db.host)
         description = describe_by_mode(spec, mode)
         flags = ['-v', flag] if verbose else [flag]
-        hostname = ['--hostname', choose_host()]
-        args = ['tag'] + ['-U'] + flags + [spec, 'rating=10'] + hostname
+        args = ['tag'] + ['-U'] + flags + [spec, 'rating=10'] + self.hostname
         execute_command_line(*parse_args(args))
         self.reset()
         if verbose:
@@ -372,8 +372,7 @@ class TestCLI(unittest.TestCase):
         (flag, spec) = specify_DADGAD(mode, self.db.host)
         description = describe_by_mode(spec, mode)
         flags = ['-v', flag] if verbose else [flag]
-        hostname = ['--hostname', choose_host()]
-        args = ['untag'] + ['-U'] + flags + [spec, 'rating'] + hostname
+        args = ['untag'] + ['-U'] + flags + [spec, 'rating'] + self.hostname
         execute_command_line(*parse_args(args))
         self.reset()
         if verbose:
@@ -388,9 +387,8 @@ class TestCLI(unittest.TestCase):
         self.stealOutput()
         (flag, spec) = specify_DADGAD(mode, self.db.host)
         description = describe_by_mode(spec, mode)
-        hostname = ['--hostname', choose_host()]
         args = (['show', '-U', '-v', flag, spec, 'rating', '/fluiddb/about']
-                + hostname)
+                + self.hostname)
         execute_command_line(*parse_args(args))
         self.reset()
         self.assertEqual(self.out.buffer,
@@ -403,15 +401,13 @@ class TestCLI(unittest.TestCase):
         self.stealOutput()
         (flag, spec) = specify_DADGAD(mode, self.db.host)
         description = describe_by_mode(spec, mode)
-        hostname = ['--hostname', choose_host()]
         args = (['show', '-U', '-v', flag, spec, 'rating', '/fluiddb/about']
-                 + hostname)
+                 + self.hostname)
         execute_command_line(*parse_args(args))
         self.reset()
-        user = self.db.credentials.username
         self.assertEqual(self.out.buffer,
                 ['Object %s:' % description, '\n',
-                 '  %s' % cli_bracket('tag /%s/rating not present' % user),
+                 '  %s' % cli_bracket('tag /%s/rating not present' % self.user),
 
                 '\n', '  /fluiddb/about = "DADGAD"', '\n'])
         self.assertEqual(self.err.buffer, [])
@@ -439,6 +435,52 @@ class TestCLI(unittest.TestCase):
     def atestUntagByIDVerboseShow(self):
         self.untagTest('id')
         self.showUntagSuccessTest('id')
+
+    def strip_list(self, list_):
+        return [L.strip() for L in list_ if L.strip()]
+
+    def command_sequence_test(self, commands, output):
+        self.stealOutput()
+        expected = self.strip_list(output if type(output) in (list, tuple)
+                                          else [output])
+        for command in commands:
+            if type(command) == type(''):
+                args = command.split(' ')
+            else:
+                args = command
+            execute_command_line(*parse_args(args))
+        self.reset()
+        self.assertEqual(self.strip_list(self.out.buffer), expected)
+
+    def test_simple_rm(self):
+        commands = ('-U mkns test-fish/testns',
+                    '-U rm test-fish/testns',
+                    '-U ls -d test-fish/testns',)
+        output = u'/%s/test-fish/testns not found' % self.user
+        self.command_sequence_test(commands, output)
+        
+    def test_perms_simples(self):
+        # Tests the simple permissions settings for namespaces
+        #   --- private, default, lock, unlock
+
+        commands = ('-U mkns test-fish/testns',
+                    '-U perms private test-fish/testns',
+                    '-U ls -ld test-fish/testns',
+                    '-U perms default test-fish/testns',
+                    '-U ls -ld test-fish/testns',
+                    '-U perms lock test-fish/testns',
+                    '-U ls -ld test-fish/testns',
+                    '-U perms unlock test-fish/testns',
+                    '-U ls -ld test-fish/testns',
+                    '-U rm test-fish/testns',
+        )
+        output = (u'nrwc------   %s/test-fish/testns/' % self.user,
+                  u'nrwcr--r--   %s/test-fish/testns/' % self.user,
+                  u'nr-cr--r--   %s/test-fish/testns/' % self.user,
+                  u'nrwcr--r--   %s/test-fish/testns/' % self.user,
+        )
+        self.command_sequence_test(commands, output)
+    
 
 if __name__ == '__main__':
     unittest.main()
