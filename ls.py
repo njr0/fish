@@ -247,7 +247,7 @@ class FluidinfoPerms:
         for kind in (u'ABSTRACT TAG', u'TAG'):
             desc = RAW_PERMS[u'tag' if kind == u'TAG' else u'abstract-tag']
             L = u't' if kind == u'TAG' else u'a'
-            s.append(kind + u' (/%s)' % desc.path)
+            s.append(kind[-3:] + u' (/%s)' % desc.path)
             if kind == u'TAG':
                 s.append(u'  Read')
                 s.append(u'    %-19s  %s' % (u'read (read):',

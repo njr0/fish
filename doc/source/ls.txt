@@ -181,7 +181,7 @@ as well as the standard flags like ``-s`` etc.
 
         njr/rating:
 
-        ABSTRACT TAG (/tags)
+        TAG (/tags)
           Write
             update (metadata):   policy: closed; exceptions = [njr, miro]
             delete (delete):     policy: closed; exceptions = [njr, miro]

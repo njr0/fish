@@ -92,7 +92,7 @@ a namespace called ``friends``.
 
         njr/rating:
 
-        ABSTRACT TAG (/tags)
+        TAG (/tags)
           Write
             update (metadata):  policy: closed; exceptions = [njr]
             delete (delete):    policy: closed; exceptions = [njr]
@@ -216,7 +216,7 @@ the change unless forced with ``-f``.
     $ fish ls -L njr/rating
     njr/rating:
 
-    ABSTRACT TAG (/tags)
+    TAG (/tags)
       Write
         update (metadata):  policy: closed; exceptions = [njr, miro]
         delete (delete):    policy: closed; exceptions = [njr, miro]

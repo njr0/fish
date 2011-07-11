@@ -364,4 +364,7 @@
 #                      perms command.
 #                      Fixed a problem preventing ls -d from complaining
 #                      if the namespace did not exist.
+#
+# 2011/07/11 v3.08     Removed ABSTRACT form ls -G heading.
+
 

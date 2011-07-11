@@ -6,7 +6,7 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'3.07'
+__version__ = u'3.08'
 VERSION = __version__
 
 import codecs
