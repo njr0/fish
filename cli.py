@@ -36,6 +36,7 @@ import flags
 try:
     import abouttag.amazon
     import abouttag.generic
+    import abouttag.nacolike
 except ImportError:
     pass
 
