@@ -45,7 +45,9 @@ The fish Command Line for Fluidinfo
    :maxdepth: 1
 
    abouttag.txt
+   about.txt
    amazon.txt
+   normalize.txt
 
 **Miscellaneous Commands**
 

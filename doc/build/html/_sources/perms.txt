@@ -40,14 +40,16 @@ or one of three low-level forms:
                        only the finest-grained permissions with
                        the fish names specified are changed.
                        These are the names shown by ls -L:
-                        - ``metadata``, ``delete``, ``acontrol``
-                          for abstract tags
-                        - ``read``, ``tag``, ``untag``, ``tcontrol`` for tags
-                        - ``read``, ``create``, ``delete``, ``control``
-                          for namespaces.
+
+                         - ``metadata``, ``delete``, ``acontrol`` for abstract
+			   tags                          
+                         - ``read``, ``tag``, ``untag``, ``tcontrol`` for tags
+                         - ``read``, ``create``, ``delete``, ``control``
+                           for namespaces.
 
                        For example:
                        ::
+
                           fish perms write -X delete closed except njr fish/z
 
                        Changes the fine-grained write permission

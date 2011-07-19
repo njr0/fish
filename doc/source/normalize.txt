@@ -1,0 +1,24 @@
+normalize — performs canonical normalization for use with about tags
+********************************************************************
+
+The ``normalize`` command is used to perform standardization of text
+for use in about tags.   Text is downcased, whitespace is regularized,
+and most punctuation is removed.   Accents are preserved.
+
+**FORM**
+::
+
+   normalize text
+
+When the text consists of a more than one argumets, the results of
+normalizing each component are joined using colons.
+
+**EXAMPLES**
+::
+
+    $ fish normalize Golf
+    golf
+
+    $ fish normalize Golfer 'Tom Watson'
+    golfer:tom watson
+

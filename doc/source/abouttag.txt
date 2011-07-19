@@ -10,8 +10,8 @@ and available to ``fish`` on the ``PYTHONPATH``.
 **FORM**
 ::
 
-    [fish] aboutag object-type <object specifiers>
-    [fish] about object-type <object specifiers>
+    [fish] aboutag object-type <object-specifier>
+    [fish] about object-type <object-specifier>
 
 **EXAMPLES**
 

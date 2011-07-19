@@ -27,7 +27,6 @@ class RemoveError(Exception):
     pass
 
 
-
 class PermissionDesc:
     def __init__(self, entity, path, actions, names):
         self.entity = entity

@@ -224,3 +224,65 @@ always unicode, i.e. they may contain any character.
 
 It is also possible to set a tag without a value by just giving a tag
 name.
+
+
+Invoking Fish as a Shell
+========================
+
+If Fish is invoked without any arguments, simply by typing
+
+   $ fish
+
+then Fish starts as an interactive shell in which the user can enter a
+commands without the ``fish`` prefix at the start of the line. For
+example:
+
+   $ fish
+   This is fish version 3.09.
+   > pwd
+   alice
+   > show -a 'book:alices adventures in wonderland (lewis carroll)' alice/rating
+   Object with about="book:alices adventures in wonderland (lewis carroll)":
+   alice/rating = 10
+   > quit
+
+Key things to know about the interactive shell are:
+
+   * When the ``readline`` library is available, it will be used,
+     meaning that you will be able to use either Emacs key bindings or
+     the arrow keys to edit the command line, including moving up and
+     down through the command history.
+
+   * Again, if the ``readline`` library is available, a ``history``
+     command will be available, to show you previous commands that you
+     have used in the session; this may also be abbreviated to ``h``.
+
+   * Quoting and escaping follow the following rules:
+
+        * Either single or double quotes can be used to make compound
+          arguments; single quotes can be enclosed in double quotes
+          and double quotes can be enclosed in single quotes, e.g.
+
+             tag -a "Occam's Razor" alice/comment="I'm a believer"
+             tag -a 'The "double" quote' alice/comment='Is "doubleplusgood"'
+
+        * The escape character is blackslash (``\``), which can be
+          used to escape quotes or backslashes.   For example, this
+          command:
+
+             tag -a "The \"backslash\" (\\) character" alice/comment="is used for escaping"
+
+          tags the object with about tag ``The "backslash" (\)
+          character``.
+
+        * Left quotes (*backticks*) can be used to allow command
+          substitution, whereby the phrase enclosed in backticks is
+          evaluated as a Fish command and the output of that command
+          replaces the quoted phrase when the enclosing command is
+          executed.   For example:
+
+             tag -a "`about book 'Animal Farm' 'George Orwell'`" alice/rating=10
+
+          tags the object with about tag ``book:animal farm (george
+          orwell)``, since that is the result of the quoted Fish
+          ``about`` command.

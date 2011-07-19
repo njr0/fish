@@ -22,7 +22,7 @@ Counts the number of objects matching a set of conditions
     6 objects matched
     Total: 6 objects
 
-**NOTE FOR WINDOWS USERS* Working from a Windows command line, single quotes
+**NOTE FOR WINDOWS USERS** Working from a Windows command line, single quotes
 do not work as above.   Instead you need to use double quotes and "stutter"
 quotes inside quotes.   So the last example becomes:
 ::

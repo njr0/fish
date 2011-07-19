@@ -28,8 +28,11 @@ The fish Command Line for Fluidinfo
 
 * abouttag — returns the canonical about tag for an object based on
   properties
+* about — returns the canonical about tag for an object based on
+  properties
 * amazon — finds the about tag for an item specified by an Amazon
   product page
+* normalize — performs canonical normalization for use with about tags
 **Miscellaneous Commands**
 
 * help — provides help overview or help with a specific fish command

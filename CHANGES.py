@@ -366,5 +366,15 @@
 #                      if the namespace did not exist.
 #
 # 2011/07/11 v3.08     Removed ABSTRACT form ls -G heading.
+#
+# 2011/07/18 v3.09     Added an interactive shell, which uses readline
+#                      and supports left quoting (backticks) and command
+#                      history.
+#                      Added normalize command.
+#                      Consolidated help for Unix-style paths and
+#                      Fluidinfo-style paths.
+#                      Changed example user to alice and bert (though
+#                      not yet in the documentation).
+
 
 

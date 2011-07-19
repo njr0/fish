@@ -1,4 +1,4 @@
 #!/usr/bin/env python
 from fish import *
 
-go()
+repl_or_go()

@@ -44,26 +44,29 @@ HTTP_METHODS = ['GET', 'PUT', 'POST', 'DELETE', 'HEAD']
 
 ARGLESS_COMMANDS = ['COUNT', 'TAGS', 'LS', 'PWD', 'PWN', 'WHOAMI']
 
+AT_ERROR = (u'You need the abouttag library to use the abouttag command.\n'
+            u'This is available from http://github.com/njr0/abouttag.')
+
 USAGE = u'''
 
 For help with a specific command, type help followed by the command name.
 For a list of commands, type commands.
 
  Tag objects:
-   tag -a 'Paris' visited rating=10
-   tag -i %s /njr/visited /njr/rating=10
-   tag -q 'about = "Paris"' visited rating=10
-   [On windows: tag -q "about = "Paris""" visited rating=10
+   tag -a 'Paris' /alice/visited /alice/rating=10
+   tag -i %s /bert/visited /bert/rating=10
+   tag -q 'about = "Paris"' /alice/visited /alice/rating=10
+   [On windows: tag -q "about = "Paris""" /alice/visited /alice/rating=10
 
  Untag objects:
-   untag -a 'Paris' /njr/visited rating
+   untag -a 'Paris' /bert/visited /alice/rating
    untag -i %s
-   untag -q 'about = "Paris"' visited rating
+   untag -q 'about = "Paris"' /alice/visited /alice/rating
 
  Fetch objects and show tags
-   show -a 'Paris' /njr/visited /njr/rating
-   show -i %s visited rating
-   show -q 'about = "Paris"' visited rating
+   show -a 'Paris' /bert/visited /bert/rating
+   show -i %s /alice/visited /alice/rating
+   show -q 'about = "Paris"' /alice/visited /alice/rating
 
  Count objects matching query:
    count -q 'has fluiddb/users/username'
@@ -80,12 +83,16 @@ For a list of commands, type commands.
    mkns [flags] path   create a namespace (normally unnecessary)
    pwd / pwn           prints root namespace of authenticated user
 
+About Tag Construction
+   abouttag kind spec  construct an about tag for object of kind specified
+   amazon 'url'        show the about tag for a book on ana Amazon US/UK page
+   normalize parts     Normalize the parts specified, joining with colons
+
  Miscellaneous:
    whoami              prints username for authenticated user
    su fiuser           set fish to use user credentials for fiuser
    help [command]      show this help, or help for the nominated comamnd.
    commands            show a list of available commands
-   amazon 'url'        show the about tag for a book on ana Amazon US/UK page
 
  Run Tests:
    test                runs all tests
@@ -96,63 +103,9 @@ For a list of commands, type commands.
 
 ''' % (PARIS_ID, PARIS_ID, PARIS_ID, PARIS_ID)
 
-
-USAGE_FI = u'''
-
-For help with a specific command, type help followed by the command name.
-For a list of commands, type commands.
-
- Tag objects:
-   tag -a 'Paris' njr/visited njr/rating=10
-   tag -i %s njr/visited njr/rating=10
-   tag -q 'about = "Paris"' njr/visited njr/rating=10
-   [On windows: tag -q "about = "Paris""" njr/visited njr/rating=10
-
- Untag objects:
-   untag -a 'Paris' njr/visited njr/rating
-   untag -i %s
-   untag -q 'about = "Paris"' njr/visited njr/rating
-
- Fetch objects and show tags
-   show -a 'Paris' njr/visited njr/rating
-   show -i %s njr/visited njr/rating
-   show -q 'about = "Paris"' njr/visited njr/rating
-
- Count objects matching query:
-   count -q 'has fluiddb/users/username'
-
- Get tags on objects and their values:
-   tags -a 'Paris'
-   tags -i %s
-
- Tag and Namespace management:
-   ls [flags]          list the contents of a namespace or list a tag
-   perms spec paths    change the permissions on tags or namespaces
-   rm [flags] paths    remove one or more namespaces or tags
-   touch [flags] path  create an (abstract) tag (normally unnecessary)
-   mkns [flags] path   create a namespace (normally unnecessary)
-   pwd / pwn           prints root namespace of authenticated user
-
- Miscellaneous:
-   whoami              prints username for authenticated user
-   pwd / pwn           prints root namespace of authenticated user
-   su fiuser           set fish to use user credentials for fiuser
-   help [command]      show this help, or help for the nominated comamnd.
-   commands            show a list of available commands
-   amazon 'url'        show the about tag for a book on ana Amazon US/UK page
-
- Run Tests:
-   test            (runs all tests)
-   testcli         (tests command line interface only)
-   testdb          (tests core FluidDB interface only)
-   testutil        (runs tests not requiring FluidDB access)
-
- Raw HTTP GET:
-   get /tags/njr/google
-   get /permissions/tags/njr/rating action=delete
-   (use POST/PUT/DELETE/HEAD at your peril; currently untested.)
-
-''' % (PARIS_ID, PARIS_ID, PARIS_ID, PARIS_ID)
+USAGE_FI = USAGE.replace('/about', 'fluiddb/about').replace('/alice',
+                         'alice').replace('/bert', 'bert')
+USAGE_FISH = USAGE.replace('/alice/','')
 
 
 class ModeError(Exception):
@@ -315,27 +268,28 @@ def execute_su_command(db, args):
     Print(u'Credentials set to user %s%s.' % (username, extra))
 
 
-def execute_amazon_command(db, args):
+def check_abouttag_available():
     try:
         abouttag.amazon
     except:
-        raise CommandError(u'You need the abouttag library to use the amazon '
-                           u'command.\n'
-                           u'This is available from '
-                           u'http://github.com/njr0/abouttag.')
+        raise CommandError(AT_ERROR)
+
+
+def execute_amazon_command(db, args):
+    check_abouttag_available()
     Print(abouttag.amazon.get_about_tag_for_item(args[0]))
 
 
 def execute_abouttag_command(db, args):
-    try:
-        abouttag.amazon
-    except:
-        raise CommandError(u'You need the abouttag library to use the abouttag'
-                           u' command.\n'
-                           u'This is available from '
-                           u'http://github.com/njr0/abouttag.')
-    
+    check_abouttag_available()
     Print(abouttag.generic.abouttag(*args))
+
+
+def execute_normalize_command(db, args):
+    check_abouttag_available()
+    Print(':'.join(abouttag.nacolike.normalize(a, preserveAlpha=True)
+          for a in args))
+
 
 def execute_http_request(action, args, db, options):
     """Executes a raw HTTP command (GET, PUT, POST, DELETE or HEAD)
@@ -462,9 +416,9 @@ def parse_args(args=None):
     if args is None:
         args = [a.decode(DEFAULT_ENCODING) for a in sys.argv[1:]]
         if Credentials().unixStyle:
-            usage = USAGE_FI if '-F' in args else USAGE
+            usage = USAGE_FI if '-F' in args else USAGE_FISH
         else:
-            usage = USAGE if '-U' in args else USAGE_FI
+            usage = USAGE_FISH if '-U' in args else USAGE_FI
     else:
         usage = USAGE_FI
     parser = OptionParser(usage=usage)
@@ -595,6 +549,7 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
         'su',
         'abouttag',
         'about',
+        'normalize',
     ]
     command_list.sort()
 
@@ -616,7 +571,7 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
                 Print(s.decode('UTF-8'))
                 f.close()
             else:
-                Print(USAGE if db.unixStyle else USAGE_FI)
+                Print(USAGE_FISH if db.unixStyle else USAGE_FI)
         elif action == 'commands':
             Print(' '.join(command_list))
         elif action not in command_list:
@@ -666,6 +621,8 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
             execute_amazon_command(db, args)
         elif action in ('abouttag', 'about'):
             execute_abouttag_command(db, args)
+        elif action == 'normalize':
+            execute_normalize_command(db, args)
         elif action in ['get', 'put', 'post', 'delete']:
             execute_http_request(action, args, db, options)
         else:
