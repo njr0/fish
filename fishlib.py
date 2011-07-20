@@ -6,7 +6,7 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'3.11'
+__version__ = u'3.12'
 VERSION = __version__
 
 import codecs
@@ -322,7 +322,8 @@ class FluidDB:
     """
 
     def __init__(self, credentials=None, host=None, debug=False,
-                 encoding=DEFAULT_ENCODING, unixStylePaths=None):
+                 encoding=DEFAULT_ENCODING, unixStylePaths=None,
+                 saveOutput=False):
         if credentials == None:
             credentials = Credentials()
         self.credentials = credentials
@@ -336,6 +337,8 @@ class FluidDB:
         self.host = host
         self.debug = debug
         self.encoding = encoding
+        self.saveOutput = saveOutput
+        self.buffer = []
         self.timeout = choose_http_timeout()
         if not host.startswith(u'http'):
             self.host = u'http://%s' % host
@@ -346,6 +349,19 @@ class FluidDB:
         self.headers = {
             u'Authorization': auth
         }
+
+    def Print(self, s):
+        if self.saveOutput:
+            self.buffer.append(s)
+        else:
+            print s
+
+    def warning(self, msg):
+        self.Print(u'%s\n' % msg)
+
+    def nothing_to_do():
+        self.Print(self, u'Nothing to do.')
+        raise Exception, msg
 
     def _get_url(self, host, path, hash, kw):
         """returns URL as unicode
@@ -394,11 +410,11 @@ class FluidDB:
         url = self._get_url(self.host, path, hash, kw)
 
         if self.debug:
-            Print(u'\nmethod: %r\nurl: %r\nbody: %s\nheaders:' %
-                   (method, url, body))
+            self.Print(u'\nmethod: %r\nurl: %r\nbody: %s\nheaders:' %
+                       (method, url, body))
             for k in headers:
                 if not k == u'Authorization':
-                    Print(u'  %s=%s' % (k, headers[k]))
+                    self.Print(u'  %s=%s' % (k, headers[k]))
         body8 = body.encode('UTF-8') if type(body) == unicode else body
 
         http = _get_http(self.timeout)
@@ -409,12 +425,13 @@ class FluidDB:
         else:
             result = content
         if self.debug:
-            Print(u'status: %d; content: %s' % (status, toStr(result)))
+            self.Print(u'status: %d; content: %s' % (status, toStr(result)))
             if status >= 400:
                 for header in response:
                     if header.lower().startswith(u'x-fluiddb-'):
-                        Print(u'\t%s=%s' % (header.decode('UTF-8'),
-                                            response[header].decode('UTF-8')))
+                        self.Print(u'\t%s=%s'
+                                   % (header.decode('UTF-8'),
+                                      response[header].decode('UTF-8')))
 
         return status, result
 
@@ -423,7 +440,7 @@ class FluidDB:
         url = self._get_url(self.host, path, hash=None, kw=None)
         http = _get_http(self.timeout)
         if self.debug:
-            Print(u'\nShow URL: %s' % url)
+            self.Print(u'\nShow URL: %s' % url)
         response, content = http.request(url, u'GET', None, headers)
         content_type = response[u'content-type']
         if content_type == PRIMITIVE_CONTENT_TYPE:
@@ -442,8 +459,8 @@ class FluidDB:
         url = self._get_url(self.host, path, hash=None, kw=None)
         http = _get_http(self.timeout)
         if self.debug:
-            Print(u'\nTag URL: %s' % url)
-            Print(u'Value: %s' % value)
+            self.Print(u'\nTag URL: %s' % url)
+            self.Print(u'Value: %s' % value)
         response, content = http.request(url, u'PUT', value.encode('UTF-8'),
                                          headers)
         return response.status, content
@@ -504,8 +521,8 @@ class FluidDB:
         if status == STATUS.CREATED:
             id = result[u'id']
             if verbose:
-                Print(u'Created namespace /%s/%s with ID %s' % (parent,
-                                                                subNS, id))
+                self.Print(u'Created namespace /%s/%s with ID %s' % (parent,
+                                                                    subNS, id))
             return id
         elif status == STATUS.NOT_FOUND:    # parent namespace doesn't exist
             if not createParentIfNeeded:
@@ -520,8 +537,8 @@ class FluidDB:
                                            u'/%s not writable' % (user, user))
         else:
             if verbose:
-                Print(u'Failed to create namespace %s (%d)' % (fullPath,
-                                                                status))
+                self.Print(u'Failed to create namespace %s (%d)' % (fullPath,
+                                                                    status))
             return status
 
     def delete_namespace(self, path, recurse=False, force=False,
@@ -540,9 +557,10 @@ class FluidDB:
         status, result = self.call('DELETE', fullPath)
         if verbose:
             if status == STATUS.NO_CONTENT:
-                Print(u'Removed namespace %s' % absPath)
+                self.Print(u'Removed namespace %s' % absPath)
             else:
-                Print(u'Failed to remove namespace %s (%d)' % (absPath, status))
+                self.Print(u'Failed to remove namespace %s (%d)'
+                           % (absPath, status))
         return 0 if status == STATUS.NO_CONTENT else status
 
     def describe_namespace(self, path):
@@ -904,7 +922,7 @@ def choose_host():
     if u'options' in globals():
         host = options.hostname
         if options.verbose:
-            Print(u"Chosen %s as host" % host)
+            self.Print(u"Chosen %s as host" % host)
         return host
     else:
         return FLUIDDB_PATH
@@ -1103,10 +1121,4 @@ def version():
 def uprint(s):
     Print(s.encode('UTF-8') if type(s) == unicode else s)
 
-out = SaveOut()
-def Print(s):
-    if hasattr(Print, 'save'):
-        out.write(s)
-    else:
-        print s
 

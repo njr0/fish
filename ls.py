@@ -4,7 +4,6 @@ import types
 import fishlib
 import cli
 import flags
-from fishlib import Print
 
 if sys.version_info < (2, 6):
     try:
@@ -228,15 +227,16 @@ class FluidinfoPerms:
                                            or name in restrict_to):
                     action = RAW_PERMS[entity].action(name)
                     if verbose:
-                        Print (u'Setting %s %s\'s %s permission to %s '
-                               u'except %s' % (entity, self.path[1:], action,
-                               self.__dict__[name].policy,
-                               unicode(self.__dict__[name].exceptions)))
+                        db.Print(u'Setting %s %s\'s %s permission to %s '
+                                 u'except %s' % (entity, self.path[1:],
+                                                 action,
+                                  self.__dict__[name].policy,
+                                  unicode(self.__dict__[name].exceptions)))
                     err = db.set_raw_perm(entity, self.path[1:], action,
                                           self.__dict__[name].policy,
                                           self.__dict__[name].exceptions)
                     if err:
-                        cli.warning(cli.error_code(err))
+                        db.warning(cli.error_code(err))
 
     def fi_tag_desc(self):
         s = [u'']
@@ -334,9 +334,10 @@ def to_string_grid(items, pageWidth=78, maxCols=9):
 
 class ExtendedFluidDB(fishlib.FluidDB):
     def __init__(self, credentials=None, host=None, debug=False,
-                 encoding=fishlib.DEFAULT_ENCODING, unixStylePaths=None):
+                 encoding=fishlib.DEFAULT_ENCODING, unixStylePaths=None,
+                 saveOut=False):
         fishlib.FluidDB.__init__(self, credentials, host, debug,
-                                encoding, unixStylePaths)
+                                encoding, unixStylePaths, saveOut)
 
     def list_namespace(self, ns, returnDescription=True,
                         returnNamespaces=True, returnTags=True):
@@ -422,7 +423,7 @@ class ExtendedFluidDB(fishlib.FluidDB):
         if items:
             fmt = string_format(max([len(item) for item in items]))
         if recurse:
-            Print(u'\n%s:' % ns)
+            self.Print(u'\n%s:' % ns)
         if long_ or longer or longest:
             res = []
             for item in items:
@@ -430,16 +431,16 @@ class ExtendedFluidDB(fishlib.FluidDB):
                                     longest=longest)
                 res.append(r)
                 if prnt:
-                    Print(r)
+                    self.Print(r)
             result = u'\n'.join(res)
         elif columns == False:
             result = u'\n'.join(items)
             if prnt:
-                Print(result)
+                self.Print(result)
         else:
             result = to_string_grid(items)
             if prnt:
-                Print(result)
+                self.Print(result)
         if recurse:
             others = u'\n'.join([self.list_sorted_ns(u'%s/%s' % (ns, space),
                                                      long_, columns, recurse,
@@ -628,7 +629,7 @@ class ExtendedFluidDB(fishlib.FluidDB):
         body = json.dumps({u'policy': policy, u'exceptions': exceptions})
         path = u'/permissions/%s/%s' % (perm.path, path)
         if self.debug:
-            Print(u'%s %s %s' % (path, body, action))
+            self.Print(u'%s %s %s' % (path, body, action))
         status, content = self.call(u'PUT', path, body, action=action)
         return 0 if status == fishlib.STATUS.NO_CONTENT else status
 
@@ -640,20 +641,15 @@ def write_status(writes):
          return u'-' if all(w == u'-' for w in writes) else u'/'
 
 
-def execute_ls_command(objs, tags, options, credentials, unixPaths=None):
-    unixPaths = (fishlib.path_style(options)
-                 if fishlib.path_style(options) is not None else unixPaths)
-    db = ExtendedFluidDB(host=options.hostname, credentials=credentials,
-                         debug=options.debug,
-                         unixStylePaths=unixPaths)
+def execute_ls_command(db, objs, tags, options, credentials, unixPaths=None):
     long_ = options.long or options.group or options.longest
     if options.policy:
         if len(tags) > 0:
-            Print(u'Form: ls -P')
+            db.Print(u'Form: ls -P')
         else:
-            Print(unicode(FluidinfoPerms(db, u'/' + db.credentials.username,
+            db.Print(unicode(FluidinfoPerms(db, u'/' + db.credentials.username,
                                    isTag=False, isPolicy=True)))
-            Print(unicode(FluidinfoPerms(db, u'/' + db.credentials.username,
+            db.Print(unicode(FluidinfoPerms(db, u'/' + db.credentials.username,
                                    isTag=True, isPolicy=True)))
         return
     if len(tags) == 0:
@@ -668,7 +664,7 @@ def execute_ls_command(objs, tags, options, credentials, unixPaths=None):
                                              options.longest)
                 else:
                     nsResult = fulltag
-                Print(nsResult)
+                db.Print(nsResult)
             else:
                 nsResult = u'Error status 404'
         else:
@@ -679,21 +675,16 @@ def execute_ls_command(objs, tags, options, credentials, unixPaths=None):
         tagExists = db.tag_exists(fulltag)
         if nsResult == 'Error status 404':
             if not tagExists:
-                Print(u'%s not found' % fulltag)
+                db.Print(u'%s not found' % fulltag)
         if tagExists:
             if long_ or options.longer or options.longest:
-                Print(db.full_perms(fulltag[1:], options.longer, options.group,
-                                    options.longest))
+                db.Print(db.full_perms(fulltag[1:], options.longer,
+                         options.group, options.longest))
             else:
-                Print(tag)
+                db.Print(tag)
 
 
-def execute_rm_command(objs, tags, options, credentials, unixPaths=None):
-    unixPaths = (fishlib.path_style(options)
-                 if fishlib.path_style(options) is not None else unixPaths)
-    db = ExtendedFluidDB(host=options.hostname, credentials=credentials,
-                         debug=options.debug,
-                         unixStylePaths=unixPaths)
+def execute_rm_command(db, objs, tags, options, credentials, unixPaths=None):
     if len(tags) == 0:
         raise RemoveError('Remove what?')
     failures = []
@@ -740,19 +731,14 @@ def execute_rm_command(objs, tags, options, credentials, unixPaths=None):
                               % u' '.join(failures))
 
 
-def execute_chmod_command(objs, args, options, credentials, unixPaths=None):
-    cli.warning('Use the perms command to change permissions.')
+def execute_chmod_command(db, objs, args, options, credentials, unixPaths=None):
+    db.warning('Use the perms command to change permissions.')
     return
 
 
-def execute_perms_command(objs, args, options, credentials, unixPaths=None):
-    unixPaths = (fishlib.path_style(options)
-                 if fishlib.path_style(options) is not None else unixPaths)
-    db = ExtendedFluidDB(host=options.hostname, credentials=credentials,
-                         debug=options.debug,
-                         unixStylePaths=unixPaths)
+def execute_perms_command(db, objs, args, options, credentials, unixPaths=None):
     if len(args) < 2:
-        Print(u'Form: perms SPEC list of tags and namespaces')
+        db.Print(u'Form: perms SPEC list of tags and namespaces')
         return
     spec = args[0]
     primitives = [u'write', u'read', u'control']
@@ -827,5 +813,5 @@ def execute_perms_command(objs, args, options, credentials, unixPaths=None):
                                          verbose=options.verbose)
                 done = True
         if not done:
-            Print('No tag or namespace %s found' % db.abs_tag_path(path,
+            db.Print('No tag or namespace %s found' % db.abs_tag_path(path,
                                                                 outPref=True))

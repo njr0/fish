@@ -232,7 +232,7 @@ For example:
 ::
 
     $ fish
-    This is fish version 3.09.
+    This is fish version 3.10.
     > pwd
     alice
     > show -a 'book:alices adventures in wonderland (lewis carroll)' alice/rating

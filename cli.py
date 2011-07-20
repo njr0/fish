@@ -19,9 +19,7 @@ from fishlib import (
     get_credentials_file,
     get_typed_tag_value,
     path_style,
-    Print,
     toStr,
-    uprint,
     version,
     DEFAULT_ENCODING,
     STATUS,
@@ -156,13 +154,13 @@ def execute_tag_command(objs, db, tags, options):
                                   inPref=True)
             if o == 0:
                 if options.verbose:
-                    Print(u'Tagged object %s with %s'
-                            % (description,
-                               formatted_tag_value(tag.name, tag.value)))
+                    db.Print(u'Tagged object %s with %s'
+                             % (description,
+                                formatted_tag_value(tag.name, tag.value)))
             else:
-                warning(u'Failed to tag object %s with %s'
+                db.warning(u'Failed to tag object %s with %s'
                         % (description, tag.name))
-                warning(u'Error code %s' % error_code(o))
+                db.warning(u'Error code %s' % error_code(o))
 
 
 def execute_untag_command(objs, db, tags, options):
@@ -176,12 +174,12 @@ def execute_untag_command(objs, db, tags, options):
             o = actions[obj.mode](obj.specifier, tag, inPref=True)
             if o == 0:
                 if options.verbose:
-                    Print('Removed tag %s from object %s\n'
-                          % (tag, description))
+                    db.Print('Removed tag %s from object %s\n'
+                             % (tag, description))
             else:
-                warning(u'Failed to remove tag %s from object %s'
+                db.warning(u'Failed to remove tag %s from object %s'
                         % (tag, description))
-                warning(u'Error code %s' % error_code(o))
+                db.warning(u'Error code %s' % error_code(o))
 
 
 def execute_show_command(objs, db, tags, options):
@@ -191,7 +189,7 @@ def execute_show_command(objs, db, tags, options):
     }
     for obj in objs:
         description = describe_by_mode(obj.specifier, obj.mode)
-        Print(u'Object %s:' % description)
+        db.Print(u'Object %s:' % description)
 
         for tag in tags:
             fulltag = db.abs_tag_path(tag, inPref=True)
@@ -209,18 +207,18 @@ def execute_show_command(objs, db, tags, options):
                 status, v = actions[obj.mode](obj.specifier, tag, inPref=True)
 
             if status == STATUS.OK:
-                Print(u'  %s' % formatted_tag_value(outtag, v))
+                db.Print(u'  %s' % formatted_tag_value(outtag, v))
             elif status == STATUS.NOT_FOUND:
-                Print(u'  %s' % cli_bracket(u'tag %s not present' % outtag))
+                db.Print(u'  %s' % cli_bracket(u'tag %s not present' % outtag))
             else:
-                Print(cli_bracket(u'error code %s attempting to read tag %s'
-                                  % (error_code(status), outtag)))
+                db.Print(cli_bracket(u'error code %s attempting to read tag %s'
+                                     % (error_code(status), outtag)))
 
 
 def execute_tags_command(objs, db, options):
     for obj in objs:
         description = describe_by_mode(obj.specifier, obj.mode)
-        Print(u'Object %s:' % description)
+        db.Print(u'Object %s:' % description)
         id = (db.create_object(obj.specifier).id if obj.mode == u'about'
               else obj.specifier)
         for tag in db.get_object_tags_by_id(id):
@@ -229,16 +227,16 @@ def execute_tags_command(objs, db, options):
             status, v = db.get_tag_value_by_id(id, fulltag)
 
             if status == STATUS.OK:
-                Print(u'  %s' % formatted_tag_value(outtag, v))
+                db.Print(u'  %s' % formatted_tag_value(outtag, v))
             elif status == STATUS.NOT_FOUND:
-                Print(u'  %s' % cli_bracket(u'tag %s not present' % outtag))
+                db.Print(u'  %s' % cli_bracket(u'tag %s not present' % outtag))
             else:
-                Print(cli_bracket(u'error code %s attempting to read tag %s'
-                                  % (error_code(status), uttag)))
+                db.Print(cli_bracket(u'error code %s attempting to read tag %s'
+                                     % (error_code(status), uttag)))
 
 
 def execute_whoami_command(db):
-    Print(db.credentials.username)
+    db.Print(db.credentials.username)
 
 
 def execute_touch_command(db, args, options):
@@ -266,7 +264,7 @@ def execute_su_command(db, args):
     username = db.credentials.username
     file = args[0].decode(DEFAULT_ENCODING)
     extra = u'' if args[0] == username else (u' (file %s)' % file)
-    Print(u'Credentials set to user %s%s.' % (username, extra))
+    db.Print(u'Credentials set to user %s%s.' % (username, extra))
 
 
 def check_abouttag_available():
@@ -278,18 +276,18 @@ def check_abouttag_available():
 
 def execute_amazon_command(db, args):
     check_abouttag_available()
-    Print(abouttag.amazon.get_about_tag_for_item(args[0]))
+    db.Print(abouttag.amazon.get_about_tag_for_item(args[0]))
 
 
 def execute_abouttag_command(db, args):
     check_abouttag_available()
-    Print(abouttag.generic.abouttag(*args))
+    db.Print(abouttag.generic.abouttag(*args))
 
 
 def execute_normalize_command(db, args):
     check_abouttag_available()
-    Print(':'.join(abouttag.nacolike.normalize(a, preserveAlpha=True)
-          for a in args))
+    db.Print(':'.join(abouttag.nacolike.normalize(a, preserveAlpha=True)
+             for a in args))
 
 
 def execute_http_request(action, args, db, options):
@@ -314,8 +312,8 @@ def execute_http_request(action, args, db, options):
     for pair in tags:
         hash[pair.name] = pair.value
     status, result = db.call(method, uri, body, hash)
-    Print(u'Status: %d' % status)
-    Print(u'Result: %s' % toStr(result))
+    db.Print(u'Status: %d' % status)
+    db.Print(u'Result: %s' % toStr(result))
 
 
 def describe_by_mode(specifier, mode):
@@ -360,19 +358,9 @@ def form_tag_value_pairs(tags):
     return pairs
 
 
-def warning(msg):
-#    sys.stderr.write(u'%s\n' % msg)
-    Print(u'%s\n' % msg)
-
-
-def fail(msg):
-    warning(msg)
-    raise Exception, msg
-
-
-def nothing_to_do():
-    Print(u'Nothing to do.')
-    raise Exception, msg
+#def fail(msg):
+#    warning(msg)
+#    raise Exception, msg
 
 
 def cli_bracket(s):
@@ -384,7 +372,7 @@ def get_ids_or_fail(query, db):
     if type(ids) == int:
         raise CommandError(ids, 'Probably a bad query specification')
     else:
-        Print(u'%s matched' % plural(len(ids), u'object'))
+        db.Print(u'%s matched' % plural(len(ids), u'object'))
         return ids
 
 
@@ -510,14 +498,14 @@ def parse_args(args=None):
 
 
 def execute_command_line(action, args, options, parser, user=None, pwd=None,
-                         unixPaths=None, docbase=None):
+                         unixPaths=None, docbase=None, saveOut=False):
     credentials = (Credentials(user or options.user[0], pwd)
                    if (user or options.user) else None)
-    if not action == 'ls':
-        unixPaths = (path_style(options) if path_style(options) is not None
-                                         else unixPaths)
-        db = FluidDB(host=options.hostname, credentials=credentials,
-                     debug=options.debug, unixStylePaths=unixPaths)
+    unixPaths = (path_style(options) if path_style(options) is not None
+                                     else unixPaths)
+    db = ls.ExtendedFluidDB(host=options.hostname, credentials=credentials,
+                            debug=options.debug, unixStylePaths=unixPaths,
+                            saveOut=saveOut)
     ids_from_queries = chain(*imap(lambda q: get_ids_or_fail(q, db),
         options.query))
     ids = chain(options.id, ids_from_queries)
@@ -558,7 +546,7 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
             [O({'mode': 'id', 'specifier': id}) for id in ids]
 
     if action == 'version' or options.version:
-        Print('fish %s' % version())
+        db.Print('fish %s' % version())
         if action == 'version':
             return
     
@@ -569,46 +557,48 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
                 path = os.path.join(base, 'doc/build/text/%s.txt' % args[0])
                 f = open(path)
                 s = f.read()
-                Print(s.decode('UTF-8'))
+                db.Print(s.decode('UTF-8'))
                 f.close()
             else:
-                Print(USAGE_FISH if db.unixStyle else USAGE_FI)
+                db.Print(USAGE_FISH if db.unixStyle else USAGE_FI)
         elif action == 'commands':
-            Print(' '.join(command_list))
+            db.Print(' '.join(command_list))
         elif action not in command_list:
-            Print('Unrecognized command %s' % action)        
+            db.Print('Unrecognized command %s' % action)        
         elif (action.upper() not in HTTP_METHODS + ARGLESS_COMMANDS
               and not args):
-            Print('Too few arguments for action %s' % action)
+            db.Print('Too few arguments for action %s' % action)
         elif action == 'count':
-            Print('Total: %s' % (flags.Plural(len(objs), 'object')))
+            db.Print('Total: %s' % (flags.Plural(len(objs), 'object')))
         elif action == 'tags':
             execute_tags_command(objs, db, options)
         elif action in ('tag', 'untag', 'show'):
             if not (options.about or options.query or options.id):
-                Print('You must use -q, -a or -i with %s' % action)
-                return
-            tags = args
-            if len(tags) == 0 and action != 'count':
-                nothing_to_do()
-            actions = {
-                'tag': execute_tag_command,
-                'untag': execute_untag_command,
-                'show': execute_show_command,
-            }
-            command = actions[action]
-            command(objs, db, args, options)
+                db.Print('You must use -q, -a or -i with %s' % action)
+            else:
+                tags = args
+                if len(tags) == 0 and action != 'count':
+                    db.nothing_to_do()
+                actions = {
+                    'tag': execute_tag_command,
+                    'untag': execute_untag_command,
+                    'show': execute_show_command,
+                }
+                command = actions[action]
+                command(objs, db, args, options)
         elif action == 'ls':
-            ls.execute_ls_command(objs, args, options, credentials, unixPaths)
+            ls.execute_ls_command(db, objs, args, options, credentials,
+                                  unixPaths)
         elif action == 'rm':
-            ls.execute_rm_command(objs, args, options, credentials, unixPaths)
+            ls.execute_rm_command(db, objs, args, options, credentials,
+                                  unixPaths)
         elif action in ('rmdir', 'rmns'):
             raise CommandError(u'Use rm to remove namespaces as well as tags')
         elif action == 'chmod':
-            ls.execute_chmod_command(objs, args, options, credentials,
+            ls.execute_chmod_command(db, objs, args, options, credentials,
                                      unixPaths)
         elif action == 'perms':
-            ls.execute_perms_command(objs, args, options, credentials,
+            ls.execute_perms_command(db, objs, args, options, credentials,
                                      unixPaths)
         elif action in ('pwd', 'pwn', 'whoami'):
             execute_whoami_command(db)
@@ -627,10 +617,12 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
         elif action in ['get', 'put', 'post', 'delete']:
             execute_http_request(action, args, db, options)
         else:
-            Print('Unrecognized command %s' % action)
+            db.Print('Unrecognized command %s' % action)
     except Exception, e:
         if options.debug:
             raise
         else:
-            Print(u'Fish failure:\n  %s' % unicode(e))
+            db.Print(u'Fish failure:\n  %s' % unicode(e))
+    return u'\n'.join(db.buffer) if saveOut else None
+
 

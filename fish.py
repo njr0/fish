@@ -35,11 +35,12 @@
 #
 
 from testfish import *
-from cline import CScanSplit
+import cline
 try:
     import readline
 except ImportError:
-    print 'Readline not available; no command history'
+    if __name__ == '__main__':
+        print 'Readline not available; no command history'
 
 PROMPT = '> '
 SEPARATORS = ' \t'
@@ -48,21 +49,10 @@ class ExpansionFailedError(Exception):
     pass
 
 
-def capture_output():
-    sys.stdout = UnicodeOut(sys.stdout)
-    sys.stderr = UnicodeOut(sys.stderr)
+#def capture_output():
+#    sys.stdout = UnicodeOut(sys.stdout)
+#    sys.stderr = UnicodeOut(sys.stderr)
 
-
-class CaptureOutput():
-    def __init__(self):
-        self.saved_stdout = sys.stdout
-        self.saved_stderr = sys.stderr
-        self.out = sys.stdout = SaveOut()
-        self.err = sys.stderr = SaveOut()
-
-    def restore(self):
-        sys.stdout = self.saved_stdout
-        sys.stderr = self.saved_stderr
 
 class REPL():
 
@@ -79,56 +69,63 @@ class REPL():
         return [readline.get_history_item(i) for i in range(1, n + 1)]
 
     def repl(self):
-        finished = False
-        while not finished:
+        while True:
             try:
                 line = raw_input(PROMPT)
-                line = CScanSplit(line, SEPARATORS, quotes='"\'`')
-                if line.words:
-                    if line.words[0] in ('history', 'h'):
-                        print '\n'.join(self.get_history())
-                    else:
-                        self.expand(line)
-                        go(line.words)
             except EOFError:
                 print 'quit'
-                finished = True
+                break
+            line_go(line)
 
-    def expand(self, line):
+
+class ExpandGo:
+    def __init__(self, user=None, pwd=None, unixPaths=None, docbase=None):
+        self.user = user
+        self.pwd = pwd
+        self.unixPaths = unixPaths
+        self.docbase = docbase
+
+    def e_go(self, lineArgs, saveOut=False):
+        if lineArgs.words:
+            if lineArgs.words[0] in ('history', 'h'):
+                result = '\n'.join(self.get_history())
+                if saveOut:
+                    return result
+                else:
+                    print result
+            else:
+                self.expand(lineArgs)
+                return go(lineArgs.words, self.user, self.pwd, self.unixPaths,
+                          self.docbase, saveOut=saveOut)
+
+    def expand(self, lineArgs):
         i = 0
-        while i < len(line.words):
-            word = line.words[i]
-            if line.info[i] == '`':
-                wordline = CScanSplit(line.words[i], SEPARATORS, quotes='"\'')
+        while i < len(lineArgs.words):
+            word = lineArgs.words[i]
+            if lineArgs.info[i] == '`':
+                wordline = cline.CScanSplit(lineArgs.words[i], SEPARATORS,
+                                            quotes='"\'')
                 if wordline.words:
-                     line.ExpandTerm(i, captured_go(wordline.words))
+                     lineArgs.ExpandTerm(i, self.e_go(wordline,
+                                                      saveOut=True))
             elif len(word) > 2 and word[0] == word[-1] == '`':
-                wordline = CScanSplit(word[1:-1], SEPARATORS, quotes='"\'')
-                line.ExpandTerm(i, captured_go(wordline.words))
+                wordline = cline.CScanSplit(word[1:-1], SEPARATORS,
+                                            quotes='"\'')
+                lineArgs.ExpandTerm(i, self.e_go(wordline, saveOut=True))
             i += 1
-                
-
-def captured_go(args):
-     c = CaptureOutput()
-     try:
-         go(args)
-         result = (' '.join(c.out.buffer)).strip()
-         c.out.clear()
-         c.err.clear()
-         c.restore()
-         print '>>>"%s"<<<' % result
-         return result
-     except:
-         c.restore()
-         raise
-#         raise ExpansionFailedError('Could not expand `%s`' % ' '.join(args))
-                                    
 
 
-def go(args=None):
+def line_go(line, user=None, pwd=None, unixPaths=None, docbase=None,
+            saveOut=False):
+    expander = ExpandGo(user, pwd, unixPaths, docbase)
+    lineArgs = cline.CScanSplit(line, SEPARATORS, quotes='"\'`')
+    return expander.e_go(lineArgs, saveOut=saveOut)
+
+
+def go(args=None, user=None, pwd=None, unixPaths=None, docbase=None,
+       saveOut=False):
     action, args, options, parser = parse_args(args)
-
-    if action.startswith('test'):
+    if action.startswith('test') and not user:
         cases = {
             'testcli': TestCLI,
             'testdb': TestFluidDB,
@@ -145,7 +142,13 @@ def go(args=None):
         v = 2 if options.hightestverbosity else 1
         unittest.TextTestRunner(verbosity=v).run(suite)
     else:
-        execute_command_line(action, args, options, parser)
+        if action == 'fish' and args:
+           action, words = args[0], args[1:]
+        else:
+           words = args
+        return execute_command_line(action, words, options, parser,
+                                    user, pwd, unixPaths, docbase,
+                                    saveOut=saveOut)
 
 
 def repl_or_go():
@@ -156,4 +159,4 @@ def repl_or_go():
 
 
 if __name__ == '__main__':
-    go_or_repl()
+    repl_or_go()
