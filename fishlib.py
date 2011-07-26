@@ -6,7 +6,7 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'3.12'
+__version__ = u'3.13'
 VERSION = __version__
 
 import codecs
@@ -257,6 +257,9 @@ class O:
         return u'\n'.join([u'%20s: %s' % (key, unicode(self.__dict__[key]))
                            for key in keys])
 
+    def u(self, key):
+        return self.__dict__[key]
+
 
 class Credentials:
     """
@@ -354,7 +357,7 @@ class FluidDB:
         if self.saveOutput:
             self.buffer.append(s)
         else:
-            print s
+            print s.encode('UTF-8') if type(s) == unicode else s
 
     def warning(self, msg):
         self.Print(u'%s\n' % msg)

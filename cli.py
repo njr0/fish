@@ -41,7 +41,8 @@ except ImportError:
 
 HTTP_METHODS = ['GET', 'PUT', 'POST', 'DELETE', 'HEAD']
 
-ARGLESS_COMMANDS = ['COUNT', 'TAGS', 'LS', 'PWD', 'PWN', 'WHOAMI']
+ARGLESS_COMMANDS = ['COUNT', 'TAGS', 'LS', 'PWD', 'PWN', 'WHOAMI', 'QUIT',
+                    'EXIT']
 
 AT_ERROR = (u'You need the abouttag library to use the abouttag command.\n'
             u'This is available from http://github.com/njr0/abouttag.')
@@ -92,6 +93,7 @@ About Tag Construction
    su fiuser           set fish to use user credentials for fiuser
    help [command]      show this help, or help for the nominated comamnd.
    commands            show a list of available commands
+   quit / exit         leave fish
 
  Run Tests:
    test                runs all tests
@@ -276,6 +278,7 @@ def check_abouttag_available():
 
 def execute_amazon_command(db, args):
     check_abouttag_available()
+    print args[0]
     db.Print(abouttag.amazon.get_about_tag_for_item(args[0]))
 
 
@@ -539,6 +542,8 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
         'abouttag',
         'about',
         'normalize',
+        'quit',
+        'exit',
     ]
     command_list.sort()
 
@@ -614,8 +619,10 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
             execute_abouttag_command(db, args)
         elif action == 'normalize':
             execute_normalize_command(db, args)
-        elif action in ['get', 'put', 'post', 'delete']:
+        elif action in ('get', 'put', 'post', 'delete'):
             execute_http_request(action, args, db, options)
+        elif action in ('quit', 'exit'):
+            pass
         else:
             db.Print('Unrecognized command %s' % action)
     except Exception, e:

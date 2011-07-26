@@ -75,6 +75,8 @@ class REPL():
             except EOFError:
                 print 'quit'
                 break
+            if line.strip() in ('exit', 'quit'):
+                break
             line_go(line)
 
 
@@ -152,7 +154,8 @@ def go(args=None, user=None, pwd=None, unixPaths=None, docbase=None,
 
 
 def repl_or_go():
-    if len(sys.argv) < 2:
+    action, args, options, parser = parse_args(sys.argv)
+    if len(args) == 0:
         REPL('This is fish version %s.' % VERSION)
     else:
         go()

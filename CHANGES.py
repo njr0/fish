@@ -382,5 +382,8 @@
 #
 # 2011/07/18 v3.12     Refactored REPL etc. so it can be used by Shell-Fish
 #
+# 2011/07/26 v3.13     Added quit and exit commands (mostly for interactive
+#                      shell; some unicode conversion to UTF-8 on output.
+
 
 
