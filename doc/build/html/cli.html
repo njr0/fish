@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>An Overview of the fish Command Line for Fluidinfo &mdash; fish v3.12 documentation</title>
+    <title>An Overview of the fish Command Line for Fluidinfo &mdash; fish v4.00 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '3.12',
+        VERSION:     '4.00',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -20,7 +20,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="fish v3.12 documentation" href="index.html" />
+    <link rel="top" title="fish v4.00 documentation" href="index.html" />
     <link rel="next" title="Shell-Fish: The Online version of Fish" href="shell-fish.html" />
     <link rel="prev" title="The fish Command Line for Fluidinfo" href="index.html" /> 
   </head>
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="index.html" title="The fish Command Line for Fluidinfo"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fish v3.12 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.00 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -75,21 +75,21 @@ altering their permissions.</p>
 <p>Assuming you have installed <tt class="docutils literal"><span class="pre">fish.py</span></tt>, set up a credentials file,
 and created an alias <tt class="docutils literal"><span class="pre">fish</span></tt> to run it, basic use is exemplified
 as follows.   In the examples that follow, I assume that the Fluidinfo
-user has username <tt class="docutils literal"><span class="pre">njr</span></tt>.   All tags belonging to njr start <tt class="docutils literal"><span class="pre">njr/</span></tt>.
+user has username <tt class="docutils literal"><span class="pre">alice</span></tt>.   All tags belonging to alice start <tt class="docutils literal"><span class="pre">alice/</span></tt>.
 (<tt class="docutils literal"><span class="pre">fish</span></tt> actually has a configuration option to allow this to be omitted,
 but for now we&#8217;ll specify the user explicitly, since that is normal
 in Fluidinfo.)</p>
 <blockquote>
 <ol class="arabic">
 <li><p class="first">Rate the Eiffel Tower as a 9:</p>
-<div class="highlight-python"><pre>$ fish tag -a "Eiffel Tower" njr/rating=9</pre>
+<div class="highlight-python"><pre>$ fish tag -a "Eiffel Tower" rating=9</pre>
 </div>
 </li>
 <li><p class="first">Show the my rating and ntoll&#8217;s rating of the &#8220;Eiffel Tower&#8221;.</p>
-<div class="highlight-python"><pre>$ fish show -a "Eiffel Tower"  fluiddb/about  njr/rating  ntoll/rating
+<div class="highlight-python"><pre>$ fish show -a "Eiffel Tower"  /about  rating  /ntoll/rating
 Object with about="Eiffel Tower":
 /objects/93bd1999-0998-49cc-8004-af457ce34ce4
-njr/rating = 9
+alice/rating = 9
 fluiddb/about = "Eiffel Tower"
 ntoll/rating = "I prefer the one in Blackpool"</pre>
 </div>
@@ -97,38 +97,38 @@ ntoll/rating = "I prefer the one in Blackpool"</pre>
 <li><p class="first">Show all the tags on the &#8220;Eiffel Tower&#8221; (now referenced by ID):</p>
 <div class="highlight-python"><pre>$ fish tags -i 93bd1999-0998-49cc-8004-af457ce34ce4
 Object with id=93bd1999-0998-49cc-8004-af457ce34ce4:
-njr/rating = 9
+alice/rating = 9
 ntoll/rating = "I prefer the  the one in Blackpool"
-njr/location = "Paris"
-njr/indexed/about
+alice/location = "Paris"
+alice/indexed/about
 fluiddb/about = "Eiffel Tower"</pre>
 </div>
 </li>
 <li><p class="first">Add a <tt class="docutils literal"><span class="pre">dislike</span></tt> tag to each object that I have rated 1 or 0
 and then show their about tags.</p>
-<div class="highlight-python"><pre>$ fish tag -q 'njr/rating &lt; 2' njr/dislike
-$ fish show -q 'has njr/dislike' fluiddb/about njr/rating njr/dislike
+<div class="highlight-python"><pre>$ fish tag -q 'alice/rating &lt; 2' dislike
+$ fish show -q 'has alice/dislike' /about rating dislike
 5 objects matched
 Object a98f2c80-ae5f-405a-a319-d47122ae9da3:
   fluiddb/about = "book:foucaults pendulum (umberto eco)"
-  njr/rating = 1
-  njr/dislike = True
+  alice/rating = 1
+  alice/dislike = True
 Object 5157c69e-ceaf-4e7c-9423-d67751d029d3:
   fluiddb/about = "The_Beatles"
-  njr/rating = 1
-  njr/dislike = True
+  alice/rating = 1
+  alice/dislike = True
 Object 1ab066e8-c2a1-4769-9121-e3346849e7e4:
   fluiddb/about = "book:beloved (toni morrison)"
-  njr/rating = 1
-  njr/dislike = True
+  alice/rating = 1
+  alice/dislike = True
 Object ff873602-e9a8-4f9a-a7d4-c0cfc394a120:
   fluiddb/about = "book:the lord of the rings (jrr tolkien)"
-  njr/rating = 1
-  njr/dislike = True
+  alice/rating = 1
+  alice/dislike = True
 Object 7aed1e67-a88e-439d-8a56-b2ab52c838ab:
   fluiddb/about = "book:oranges are not the only fruit (jeanette winterson)"
-  njr/rating = 0
-  njr/dislike = True</pre>
+  alice/rating = 0
+  alice/dislike = True</pre>
 </div>
 </li>
 </ol>
@@ -145,7 +145,7 @@ Here, we briefly note the differences.</p>
 <blockquote>
 <ul>
 <li><p class="first">In the Fluidinfo API, you can&#8217;t simply tag an object with
-an <tt class="docutils literal"><span class="pre">njr/rating</span></tt> tag; you first have to tell the system that you
+an <tt class="docutils literal"><span class="pre">alice/rating</span></tt> tag; you first have to tell the system that you
 wish to use a <tt class="docutils literal"><span class="pre">rating</span></tt> tag by <tt class="docutils literal"><span class="pre">creating</span></tt> it; only once you
 have done this can you use it.</p>
 <p>In <tt class="docutils literal"><span class="pre">fish</span></tt>, you can just go ahead and set a tag; if it doesn&#8217;t
@@ -237,8 +237,8 @@ specifies the object with this ID, which happens to be the
 on with the about tag <tt class="docutils literal"><span class="pre">Eiffel</span> <span class="pre">Tower</span></tt>.</li>
 <li><tt class="docutils literal"><span class="pre">-q</span> <span class="pre">&quot;fluidinfo</span> <span class="pre">query&quot;</span></tt> is used to specify a set of objects
 on the basis of a query expressed in the Fluidinfo query language.
-For example <tt class="docutils literal"><span class="pre">-q</span> <span class="pre">has</span> <span class="pre">njr/rating</span></tt> specifies objects that have
-an njr/rating rag on them.</li>
+For example <tt class="docutils literal"><span class="pre">-q</span> <span class="pre">has</span> <span class="pre">alice/rating</span></tt> specifies objects that have
+an <tt class="docutils literal"><span class="pre">alice/rating</span></tt> rag on them.</li>
 </ul>
 </blockquote>
 <p>Finally, some commands need or accept a list of tags or tag-value pairs.
@@ -271,7 +271,7 @@ For example:</p>
 This is fish version 3.10.
 &gt; pwd
 alice
-&gt; show -a 'book:alices adventures in wonderland (lewis carroll)' alice/rating
+&gt; show -a 'book:alices adventures in wonderland (lewis carroll)' rating
 Object with about="book:alices adventures in wonderland (lewis carroll)":
 alice/rating = 10
 &gt; quit</pre>
@@ -295,14 +295,14 @@ to <tt class="docutils literal"><span class="pre">h</span></tt>.</p>
 <li><p class="first">Either single or double quotes can be used to make compound
 arguments; single quotes can be enclosed in double quotes
 and double quotes can be enclosed in single quotes, e.g.</p>
-<div class="highlight-python"><pre>tag -a "Occam's Razor" alice/comment="I'm a believer"
-tag -a 'The "double" quote' alice/comment='Is "doubleplusgood"'</pre>
+<div class="highlight-python"><pre>tag -a "Occam's Razor" comment="I'm a believer"
+tag -a 'The "double" quote' comment='Is "doubleplusgood"'</pre>
 </div>
 </li>
 <li><p class="first">The escape character is blackslash (<tt class="docutils literal"><span class="pre">\</span></tt>), which can be
 used to escape quotes or backslashes.   For example,
 this command:</p>
-<div class="highlight-python"><pre>tag -a "The \"backslash\" (\\) character" alice/comment="is used for escaping"</pre>
+<div class="highlight-python"><pre>tag -a "The \"backslash\" (\\) character" comment="is used for escaping"</pre>
 </div>
 <p>tags the object with about tag <tt class="docutils literal"><span class="pre">The</span> <span class="pre">&quot;backslash&quot;</span> <span class="pre">(\)</span> <span class="pre">character</span></tt>.</p>
 </li>
@@ -310,7 +310,7 @@ this command:</p>
 whereby the phrase enclosed in backticks is evaluated as a Fish
 command and the output of that command replaces the quoted phrase
 when the enclosing command is executed.   For example:</p>
-<div class="highlight-python"><pre>tag -a "`about book 'Animal Farm' 'George Orwell'`" alice/rating=10</pre>
+<div class="highlight-python"><pre>tag -a "`about book 'Animal Farm' 'George Orwell'`" rating=10</pre>
 </div>
 <p>tags the object with about tag <tt class="docutils literal"><span class="pre">book:animal</span> <span class="pre">farm</span> <span class="pre">(george</span> <span class="pre">orwell)</span></tt>,
 since that is the result of the quoted Fish <tt class="docutils literal"><span class="pre">about</span></tt> command.</p>
@@ -384,7 +384,7 @@ since that is the result of the quoted Fish <tt class="docutils literal"><span c
         <li class="right" >
           <a href="index.html" title="The fish Command Line for Fluidinfo"
              >previous</a> |</li>
-        <li><a href="index.html">fish v3.12 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.00 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

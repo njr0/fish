@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>mkns — makes a new namespace &mdash; fish v3.12 documentation</title>
+    <title>mkns — makes a new namespace &mdash; fish v4.00 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '3.12',
+        VERSION:     '4.00',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -20,7 +20,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="fish v3.12 documentation" href="index.html" />
+    <link rel="top" title="fish v4.00 documentation" href="index.html" />
     <link rel="next" title="mkdir - makes a new namespace (the Fluidinfo equivalent of a directory)" href="mkdir.html" />
     <link rel="prev" title="touch — creates a tags and optionally sets their descriptions" href="touch.html" /> 
   </head>
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="touch.html" title="touch — creates a tags and optionally sets their descriptions"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fish v3.12 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.00 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -60,14 +60,15 @@ to set its description.</p>
 </ul>
 </blockquote>
 <p><strong>EXAMPLES</strong></p>
+<p>When authenticated as the user <tt class="docutils literal"><span class="pre">alice</span></tt>:</p>
 <blockquote>
 <ol class="arabic">
-<li><p class="first">Create a namespace called <tt class="docutils literal"><span class="pre">njr/secret</span></tt></p>
-<div class="highlight-python"><pre>$ touch njr/secret</pre>
+<li><p class="first">Create a namespace called <tt class="docutils literal"><span class="pre">alice/secret</span></tt></p>
+<div class="highlight-python"><pre>$ touch secret</pre>
 </div>
 </li>
-<li><p class="first">Create a tag <tt class="docutils literal"><span class="pre">njr/very/secret</span></tt> with description &#8220;keep right out&#8221;</p>
-<div class="highlight-python"><pre>$ touch -m "keep right out"  njr/very/secret</pre>
+<li><p class="first">Create a tag <tt class="docutils literal"><span class="pre">alice/very/secret</span></tt> with description &#8220;keep right out&#8221;</p>
+<div class="highlight-python"><pre>$ touch -m "keep right out"  very/secret</pre>
 </div>
 </li>
 </ol>
@@ -78,6 +79,8 @@ command is only needed, therefore, if you wish to set permissions
 before use set permissions before use or specify a description.</p>
 <p>The <tt class="docutils literal"><span class="pre">mkns</span></tt> command cannot be used (at present) to change the
 description of an existing namespace.</p>
+<p><strong>SEE ALSO:</strong></p>
+<p><tt class="docutils literal"><span class="pre">mkdir</span></tt> (synonym)</p>
 </div>
 
 
@@ -129,7 +132,7 @@ description of an existing namespace.</p>
         <li class="right" >
           <a href="touch.html" title="touch — creates a tags and optionally sets their descriptions"
              >previous</a> |</li>
-        <li><a href="index.html">fish v3.12 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.00 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

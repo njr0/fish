@@ -11,7 +11,7 @@ Counts the number of objects matching a set of conditions
 **EXAMPLES**
 ::
 
-    $ fish count -q 'has njr/rating'
+    $ fish count -q 'has alice/rating'
     141 objects matched
     Total: 141 objects
 
@@ -33,8 +33,8 @@ The command produces no output when successful, even if the tag did
 not exist.
 ::
 
-  $ fish untag -F -a "Eiffel Tower" ntoll/rating  
-  Failed to remove tag ntoll/rating from object with about="Eiffel Tower"
+  $ fish untag -F -a "Eiffel Tower" bert/rating  
+  Failed to remove tag bert/rating from object with about="Eiffel Tower"
   Error code 401 (UNAUTHORIZED)
 
 **NOTES**

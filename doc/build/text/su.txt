@@ -10,7 +10,7 @@ Set user: changes the set of credentials in use by ``fish``.
 
 **EXAMPLES**
 
-   $ fish su foo
+   $ fish su bert
 
 The ``fish`` command expects user credentials for Fluidinfo to be
 stored in a file in the users's home directory.   On unix systems,
@@ -19,12 +19,12 @@ this file is ``~/.fluidDBcredentials``; on Windows systems it is
 
 The the user has access to more than on Fluidinfo account, multiple
 credentials may be stored in variant files.   In unix systems, these
-files have names like ``~/.fluidDBcredentials.foo``; on windows they
-have names like ``fluiddbcredentials-foo.ini``.
+files have names like ``~/.fluidDBcredentials.bert``; on windows they
+have names like ``fluiddbcredentials-bert.ini``.
 
 A different set of credentials can be used for any one-off command by
-adding ``-u foo`` to the command line; this will cause the credentials
-in the ``foo`` variant of the file to be used.
+adding ``-u bert`` to the command line; this will cause the
+credentials in the ``bert`` variant of the file to be used.
 
 The ``fish su command`` changes the default set of credentials to be
 used by copying the specified variant file over the default file.
@@ -32,8 +32,8 @@ Because it is a simple copy, this is a *global* change, i.e. it
 affects all sessions, not just one in the current shell.    So on
 unix,
 
-   su njr
+   su alice
 
 is exactly equivalent to
 
-   cp ~/.fluidDBcredentials.njr ~/.fluidDBcredentials
+   cp ~/.fluidDBcredentials.alice ~/.fluidDBcredentials

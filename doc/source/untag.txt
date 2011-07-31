@@ -9,23 +9,26 @@ Removes one or more tags from the object or objects specified.
     [fish] untag [flags] <object specifier> <tags>
 
 **EXAMPLES**
+
+When authenticated as  user ``alice``:
 ::
 
-    untag -a "Eiffel Tower" njr/rating njr/seen
-    untag -a "Eiffel Tower" njr/rating njr/seen
-    untag -i 93bd1999-0998-49cc-8004-af457ce34ce4 njr/rating njr/seen
-    untag -U -a "Eiffel Tower" rating seen
-    untag -q 'fluiddb/about matches "Eiffel Tower"' njr/rating njr/seen
+    untag -a "Eiffel Tower" rating seen
+    untag -a "Eiffel Tower" /alice/rating seen
+    untag -i 93bd1999-0998-49cc-8004-af457ce34ce4 rating seen
+    untag -F -a "Eiffel Tower" alice/rating alice/seen
+    untag -q 'fluiddb/about matches "Eiffel Tower"' rating seen
 
-**NOTE FOR WINDOWS USERS* Working from a Windows command line, single quotes
+**NOTE FOR WINDOWS USERS**
+Working from a Windows command line, single quotes
 do not work as above.   Instead you need to use double quotes and "stutter"
 quotes inside quotes.   So the last example becomes:
 ::
 
-    untag -q "fluiddb/about matches """Eiffel Tower""" njr/rating njr/seen
+    untag -q "fluiddb/about matches """Eiffel Tower""" rating seen
 
-All of these commands will remove the tags ``njr/rating``
-and ``njr/seen`` from the object with about tag "Eiffel Tower"
+All of these commands will remove the tags ``alice/rating``
+and ``alice/seen`` from the object with about tag "Eiffel Tower"
 and ID ``93bd1999-0998-49cc-8004-af457ce34ce4``;
 The last one may also tag other objects since the query
 ::
@@ -36,19 +39,16 @@ is search-engine-style string match that will match any about tag
 containing the words ``Eiffel`` and ``Tower``, ignoring case, other words
 and punctuation.
 
-The ``-U`` option specifies "unix-style" relative paths; when this option
-is used, tag names are assumed to be relative to the authenticated user's
-namespace; if other user's tags are to be referred to, they must be
-introduced with a leading ``/`` (e.g. ``/ntoll/rating).
-Note that ``-U`` does not affect queries specified with ``-q``,
-i.e. full Fluidinfo-style paths must be used inside the query.
+The ``-F`` option specifies "Fluidinfo-style" full paths; when this option
+is used, all tag names are assumed be absolute, i.e. must start with
+the username.
 
 The command produces no output when successful, even if the tag did
 not exist.
 ::
 
-    $ fish untag -F -a "Eiffel Tower" ntoll/rating  
-    Failed to remove tag ntoll/rating from object with about="Eiffel Tower"
+    $ fish untag -F -a "Eiffel Tower" bert/rating  
+    Failed to remove tag bert/rating from object with about="Eiffel Tower"
     Error code 401 (UNAUTHORIZED)
 
 **NOTE**

@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>untag — removes tags from objects &mdash; fish v3.12 documentation</title>
+    <title>untag — removes tags from objects &mdash; fish v4.00 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '3.12',
+        VERSION:     '4.00',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -20,7 +20,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="fish v3.12 documentation" href="index.html" />
+    <link rel="top" title="fish v4.00 documentation" href="index.html" />
     <link rel="next" title="show — shows the values of tags on objects" href="show.html" />
     <link rel="prev" title="tag — adds tags to objects" href="tag.html" /> 
   </head>
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="tag.html" title="tag — adds tags to objects"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fish v3.12 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.00 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -53,19 +53,21 @@
 <div class="highlight-python"><pre>[fish] untag [flags] &lt;object specifier&gt; &lt;tags&gt;</pre>
 </div>
 <p><strong>EXAMPLES</strong></p>
-<div class="highlight-python"><pre>untag -a "Eiffel Tower" njr/rating njr/seen
-untag -a "Eiffel Tower" njr/rating njr/seen
-untag -i 93bd1999-0998-49cc-8004-af457ce34ce4 njr/rating njr/seen
-untag -U -a "Eiffel Tower" rating seen
-untag -q 'fluiddb/about matches "Eiffel Tower"' njr/rating njr/seen</pre>
+<p>When authenticated as  user <tt class="docutils literal"><span class="pre">alice</span></tt>:</p>
+<div class="highlight-python"><pre>untag -a "Eiffel Tower" rating seen
+untag -a "Eiffel Tower" /alice/rating seen
+untag -i 93bd1999-0998-49cc-8004-af457ce34ce4 rating seen
+untag -F -a "Eiffel Tower" alice/rating alice/seen
+untag -q 'fluiddb/about matches "Eiffel Tower"' rating seen</pre>
 </div>
-<p><a href="#id1"><span class="problematic" id="id2">**</span></a>NOTE FOR WINDOWS USERS* Working from a Windows command line, single quotes
+<p><strong>NOTE FOR WINDOWS USERS</strong>
+Working from a Windows command line, single quotes
 do not work as above.   Instead you need to use double quotes and &#8220;stutter&#8221;
 quotes inside quotes.   So the last example becomes:</p>
-<div class="highlight-python"><pre>untag -q "fluiddb/about matches """Eiffel Tower""" njr/rating njr/seen</pre>
+<div class="highlight-python"><pre>untag -q "fluiddb/about matches """Eiffel Tower""" rating seen</pre>
 </div>
-<p>All of these commands will remove the tags <tt class="docutils literal"><span class="pre">njr/rating</span></tt>
-and <tt class="docutils literal"><span class="pre">njr/seen</span></tt> from the object with about tag &#8220;Eiffel Tower&#8221;
+<p>All of these commands will remove the tags <tt class="docutils literal"><span class="pre">alice/rating</span></tt>
+and <tt class="docutils literal"><span class="pre">alice/seen</span></tt> from the object with about tag &#8220;Eiffel Tower&#8221;
 and ID <tt class="docutils literal"><span class="pre">93bd1999-0998-49cc-8004-af457ce34ce4</span></tt>;
 The last one may also tag other objects since the query</p>
 <div class="highlight-python"><pre>fluiddb/about matches "Eiffel Tower"</pre>
@@ -73,16 +75,13 @@ The last one may also tag other objects since the query</p>
 <p>is search-engine-style string match that will match any about tag
 containing the words <tt class="docutils literal"><span class="pre">Eiffel</span></tt> and <tt class="docutils literal"><span class="pre">Tower</span></tt>, ignoring case, other words
 and punctuation.</p>
-<p>The <tt class="docutils literal"><span class="pre">-U</span></tt> option specifies &#8220;unix-style&#8221; relative paths; when this option
-is used, tag names are assumed to be relative to the authenticated user&#8217;s
-namespace; if other user&#8217;s tags are to be referred to, they must be
-introduced with a leading <tt class="docutils literal"><span class="pre">/</span></tt> (e.g. <tt class="docutils literal"><span class="pre">/ntoll/rating).</span>
-<span class="pre">Note</span> <span class="pre">that</span> <span class="pre">``-U</span></tt> does not affect queries specified with <tt class="docutils literal"><span class="pre">-q</span></tt>,
-i.e. full Fluidinfo-style paths must be used inside the query.</p>
+<p>The <tt class="docutils literal"><span class="pre">-F</span></tt> option specifies &#8220;Fluidinfo-style&#8221; full paths; when this option
+is used, all tag names are assumed be absolute, i.e. must start with
+the username.</p>
 <p>The command produces no output when successful, even if the tag did
 not exist.</p>
-<div class="highlight-python"><pre>$ fish untag -F -a "Eiffel Tower" ntoll/rating
-Failed to remove tag ntoll/rating from object with about="Eiffel Tower"
+<div class="highlight-python"><pre>$ fish untag -F -a "Eiffel Tower" bert/rating
+Failed to remove tag bert/rating from object with about="Eiffel Tower"
 Error code 401 (UNAUTHORIZED)</pre>
 </div>
 <p><strong>NOTE</strong></p>
@@ -139,7 +138,7 @@ the permissions system.</p>
         <li class="right" >
           <a href="tag.html" title="tag — adds tags to objects"
              >previous</a> |</li>
-        <li><a href="index.html">fish v3.12 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.00 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

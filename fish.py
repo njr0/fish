@@ -127,6 +127,9 @@ def line_go(line, user=None, pwd=None, unixPaths=None, docbase=None,
 def go(args=None, user=None, pwd=None, unixPaths=None, docbase=None,
        saveOut=False):
     action, args, options, parser = parse_args(args)
+    if not saveOut and options.outform:
+        if options.outform[0] in ('json', 'python'):
+            saveOut = options.outform[0]
     if action.startswith('test') and not user:
         cases = {
             'testcli': TestCLI,
@@ -158,8 +161,11 @@ def repl_or_go():
     if len(args) == 0:
         REPL('This is fish version %s.' % VERSION)
     else:
-        go()
+        return go()
 
 
 if __name__ == '__main__':
-    repl_or_go()
+    r = repl_or_go()
+    if r:
+        print r
+

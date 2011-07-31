@@ -2,8 +2,9 @@
 Installation and Configuration
 ******************************
 
-**IMPORTANT CHANGE** From version 2.00 onwards, Fluidinfo has become
-more conventional; see *Tag Conventions*
+**IMPORTANT CHANGE** From version 4.00 onwards, Fluidinfo has reverted
+to its original design behaviour and uses unix-style paths by default.
+See under Credentials for details.
 
 
 Download
@@ -82,21 +83,24 @@ You can also optionally add a line, after password, saying either
 
 unix-style-paths true or unix-style-paths false
 
-(see next section)
+(see next section).   If this is not set, unix-style paths will be
+used.
 
 
 Tag Conventions
 ===============
 
-As from version 2.00, fish uses absolute Fluidinfo-style paths all the
-time (i.e. you always specify the namespace and don't use a leading
-slash). You can explicitly mandate this also by adding the line
+As from version 4.00, fish uses Unix-style paths by default (i.e. tag
+paths without a leading slash are assumed to be in the authenticated
+user's namespace; tags for other users need to be prefixed with  a
+leading slash). You can explicitly mandate this also by adding the
+line
 
-   unix-style-paths false
+   unix-style-paths true
 
 in your credentials file (see above). If you instead set
 
-   unix-style-paths true
+   unix-style-paths false
 
 on the third line of the credentials file, fish uses unix-style paths,
 meaning that paths are assumed to be relative to the user's namespace

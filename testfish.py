@@ -28,7 +28,7 @@ class TestFluidDB(unittest.TestCase):
     def testCreateObjectNoAbout(self):
         db = self.db
         o = db.create_object()
-        self.assertEqual(type(o) != types.IntType, True)
+        self.assertEqual(type(o) not in (int, long), True)
 
     def testCreateObjectFail(self):
         bad = Credentials(u'doesnotexist', u'certainlywiththispassword')

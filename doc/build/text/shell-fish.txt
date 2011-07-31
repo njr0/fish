@@ -2,6 +2,8 @@
 Shell-Fish: The Online version of Fish
 **************************************
 
+[image]
+
 There is a version of ``fish`` available online at http://shell-
 fish.appspot.com.
 
@@ -55,3 +57,7 @@ Key things to know are:
      running the tests would be ill-advised. Timeouts will obviously
      be more common at times when Fluidinfo is under particularly
      heavy load.
+
+   * If you use an iPhone or iPad, you can add the fish page to your
+     homescreen and get a "web app" version, which should show up
+     looking like the one at the top of the page.

@@ -11,6 +11,7 @@ The fish Command Line for Fluidinfo
 * tag — adds tags to objects
 * untag — removes tags from objects
 * show — shows the values of tags on objects
+* get — gets the values (only) of tags on objects
 * tags — shows all the tags on an object with their values
 * count — counts the number of objects satisfying a query
 **Commands for Listing and Managing Tags and Namespaces**
@@ -40,6 +41,8 @@ The fish Command Line for Fluidinfo
 * version — prints fish's version number
 * su — sets the Fluidinfo user
 * whoami — prints the name of the current Fluidinfo user
+* quit — quits fish
+* exit — exits fish
 * test — runs fish's test suite
 **Installation and Configuration**
 

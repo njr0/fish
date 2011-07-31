@@ -9,24 +9,26 @@ Shows the values of the tags nominated from the objects specified.
     [fish] show [flags] <object specifier> <tags>
 
 **EXAMPLES**
+
+When authenticated as  user ``alice``:
 ::
 
-    $ fish show -a "Eiffel Tower" njr/rating njr/seen ntoll/seen
+    $ fish show -a "Eiffel Tower" rating seen bert/seen
     Object with about="Eiffel Tower":
-      njr/rating = 7
-      njr/seen
-      (tag ntoll/seen not present)
+      alice/rating = 7
+      alice/seen
+      (tag bert/seen not present)
 
 Alternative specifications:
 ::
 
-    show -a "Eiffel Tower" njr/rating njr/seen ntoll/seen
-    show -i 93bd1999-0998-49cc-8004-af457ce34ce4 njr/rating njr/seen ntoll/seen
-    show -q 'fluiddb/about matches "Eiffel Tower"' njr/rating njr/seen ntoll/seen
-    show -U -a "Eiffel Tower" rating seen ntoll/seen
+    show -a "Eiffel Tower" rating seen /bert/seen
+    show -i 93bd1999-0998-49cc-8004-af457ce34ce4 rating seen /bert/seen
+    show -q 'fluiddb/about matches "Eiffel Tower"' rating seen /bert/seen
+    show -F -a "Eiffel Tower" alice/rating alice/seen bert/seen
 
-All of these commands will show the values the tags ``njr/rating``,
-``njr/seen`` and ``ntoll/seen`` from the object with about tag "Eiffel Tower"
+All of these commands will show the values the tags ``alice/rating``,
+``alice/seen`` and ``bert/seen`` from the object with about tag "Eiffel Tower"
 and ID ``93bd1999-0998-49cc-8004-af457ce34ce4``;
 The last one may also show other objects since the query
 ::
@@ -37,23 +39,16 @@ is search-engine-style string match that will match any about tag
 containing the words ``Eiffel`` and ``Tower``, ignoring case, other words
 and punctuation.
 
-The ``-U`` option specifies "unix-style" relative paths; when this option
-is used, tag names are assumed to be relative to the authenticated user's
-namespace; if other user's tags are to be referred to, they must be
-introduced with a leading ``/`` (e.g. ``/ntoll/rating).
-Note that ``-U`` does not affect queries specified with ``-q``,
-i.e. full Fluidinfo-style paths must be used inside the query.
+**NOTES**
 
-The command produces no output when successful, even if the tag did
-not exist.
-::
-
-  $ fish untag -F -a "Eiffel Tower" ntoll/rating  
-  Failed to remove tag ntoll/rating from object with about="Eiffel Tower"
-  Error code 401 (UNAUTHORIZED)
-
-**NOTE**
+The ``-F`` option specifies "Fluidinfo-style" full paths; when this option
+is used, all tag names are assumed be absolute, i.e. must start with
+the username.
 
 The user's ability to read tags is regulated by the permissions system.
 
 
+See also:
+---------
+
+``get``, ``tags``

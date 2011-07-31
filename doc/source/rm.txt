@@ -21,27 +21,29 @@ the ``-r`` options is specified) and tags have to be unused
 
 **EXAMPLES**
 
-  #. Remove an unused tag ``njr/unused``:
+When authenticated as  user ``alice``:
+
+  #. Remove an unused tag ``alice/unused``:
      ::
 
-        $ rm njr/unused
+        $ rm unused
 
-  #. Remove a used tag ``njr/used``, in the process removing that tag
+  #. Remove a used tag ``alice/used``, in the process removing that tag
      from all objects to which it is attached:
      ::
 
-	$ rm -f njr/used
+	$ rm -f used
 
-  #. Remove an empty namespace ``njr/empty``:
+  #. Remove an empty namespace ``alice/empty``:
      ::
 
-        $ rm njr/empty
+        $ rm empty
 
-  #. Remove a non-empty namespace ``njr/inUse`` and all the tags and
+  #. Remove a non-empty namespace ``alice/inUse`` and all the tags and
      namespaces under it:
      ::
 
-        $ rm -r njr/inUse
+        $ rm -r inUse
 
 **NOTES**
 

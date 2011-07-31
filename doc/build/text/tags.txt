@@ -10,15 +10,16 @@ Show the list of tags (and their values) present on an objects
 
 **EXAMPLES**
 
-   $ fish tags -a "Eiffel Tower" njr/rating njr/seen ntoll/seen
+When authenticated as  user ``alice``:
+
+   $ fish tags -a "Eiffel Tower" rating seen /bert/seen
    Object with about="Eiffel Tower":
    /objects/93bd1999-0998-49cc-8004-af457ce34ce4
-     njr/seen
+     alice/seen
      fluiddb/about = "Eiffel Tower"
-     njr/njr/seen
-     njr/rating = 7
-     njr/index/about
-     njr/location = "Paris"
+     alice/rating = 7
+     alice/index/about
+     alice/location = "Paris"
 
 Alternative specifications:
 
@@ -26,10 +27,9 @@ Alternative specifications:
    tags -i 93bd1999-0998-49cc-8004-af457ce34ce4
    tags -q 'fluiddb/about matches "Eiffel Tower"'
 
->>**<<NOTE FOR WINDOWS USERS* Working from a Windows command line,
-single quotes do not work as above.   Instead you need to use double
-quotes and "stutter" quotes inside quotes.   So the last example
-becomes:
+**NOTE FOR WINDOWS USERS** Working from a Windows command line, single
+quotes do not work as above.   Instead you need to use double quotes
+and "stutter" quotes inside quotes.   So the last example becomes:
 
    tags -q "fluiddb/about matches """Eiffel Tower"""
 

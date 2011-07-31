@@ -6,7 +6,7 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'3.13'
+__version__ = u'4.00'
 VERSION = __version__
 
 import codecs
@@ -17,6 +17,7 @@ import types
 import urllib
 from functools import wraps
 from httplib2 import Http
+import cline
 
 if sys.version_info < (2, 6):
     try:
@@ -30,7 +31,7 @@ else:
 DADGAD_ID = u'ca0f03b5-3c0d-4c00-aa62-bdb07f29599c'
 PARIS_ID = u'17ecdfbc-c148-41d3-b898-0b5396ebe6cc'
 UNICODE = True
-DEFAULT_UNIX_STYLE_PATHS = False
+DEFAULT_UNIX_STYLE_PATHS = True
 toStr = unicode if UNICODE else str
 
 
@@ -147,6 +148,48 @@ def human_status(c, extra=None, trans=None):
     return u'Error Status %d%s' % (c, translation) + extras
 
 
+class AbstractTag:
+    def __init__(self, name):
+        self.name = name
+
+    def __unicode__(self):
+        return self.name
+
+
+class ConcreteTag:
+    def __init__(self, name, value=None, about=None, id=None):
+        self.name = name
+        self.value = value
+        self.about = about
+        self.id = id
+
+    def __unicode__(self):
+        return u'%s=%s' % (self.name, repr(self.value))
+
+
+class TagValue:
+    def __init__(self, name, value=None):
+        self.name = name
+        self.value = value
+
+    def __unicode__(self):
+        return (u'Tag "%s", value "%s" of type %s'
+                     % (self.name, toStr(self.value), toStr(type(self.value))))
+
+
+class Namespace:
+    def __init__(self, name):
+        self.name = name
+
+    def __unicode__(self):
+        return self.name
+
+    def toJSON(self):
+        return {'item': 'namespace', 'name': self.name}
+
+    toUnicode = __unicode__
+
+
 def quote_u_u(s):
     """Quote a unicode string s using %-encoding.
 
@@ -215,7 +258,7 @@ def by_about(f):
     @wraps(f)
     def wrapper(self, about, *args, **kwargs):
         o = self.create_object(about=about)
-        if type(o) == types.IntType:   # error code
+        if type(o) in (int, long):   # error code
             return o, None
         return f(self, o.id, *args, **kwargs)
     return wrapper
@@ -239,6 +282,8 @@ class O:
 
     Most objects returned natively as hashes by the FluidDB API
     are mapped to these dummy objects in this library.
+
+    Set missing tags to O.
     """
     def __init__(self, hash=None):
         if hash:
@@ -248,7 +293,9 @@ class O:
     def __str__(self):
         keys = self.__dict__.keys()
         keys.sort()
-        return u'\n'.join([u'%20s: %s' % (key, toStr(self.__dict__[key]))
+        return u'\n'.join([u'%20s: %s' % (key, toStr(self.__dict__[key]
+                           if not self.__dict__[key] is O
+                                else u'(not present)'))
                                 for key in keys])
 
     def __unicode__(self):
@@ -259,6 +306,9 @@ class O:
 
     def u(self, key):
         return self.__dict__[key]
+
+    def toJSON(self):
+        return {'item': 'object', 'tags': self.__dict__}
 
 
 class Credentials:
@@ -322,6 +372,12 @@ class FluidDB:
     Although currently unused, the unixStylePaths parameter
     can be used to choose whether to use unix-style paths for tags,
     namespaces etc.
+
+    saveOutput may be:
+       False (just print)
+       True (save text)
+       'json' (save json dictionary)
+       'python' (save python objects)
     """
 
     def __init__(self, credentials=None, host=None, debug=False,
@@ -341,6 +397,7 @@ class FluidDB:
         self.debug = debug
         self.encoding = encoding
         self.saveOutput = saveOutput
+        assert saveOutput in (True, False, u'python', u'json')
         self.buffer = []
         self.timeout = choose_http_timeout()
         if not host.startswith(u'http'):
@@ -353,11 +410,15 @@ class FluidDB:
             u'Authorization': auth
         }
 
-    def Print(self, s):
+    def Print(self, s, allowSave=True, allowPrint=True):
         if self.saveOutput:
-            self.buffer.append(s)
-        else:
-            print s.encode('UTF-8') if type(s) == unicode else s
+            if  allowSave:
+                self.buffer.append(s)
+        elif allowPrint:
+            if type(s) in types.StringTypes:
+                print s.encode('UTF-8') if type(s) == unicode else s
+            else:
+                print s.toUnicode().encode('UTF-8')
 
     def warning(self, msg):
         self.Print(u'%s\n' % msg)
@@ -419,7 +480,11 @@ class FluidDB:
                 if not k == u'Authorization':
                     self.Print(u'  %s=%s' % (k, headers[k]))
         body8 = body.encode('UTF-8') if type(body) == unicode else body
+        response, content, result, status = self.request(url, method,
+                                                         body8, headers)
+        return status, result
 
+    def request(self, url, method, body8, headers):
         http = _get_http(self.timeout)
         response, content = http.request(url, method, body8, headers)
         status = response.status
@@ -427,7 +492,7 @@ class FluidDB:
             result = json.loads(content)
         else:
             result = content
-        if self.debug:
+        if self.debug or status == STATUS.INTERNAL_SERVER_ERROR:
             self.Print(u'status: %d; content: %s' % (status, toStr(result)))
             if status >= 400:
                 for header in response:
@@ -435,23 +500,23 @@ class FluidDB:
                         self.Print(u'\t%s=%s'
                                    % (header.decode('UTF-8'),
                                       response[header].decode('UTF-8')))
-
-        return status, result
+        return (response, content, result, status)
+        
 
     def _get_tag_value(self, path):
         headers = self.headers.copy()
         url = self._get_url(self.host, path, hash=None, kw=None)
-        http = _get_http(self.timeout)
         if self.debug:
             self.Print(u'\nShow URL: %s' % url)
-        response, content = http.request(url, u'GET', None, headers)
+        response, content, result, status = self.request(url, u'GET',
+                                                         None, headers)
         content_type = response[u'content-type']
         if content_type == PRIMITIVE_CONTENT_TYPE:
             result = json.loads(content)
             content_type = None
         else:
             result = content
-        return response.status, (result, content_type)
+        return status, (result, content_type)
 
     def _set_tag_value(self, path, value, value_type=None):
         headers = self.headers.copy()
@@ -464,9 +529,10 @@ class FluidDB:
         if self.debug:
             self.Print(u'\nTag URL: %s' % url)
             self.Print(u'Value: %s' % value)
-        response, content = http.request(url, u'PUT', value.encode('UTF-8'),
-                                         headers)
-        return response.status, content
+        response, content, result, status = self.request(url, u'PUT',
+                                                value.encode('UTF-8'),
+                                                headers)
+        return status, content
 
     def create_object(self, about=None):
         """
@@ -650,7 +716,7 @@ class FluidDB:
         (status, o) = self._set_tag_value(objTagParts, value, value_type)
         if status == STATUS.NOT_FOUND and createAbstractTagIfNeeded:
             o = self.create_abstract_tag(tag, inPref=inPref)
-            if type(o) == types.IntType:       # error code
+            if type(o) in (int, long):       # error code
                 return o
             else:
                 return self.tag_object(spec, tag, byAbout, value, value_type,
@@ -917,6 +983,8 @@ def get_typed_tag_value(v):
         return r
     elif len(v) > 1 and v[0] == v[-1] and v[0] in (u'"\''):
         return v[1:-1]
+    elif len(v) > 1 and v[0] == u'{' and v[-1] == '}':
+         return cline.CScanSplit(v[1:-1], ' \t,', quotes='"\'').words
     else:
         return toStr(v)
 

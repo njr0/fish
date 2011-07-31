@@ -1,55 +1,58 @@
 Using Unix-Like Paths
 =====================
 
-In Fluidinfo, all paths (namespaces and tags) are absolute and have no
-leading slash.  So ``njr`'s rating tag is ``njr/rating`` and must
-always be specified as such.
+In Fluidinfo itself, all paths (namespaces and tags) are absolute and
+have no leading slash.  So ``alice`'s rating tag is ``alice/rating`` and
+must always be specified as such.
 
 This contrasts with Unix, where there is a notion of relative and absolute
 paths.   Absolute paths start with a slash and specify how to get to
 the item you are interested in.   So, if we map namespaces to directories
-and tags to files, then the unix equivalent of ``njr/rating`` is
-``/njr/rating``.   But Unix also has a notion of a ``current working
+and tags to files, then the unix equivalent of ``alice/rating`` is
+``/alice/rating``.   But Unix also has a notion of a ``current working
 directory`` (``cwd``) and relative paths---the path to the file or directory
 of interest relative to the working directory.   Thus if the ``cwd`` is
-``njr``, then ``/njr/rating`` can be referred to as ``rating``.
+``alice``, then ``/alice/rating`` can be referred to as ``rating``.
 Unix uses the ``cd`` command to allow you to change your working directory,
 and ``pwd`` to print the name of the working directory.
 
-``fish`` supports a limited version of the same.   There are two ways
-to tell ``fish`` that you would like to use unix-style paths rather than
-fluidinfo-style paths.   First, on any command line, you can add
-a ``-U`` flag, and this will have the desired effect for that command only.
-Thus
+The default behaviour of Fish is the support a limited version of
+the unix-like behaviour.  There are two ways to tell Fish that you
+would like to use fluidinfo-style paths rather than unix-style paths.
+First, on any command line, you can add a ``-F`` flag, and this will
+have the desired effect for that command only.  Thus, when authenticated
+as the user ``alice``, the commands
 ::
 
-    ls -l njr/rating
+    ls -l rating
 
 and
 ::
 
-    ls -F -l rating
+    ls -F -l alice/rating
 
 have the same effect.  (The ``-F`` and ``-l`` can also be combined as
 ``-lF`` or ``-Fl`` since they are single letter flags that don't take
 arguments.)
 
-Alternatively, if you would always like to use unix-style paths,
+Alternatively, if you would always like to use fluidinfo-style paths,
 you can add a third line to your `Credentials` file saying
 ::
 
-  unix-style-paths true
+  unix-style-paths false
 
-What Changes with Unix-Style Paths
-----------------------------------
 
-If you choose to use unix-style paths, the following changes occur:
+The Differences Between Using Unix-Style Paths and Fluidinfo-style Paths
+------------------------------------------------------------------------
+
+When using the default use unix-style paths, the following behaviours
+occur:
 
   * All paths not beginning with a ``/`` are taken to be relative
-    to the user's namespace.   So if you authenticate as ``njr``,
-    then ``rating`` is a shorthand for ``/njr/rating``
-    (the Fluidinfo tag ``njr/rating``),
-    ``private/rating`` is a shorthand for ``/njr/private/rating``.
+    to the user's namespace.   So if you authenticate as ``alice``,
+    then ``rating`` is a shorthand for ``/alice/rating``
+    (the Fluidinfo tag ``alice/rating``),
+    ``private/rating`` is a shorthand for ``/alice/private/rating``.
 
   * Paths in other users' namespaces must be introduced with a slash.
     Thus, to refer to ``jacqui``'s rating, use ``/jacqui/rating`` etc.
@@ -58,7 +61,7 @@ If you choose to use unix-style paths, the following changes occur:
 
        fish show -a DADGAD rating /jacqui/rating
 
-    will request the Fluidinfo tags ``njr/rating`` and ``jacqui/rating``.
+    will request the Fluidinfo tags ``alice/rating`` and ``jacqui/rating``.
 
   * The *about tag*, ``fluiddb/about`` may be referred to with the
     special abbreviation ``/about``.
@@ -71,8 +74,9 @@ If you choose to use unix-style paths, the following changes occur:
     tag is obviously a bit pointless).
 
   * The pseudo-tag ``/id`` may be used to request the object's ID.
+    (This is also available when not using unix-style paths, in fact.)
 
-  * The exception to this is in the body of queries: ``fish`` does not
+  * The exception to this is in the body of queries: Fish does not
     rewrite queries, which are passed directly to Fluidinfo.
     Thus, to request the about tags for all objects containing DADGAD,
     you would say:
@@ -80,10 +84,10 @@ If you choose to use unix-style paths, the following changes occur:
 
        fish show -q 'fluiddb/about matches "DADGAD"' /about
 
-    Similarly, to request all objects ``njr`` has rated 10:
+    Similarly, to request all objects ``alice`` has rated 10:
     ::
 
-       fish show -q 'njr/rating = 10' /about 
+       fish show -q 'alice/rating = 10' /about 
 
 **NOTES**
 
@@ -92,7 +96,7 @@ If you choose to use unix-style paths, the following changes occur:
     command at present.   This may change.
 
   * It is quite likely that at some point in the future, when unix paths
-    are in use, ``fish`` will rewrite queries too, i.e. unix-style
+    are in use, Fish will rewrite queries too, i.e. unix-style
     paths will be extended to the query; however, that is a slightly more
     delicate operation, so hasn't been tackled yet.
 

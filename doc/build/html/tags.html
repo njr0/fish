@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>tags — shows all the tags on an object with their values &mdash; fish v3.12 documentation</title>
+    <title>tags — shows all the tags on an object with their values &mdash; fish v4.00 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '3.12',
+        VERSION:     '4.00',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -20,9 +20,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="fish v3.12 documentation" href="index.html" />
+    <link rel="top" title="fish v4.00 documentation" href="index.html" />
     <link rel="next" title="count — counts the number of objects satisfying a query" href="count.html" />
-    <link rel="prev" title="show — shows the values of tags on objects" href="show.html" /> 
+    <link rel="prev" title="get — gets the values (only) of tags on objects" href="get.html" /> 
   </head>
   <body>
     <div class="related">
@@ -35,9 +35,9 @@
           <a href="count.html" title="count — counts the number of objects satisfying a query"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="show.html" title="show — shows the values of tags on objects"
+          <a href="get.html" title="get — gets the values (only) of tags on objects"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fish v3.12 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.00 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -53,22 +53,23 @@
 <div class="highlight-python"><pre>[fish] tag [flags] &lt;object specifier&gt;</pre>
 </div>
 <p><strong>EXAMPLES</strong></p>
-<div class="highlight-python"><pre>$ fish tags -a "Eiffel Tower" njr/rating njr/seen ntoll/seen
+<p>When authenticated as  user <tt class="docutils literal"><span class="pre">alice</span></tt>:</p>
+<div class="highlight-python"><pre>$ fish tags -a "Eiffel Tower" rating seen /bert/seen
 Object with about="Eiffel Tower":
 /objects/93bd1999-0998-49cc-8004-af457ce34ce4
-  njr/seen
+  alice/seen
   fluiddb/about = "Eiffel Tower"
-  njr/njr/seen
-  njr/rating = 7
-  njr/index/about
-  njr/location = "Paris"</pre>
+  alice/rating = 7
+  alice/index/about
+  alice/location = "Paris"</pre>
 </div>
 <p>Alternative specifications:</p>
 <div class="highlight-python"><pre>tags -a "Eiffel Tower"
 tags -i 93bd1999-0998-49cc-8004-af457ce34ce4
 tags -q 'fluiddb/about matches "Eiffel Tower"'</pre>
 </div>
-<p><a href="#id1"><span class="problematic" id="id2">**</span></a>NOTE FOR WINDOWS USERS* Working from a Windows command line, single quotes
+<p><strong>NOTE FOR WINDOWS USERS</strong>
+Working from a Windows command line, single quotes
 do not work as above.   Instead you need to use double quotes and &#8220;stutter&#8221;
 quotes inside quotes.   So the last example becomes:</p>
 <div class="highlight-python"><pre>tags -q "fluiddb/about matches """Eiffel Tower"""</pre>
@@ -95,8 +96,8 @@ and punctuation.</p>
               <img class="logo" src="_static/fish-doc-logo.png" alt="Logo"/>
             </a></p>
             <h4>Previous topic</h4>
-            <p class="topless"><a href="show.html"
-                                  title="previous chapter">show — shows the values of tags on objects</a></p>
+            <p class="topless"><a href="get.html"
+                                  title="previous chapter">get — gets the values (only) of tags on objects</a></p>
             <h4>Next topic</h4>
             <p class="topless"><a href="count.html"
                                   title="next chapter">count — counts the number of objects satisfying a query</a></p>
@@ -132,9 +133,9 @@ and punctuation.</p>
           <a href="count.html" title="count — counts the number of objects satisfying a query"
              >next</a> |</li>
         <li class="right" >
-          <a href="show.html" title="show — shows the values of tags on objects"
+          <a href="get.html" title="get — gets the values (only) of tags on objects"
              >previous</a> |</li>
-        <li><a href="index.html">fish v3.12 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.00 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

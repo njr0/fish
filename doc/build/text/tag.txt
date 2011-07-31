@@ -11,23 +11,24 @@ specified.
 
 **EXAMPLES**
 
-   tag -a "Eiffel Tower" njr/rating=7 njr/seen
-   tag -a "Eiffel Tower" njr/rating=7 njr/seen
-   tag -i 93bd1999-0998-49cc-8004-af457ce34ce4 njr/rating=7 njr/seen
-   tag -U -a "Eiffel Tower" rating=7 seen
-   tag -q 'fluiddb/about matches "Eiffel Tower"' njr/rating=7 njr/seen
+When authenticated as  user ``alice``:
 
->>**<<NOTE FOR WINDOWS USERS* Working from a Windows command line,
-single quotes do not work as above.   Instead you need to use double
-quotes and "stutter" quotes inside quotes.   So the last example
-becomes:
+   tag -a "Eiffel Tower" rating=7 seen
+   tag -a "Eiffel Tower" /alice/rating=7 seen
+   tag -i 93bd1999-0998-49cc-8004-af457ce34ce4 rating=7 seen
+   tag -F -a "Eiffel Tower" alice/rating=7 alice/seen
+   tag -q 'fluiddb/about matches "Eiffel Tower"' rating=7 seen
 
-   tag -q "fluiddb/about matches ""Eiffel Tower""" njr/rating=7 njr/seen
+**NOTE FOR WINDOWS USERS** Working from a Windows command line, single
+quotes do not work as above.   Instead you need to use double quotes
+and "stutter" quotes inside quotes.   So the last example becomes:
+
+   tag -q "fluiddb/about matches ""Eiffel Tower""" rating=7 seen
 
 All of these commands will tag the object with about tag "Eiffel
 Tower" and ID ``93bd1999-0998-49cc-8004-af457ce34ce4`` with two
-tags---``njr/rating`` of 7 and ``njr/seen`` with no value. The last
-one may also tag other objects since the query
+tags---``alice/rating`` of 7 and ``alice/seen`` with no value. The
+last one may also tag other objects since the query
 
    fluiddb/about matches "Eiffel Tower"
 
@@ -35,30 +36,20 @@ is search-engine-style string match that will match any about tag
 containing the words ``Eiffel`` and ``Tower``, ignoring case, other
 words and punctuation.
 
-The ``-U`` option specifies "unix-style" relative paths; when this
-option is used, tag names are assumed to be relative to the
-authenticated user's namespace; if other user's tags are to be
-referred to, they must be introduced with a leading ``/`` (e.g.
-``/ntoll/rating). Note that ``-U`` does not affect queries specified
-with ``-q``, i.e. full Fluidinfo-style paths must be used inside the
-query.
+The ``-F`` option specifies "Fluidinfo-style" relative paths; when
+this option is used, all tag names must start with the relevant user
+name (as is always the case within queries).
 
 The command produces no output when successful and a suitable warning
 when it fails.
 
-   $ fish tag -a "Eiffel Tower" njr/rating=7
+   $ fish tag -a "Eiffel Tower" rating=7
 
-   $ fish tag -a "Eiffel Tower" ntoll/rating=7
-   Failed to tag object with about="Eiffel Tower" with ntoll/rating
+   $ fish tag -a "Eiffel Tower" /bert/rating=7
+   Failed to tag object with about="Eiffel Tower" with bert/rating
    Error code 401 (UNAUTHORIZED)
 
 **NOTES**
-
-When specified by about tag, the object does not need to exist in
-Fluidinfo prior to the operation; if necessary an object with the
-given about tag will be created.   (Conceptually, an object for every
-possible about tag always exists in Fluidinfo; they are just
-*instantiated lazily*, i.e. allocated IDs when first used.)
 
 The user must have permission to write the tag. By default, the user
 can write any tag under her namespace.

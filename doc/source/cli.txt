@@ -31,7 +31,7 @@ altering their permissions.
 Assuming you have installed ``fish.py``, set up a credentials file,
 and created an alias ``fish`` to run it, basic use is exemplified
 as follows.   In the examples that follow, I assume that the Fluidinfo
-user has username ``njr``.   All tags belonging to njr start ``njr/``.
+user has username ``alice``.   All tags belonging to alice start ``alice/``.
 (``fish`` actually has a configuration option to allow this to be omitted,
 but for now we'll specify the user explicitly, since that is normal
 in Fluidinfo.)
@@ -40,15 +40,15 @@ in Fluidinfo.)
   1. Rate the Eiffel Tower as a 9:
      ::
 
-         $ fish tag -a "Eiffel Tower" njr/rating=9
+         $ fish tag -a "Eiffel Tower" rating=9
 
   2. Show the my rating and ntoll's rating of the "Eiffel Tower".
      ::
 
-        $ fish show -a "Eiffel Tower"  fluiddb/about  njr/rating  ntoll/rating 
+        $ fish show -a "Eiffel Tower"  /about  rating  /ntoll/rating
 	Object with about="Eiffel Tower":
 	/objects/93bd1999-0998-49cc-8004-af457ce34ce4
-  	njr/rating = 9
+  	alice/rating = 9
   	fluiddb/about = "Eiffel Tower"
   	ntoll/rating = "I prefer the one in Blackpool"
 
@@ -57,44 +57,45 @@ in Fluidinfo.)
 
         $ fish tags -i 93bd1999-0998-49cc-8004-af457ce34ce4
 	Object with id=93bd1999-0998-49cc-8004-af457ce34ce4:
-        njr/rating = 9
+        alice/rating = 9
         ntoll/rating = "I prefer the  the one in Blackpool"
-	njr/location = "Paris"
-	njr/indexed/about
+	alice/location = "Paris"
+	alice/indexed/about
 	fluiddb/about = "Eiffel Tower"
 
   4. Add a ``dislike`` tag to each object that I have rated 1 or 0
      and then show their about tags.
      ::
 
-        $ fish tag -q 'njr/rating < 2' njr/dislike
-        $ fish show -q 'has njr/dislike' fluiddb/about njr/rating njr/dislike
+        $ fish tag -q 'alice/rating < 2' dislike
+        $ fish show -q 'has alice/dislike' /about rating dislike
         5 objects matched
         Object a98f2c80-ae5f-405a-a319-d47122ae9da3:
           fluiddb/about = "book:foucaults pendulum (umberto eco)"
-          njr/rating = 1
-          njr/dislike = True
+          alice/rating = 1
+          alice/dislike = True
         Object 5157c69e-ceaf-4e7c-9423-d67751d029d3:
           fluiddb/about = "The_Beatles"
-          njr/rating = 1
-          njr/dislike = True
+          alice/rating = 1
+          alice/dislike = True
         Object 1ab066e8-c2a1-4769-9121-e3346849e7e4:
           fluiddb/about = "book:beloved (toni morrison)"
-          njr/rating = 1
-          njr/dislike = True
+          alice/rating = 1
+          alice/dislike = True
         Object ff873602-e9a8-4f9a-a7d4-c0cfc394a120:
           fluiddb/about = "book:the lord of the rings (jrr tolkien)"
-          njr/rating = 1
-          njr/dislike = True
+          alice/rating = 1
+          alice/dislike = True
         Object 7aed1e67-a88e-439d-8a56-b2ab52c838ab:
           fluiddb/about = "book:oranges are not the only fruit (jeanette winterson)"
-          njr/rating = 0
-          njr/dislike = True
+          alice/rating = 0
+          alice/dislike = True
 
 
 Before describing these commands in detail, it will be useful
 to describe the abstraction ``fish`` uses, as it differs in key
 respects from the underlying Fluidinfo model.
+
 
 The fish Abstraction
 --------------------
@@ -104,7 +105,7 @@ The Fluidinfo API is quite low level and rigid;
 Here, we briefly note the differences.
 
   * In the Fluidinfo API, you can't simply tag an object with
-    an ``njr/rating`` tag; you first have to tell the system that you
+    an ``alice/rating`` tag; you first have to tell the system that you
     wish to use a ``rating`` tag by ``creating`` it; only once you
     have done this can you use it.
 
@@ -192,8 +193,8 @@ in and usually takes on of three forms:
 
   * ``-q "fluidinfo query"`` is used to specify a set of objects
     on the basis of a query expressed in the Fluidinfo query language.
-    For example ``-q has njr/rating`` specifies objects that have
-    an njr/rating rag on them.
+    For example ``-q has alice/rating`` specifies objects that have
+    an ``alice/rating`` rag on them.
 
 Finally, some commands need or accept a list of tags or tag-value pairs.
 Specifically, ``show`` and ``untag`` both require a list of tags to be
@@ -235,7 +236,7 @@ For example:
     This is fish version 3.10.
     > pwd
     alice
-    > show -a 'book:alices adventures in wonderland (lewis carroll)' alice/rating
+    > show -a 'book:alices adventures in wonderland (lewis carroll)' rating
     Object with about="book:alices adventures in wonderland (lewis carroll)":
     alice/rating = 10
     > quit
@@ -259,15 +260,15 @@ Key things to know about the interactive shell are:
 	and double quotes can be enclosed in single quotes, e.g.
 	::
 
-            tag -a "Occam's Razor" alice/comment="I'm a believer"
-            tag -a 'The "double" quote' alice/comment='Is "doubleplusgood"'
+            tag -a "Occam's Razor" comment="I'm a believer"
+            tag -a 'The "double" quote' comment='Is "doubleplusgood"'
 
       - The escape character is blackslash (``\``), which can be
         used to escape quotes or backslashes.   For example,
 	this command:
         ::
 
-            tag -a "The \"backslash\" (\\) character" alice/comment="is used for escaping"
+            tag -a "The \"backslash\" (\\) character" comment="is used for escaping"
 
         tags the object with about tag ``The "backslash" (\) character``.
 
@@ -277,7 +278,7 @@ Key things to know about the interactive shell are:
         when the enclosing command is executed.   For example:
         ::
 
-            tag -a "`about book 'Animal Farm' 'George Orwell'`" alice/rating=10
+            tag -a "`about book 'Animal Farm' 'George Orwell'`" rating=10
 
         tags the object with about tag ``book:animal farm (george orwell)``,
 	since that is the result of the quoted Fish ``about`` command.

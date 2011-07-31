@@ -21,23 +21,25 @@ Namespaces normally have to be empty for this to work (unless the
 
 **EXAMPLES**
 
-   1. Remove an unused tag ``njr/unused``:
+When authenticated as  user ``alice``:
 
-         $ rm njr/unused
+   1. Remove an unused tag ``alice/unused``:
 
-   2. Remove a used tag ``njr/used``, in the process removing that tag
-      from all objects to which it is attached:
+         $ rm unused
 
-         $ rm -f njr/used
+   2. Remove a used tag ``alice/used``, in the process removing that
+      tag from all objects to which it is attached:
 
-   3. Remove an empty namespace ``njr/empty``:
+         $ rm -f used
 
-         $ rm njr/empty
+   3. Remove an empty namespace ``alice/empty``:
 
-   4. Remove a non-empty namespace ``njr/inUse`` and all the tags and
-      namespaces under it:
+         $ rm empty
 
-         $ rm -r njr/inUse
+   4. Remove a non-empty namespace ``alice/inUse`` and all the tags
+      and namespaces under it:
+
+         $ rm -r inUse
 
 **NOTES**
 

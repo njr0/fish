@@ -15,14 +15,16 @@ to set its description.
 
 **EXAMPLES**
 
-   1. Create a namespace called ``njr/secret``
+When authenticated as the user ``alice``:
 
-         $ touch njr/secret
+   1. Create a namespace called ``alice/secret``
 
-   2. Create a tag ``njr/very/secret`` with description "keep right
+         $ touch secret
+
+   2. Create a tag ``alice/very/secret`` with description "keep right
       out"
 
-         $ touch -m "keep right out"  njr/very/secret
+         $ touch -m "keep right out"  very/secret
 
 **NOTE**
 
@@ -32,3 +34,7 @@ before use set permissions before use or specify a description.
 
 The ``mkns`` command cannot be used (at present) to change the
 description of an existing namespace.
+
+**SEE ALSO:**
+
+``mkdir`` (synonym)

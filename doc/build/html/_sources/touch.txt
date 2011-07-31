@@ -16,20 +16,22 @@ to set its description.
 
 **EXAMPLES**
 
-  #. Create a tag called ``njr/rating``
+When authenticated as user ``alice``:
+
+  #. Create a tag called ``alice/rating``
      ::
 
-        $ touch njr/rating
+        $ touch rating
 
-  #. Create a tag ``njr/private/rating`` with description "keep out"
+  #. Create a tag ``alice/private/rating`` with description "keep out"
      ::
 
-	$ touch -m "keep out"  njr/private/rating
+	$ touch -m "keep out"  private/rating
 
 **NOTE**
 
-Tag creation is automatic on first use in ``fish``.
-Touch is only needed, therefore, if you wish to set permissions before use
-or specify a description
+Tag creation is automatic on first use in ``fish``.  Touch is only
+needed, therefore, if you wish to set permissions before use or
+specify a description
 
 Touch cannot be used (at present) to change the description of an existing tag.

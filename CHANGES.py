@@ -384,6 +384,21 @@
 #
 # 2011/07/26 v3.13     Added quit and exit commands (mostly for interactive
 #                      shell; some unicode conversion to UTF-8 on output.
+#
+# 2011/07/27 v3.14     Allow string sets to be written.
+#                      Also Preparing ground for Python/JSON API-FROM-CLI
+#
+# 2011/07/31 v4.00     Added get command; like show, but terser.
+#                      Improved debugging options to work better with
+#                      shell-fish.
+#                      Added embryonic json and python arguments
+#                      on the way to creating a command-based API.
+#                      Now route all HTTP requests through
+#                      FluidDB.request, which checks for 500 errors
+#                      and reports them.
+
+
+
 
 
 

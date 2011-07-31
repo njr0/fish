@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>perms — sets access permissions on tags and namespaces &mdash; fish v3.12 documentation</title>
+    <title>perms — sets access permissions on tags and namespaces &mdash; fish v4.00 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '3.12',
+        VERSION:     '4.00',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -20,7 +20,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="fish v3.12 documentation" href="index.html" />
+    <link rel="top" title="fish v4.00 documentation" href="index.html" />
     <link rel="next" title="rm — removes tags and namespaces" href="rm.html" />
     <link rel="prev" title="ls — lists tags and namespaces and their properties" href="ls.html" /> 
   </head>
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="ls.html" title="ls — lists tags and namespaces and their properties"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fish v3.12 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.00 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -98,10 +98,10 @@ for namespaces.</li>
 </ul>
 </blockquote>
 <p>For example:</p>
-<div class="highlight-python"><pre>fish perms write -X delete closed except njr fish/z</pre>
+<div class="highlight-python"><pre>fish perms write -X delete closed except alice /fish/z</pre>
 </div>
 <p>Changes the fine-grained write permission
-<tt class="docutils literal"><span class="pre">delete</span></tt> on <tt class="docutils literal"><span class="pre">fish/z</span></tt> so that only <tt class="docutils literal"><span class="pre">njr</span></tt> has
+<tt class="docutils literal"><span class="pre">delete</span></tt> on <tt class="docutils literal"><span class="pre">fish/z</span></tt> so that only <tt class="docutils literal"><span class="pre">alice</span></tt> has
 the permission.</p>
 <p class="last"><tt class="docutils literal"><span class="pre">-X</span></tt> is rarely used.</p>
 </dd>
@@ -114,122 +114,122 @@ a namespace called <tt class="docutils literal"><span class="pre">friends</span>
 <blockquote>
 <ul>
 <li><p class="first">Make a tag or namespace completely private.</p>
-<div class="highlight-python"><pre>$ fish perms private njr/rating
-$ fish perms private njr/fi</pre>
+<div class="highlight-python"><pre>$ fish perms private rating
+$ fish perms private fi</pre>
 </div>
 <p>We could also change them together by saying:</p>
-<div class="highlight-python"><pre>$ fish perms private njr/rating njr/fi</pre>
+<div class="highlight-python"><pre>$ fish perms private rating fi</pre>
 </div>
 <p>This sets the permissions so that only the owner of the tag
 or namespace has permission to do anything with it&#8212;<tt class="docutils literal"><span class="pre">read</span></tt>, <tt class="docutils literal"><span class="pre">write</span></tt>
 and <tt class="docutils literal"><span class="pre">control</span></tt> permission.
 The abbreviated view of this is shown by</p>
-<div class="highlight-python"><pre>$ fish ls -ld njr/rating njr/fi
-trwc------   njr/rating
-nrwc------   njr/fi/</pre>
+<div class="highlight-python"><pre>$ fish ls -ld rating fi
+trwc------   alice/rating
+nrwc------   alice/fi/</pre>
 </div>
 <p>(See <a class="reference external" href="ls.html#fishls"><em>ls — lists tags and namespaces and their properties</em></a> for an detailed explanation of the permissions codes.)</p>
 <p>The full listing after this is:</p>
-<div class="highlight-python"><pre>$ fish -F ls -Ld njr/rating njr/fi
+<div class="highlight-python"><pre>$ fish -F ls -Ld rating fi
 
-njr/rating:
+alice/rating:
 
 TAG (/tags)
   Write
-    update (metadata):  policy: closed; exceptions = [njr]
-    delete (delete):    policy: closed; exceptions = [njr]
+    update (metadata):  policy: closed; exceptions = [alice]
+    delete (delete):    policy: closed; exceptions = [alice]
   Control
-    control (control):  policy: closed; exceptions = [njr]
+    control (control):  policy: closed; exceptions = [alice]
 
 TAG (/tag-values)
   Read
-    read (read):        policy: closed; exceptions = [njr]
+    read (read):        policy: closed; exceptions = [alice]
   Write
-    create (tag):       policy: closed; exceptions = [njr]
-    delete (untag):     policy: closed; exceptions = [njr]
+    create (tag):       policy: closed; exceptions = [alice]
+    delete (untag):     policy: closed; exceptions = [alice]
   Control
-    control (control):  policy: closed; exceptions = [njr]
+    control (control):  policy: closed; exceptions = [alice]
 
 
-njr/fi/:
+alice/fi/:
 
 NAMESPACE (/namespaces)
   Read
-    list (read):        policy: closed; exceptions = [njr]
+    list (read):        policy: closed; exceptions = [alice]
   Write
-    create (create):    policy: closed; exceptions = [njr]
-    delete (delete):    policy: closed; exceptions = [njr]
+    create (create):    policy: closed; exceptions = [alice]
+    delete (delete):    policy: closed; exceptions = [alice]
   Control
-    control (control):  policy: closed; exceptions = [njr]</pre>
+    control (control):  policy: closed; exceptions = [alice]</pre>
 </div>
 </li>
 <li><p class="first">Restore default permissions to a tag or namespace.
 The default is that the owner has read, write and control
 and everyone else has read only:</p>
-<div class="highlight-python"><pre>$ fish perms default njr/rating njr/fi
+<div class="highlight-python"><pre>$ fish perms default rating fi
 
-$ fish -F ls -ld njr/rating njr/fi
-trwcr--r--   njr/rating
-nrwcr--r--   njr/fi/</pre>
+$ fish -F ls -ld rating fi
+trwcr--r--   alice/rating
+nrwcr--r--   alice/fi/</pre>
 </div>
 </li>
 <li><p class="first">Lock a namespace or tag so that it can&#8217;t be edited (i.e.,
 remove all write permissions).</p>
-<div class="highlight-python"><pre>$ fish perms lock njr/rating
+<div class="highlight-python"><pre>$ fish perms lock rating
 
-$ fish ls -l njr/rating
-tr-cr--r--   njr/rating</pre>
+$ fish ls -l alice/rating
+tr-cr--r--   alice/rating</pre>
 </div>
 <p>This does not alter read or control permissions.</p>
 </li>
 <li><p class="first">Unlock a namespace or tag so that the owner (only) can edit it.</p>
-<div class="highlight-python"><pre>$ fish perms unlock njr/rating
+<div class="highlight-python"><pre>$ fish perms unlock rating
 
-$ fish ls -l njr/rating
-trwcr--r--   njr/rating</pre>
+$ fish ls -l alice/rating
+trwcr--r--   alice/rating</pre>
 </div>
 <p>This does not alter read or control permissions.</p>
 </li>
 <li><p class="first">Set the permissions on a tag or namespace so that one or more extra people
 can write it.   (This does not alter read permissions.)</p>
-<div class="highlight-python"><pre>$ fish perms group-write ntoll+jkakar njr/rating njr/fi
+<div class="highlight-python"><pre>$ fish perms group-write bert+jacqui rating fi
 
-$ fish ls -gd njr/rating njr/fi
-trwcrw-r--   r:(world)  w:ntoll+jkakar   njr/rating
-nrwcrw-r--   r:(world)  w:ntoll+jkakar   njr/fi/</pre>
+$ fish ls -gd rating fi
+trwcrw-r--   r:(world)  w:bert+jacqui   alice/rating
+nrwcrw-r--   r:(world)  w:bert+jacqui   alice/fi/</pre>
 </div>
 </li>
 <li><p class="first">Set the permissions so that only a particular group can read it,
 leaving write permissions as the are.</p>
-<div class="highlight-python"><pre>$ fish perms default njr/rating njr/fi
-$ fish perms group-read ntoll+jkakar+miro njr/rating njr/fi
+<div class="highlight-python"><pre>$ fish perms default rating fi
+$ fish perms group-read bert+jacqui+miro rating fi
 
-$ fish -F ls -gd njr/rating njr/fi
-trwcr-----   r:ntoll+jkakar+miro  w:(world)   njr/rating
-nrwcr-----   r:ntoll+jkakar+miro  w:(world)   njr/fi/</pre>
+$ fish -F ls -gd rating fi
+trwcr-----   r:bert+jacqui+miro  w:(world)   alice/rating
+nrwcr-----   r:bert+jacqui+miro  w:(world)   alice/fi/</pre>
 </div>
 </li>
 <li><p class="first">Set permissions so that one group of users can write tge tag
 or namespace, and another group can read it.
-In this case, let&#8217;s allow <tt class="docutils literal"><span class="pre">miro</span></tt> to write and <tt class="docutils literal"><span class="pre">ntoll</span></tt> and
-<tt class="docutils literal"><span class="pre">jkakar</span></tt> (as well as <tt class="docutils literal"><span class="pre">miro</span></tt>) to read.</p>
-<div class="highlight-python"><pre>$ fish perms group-read ntoll+jkakar+miro njr/rating njr/fi
-$ fish perms group-write miro njr/rating njr/fi
+In this case, let&#8217;s allow <tt class="docutils literal"><span class="pre">miro</span></tt> to write and <tt class="docutils literal"><span class="pre">bert</span></tt> and
+<tt class="docutils literal"><span class="pre">jacqui</span></tt> (as well as <tt class="docutils literal"><span class="pre">miro</span></tt>) to read.</p>
+<div class="highlight-python"><pre>$ fish perms group-read bert+jacqui+miro rating fi
+$ fish perms group-write miro rating fi
 
-$ fish ls -gd njr/rating njr/fi
-trwcrw----   r:ntoll+jkakar+miro  w:miro   njr/rating
-nrwcrw----   r:ntoll+jkakar+miro  w:miro   njr/fi/</pre>
+$ fish ls -gd rating fi
+trwcrw----   r:bert+jacqui+miro  w:miro   alice/rating
+nrwcrw----   r:bert+jacqui+miro  w:miro   alice/fi/</pre>
 </div>
 </li>
 <li><p class="first">The final case is really just a special case of the previous one,
 where the read and write groups are the same.
-Let&#8217;s make <tt class="docutils literal"><span class="pre">miro</span></tt> the only user (other the owner, <tt class="docutils literal"><span class="pre">njr</span></tt>)
+Let&#8217;s make <tt class="docutils literal"><span class="pre">miro</span></tt> the only user (other the owner, <tt class="docutils literal"><span class="pre">alice</span></tt>)
 who can read or write the tag and namespace.</p>
-<div class="highlight-python"><pre>$ fish perms group miro njr/rating njr/fi
+<div class="highlight-python"><pre>$ fish perms group miro rating fi
 
-$ fish ls -gd njr/rating njr/fi
-trwcrw----   miro   njr/rating
-nrwcrw----   miro   njr/fi/</pre>
+$ fish ls -gd rating fi
+trwcrw----   miro   alice/rating
+nrwcrw----   miro   alice/fi/</pre>
 </div>
 </li>
 </ul>
@@ -243,27 +243,27 @@ separated by plus signs.</p>
 in the exception list if the policy is closed.
 If the owner is excluded from control, <tt class="docutils literal"><span class="pre">fish</span></tt> will refuse to make
 the change unless forced with <tt class="docutils literal"><span class="pre">-f</span></tt>.</p>
-<div class="highlight-python"><pre>$ fish perms read open njr/rating
-$ fish perms write closed except njr+miro njr/rating
-$ fish perms control closed except njr+miro njr/rating
-$ fish ls -L njr/rating
-njr/rating:
+<div class="highlight-python"><pre>$ fish perms read open rating
+$ fish perms write closed except alice+miro rating
+$ fish perms control closed except alice+miro rating
+$ fish ls -L rating
+alice/rating:
 
 TAG (/tags)
   Write
-    update (metadata):  policy: closed; exceptions = [njr, miro]
-    delete (delete):    policy: closed; exceptions = [njr, miro]
+    update (metadata):  policy: closed; exceptions = [alice, miro]
+    delete (delete):    policy: closed; exceptions = [alice, miro]
   Control
-    control (control):  policy: closed; exceptions = [njr, miro]
+    control (control):  policy: closed; exceptions = [alice, miro]
 
 TAG (/tag-values)
   Read
     read (read):        policy: open; exceptions = []
   Write
-    create (tag):       policy: closed; exceptions = [njr, miro]
-    delete (untag):     policy: closed; exceptions = [njr, miro]
+    create (tag):       policy: closed; exceptions = [alice, miro]
+    delete (untag):     policy: closed; exceptions = [alice, miro]
   Control
-    control (control):  policy: closed; exceptions = [njr, miro]</pre>
+    control (control):  policy: closed; exceptions = [alice, miro]</pre>
 </div>
 <p><strong>NOTES</strong></p>
 <ol class="arabic">
@@ -288,16 +288,18 @@ if <tt class="docutils literal"><span class="pre">alice</span></tt> creates a ta
 permission and write permission over it and <em>you will not</em>.</p>
 <p>This is a recognized failure, and will be fixed.</p>
 <p>In the meantime, if <tt class="docutils literal"><span class="pre">alice</span></tt> does create a tag called <tt class="docutils literal"><span class="pre">alice/a</span></tt>
-in <tt class="docutils literal"><span class="pre">njr</span></tt>&#8216;s namespace, she can give back shared control to
-<tt class="docutils literal"><span class="pre">njr</span></tt> by saying:</p>
-<div class="highlight-python"><pre>$ fish perms write closed except alice+njr njr/alice/a
-$ fish perms control closed except alice+njr njr/alice/a</pre>
+in <tt class="docutils literal"><span class="pre">bert</span></tt>&#8216;s namespace, she can give back shared control to
+<tt class="docutils literal"><span class="pre">bert</span></tt> by saying:</p>
+<div class="highlight-python"><pre>$ fish perms write closed except alice+bert /bert/alice/a
+$ fish perms control closed except alice+bert /bert/alice/a</pre>
 </div>
 <p>She could also hand back exclusive control by saying:</p>
-<div class="highlight-python"><pre>$ fish perms control closed except njr njr/alice/a</pre>
+<div class="highlight-python"><pre>$ fish perms control closed except alice /bert/alice/a</pre>
 </div>
 </li>
 </ol>
+<p><strong>SEE ALSO</strong>:</p>
+<p><tt class="docutils literal"><span class="pre">ls</span></tt></p>
 </div>
 
 
@@ -349,7 +351,7 @@ $ fish perms control closed except alice+njr njr/alice/a</pre>
         <li class="right" >
           <a href="ls.html" title="ls — lists tags and namespaces and their properties"
              >previous</a> |</li>
-        <li><a href="index.html">fish v3.12 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.00 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

@@ -10,6 +10,7 @@ import os
 import shutil
 import sys
 import types
+import traceback
 from optparse import OptionParser, OptionGroup
 from itertools import chain, imap
 from fishlib import (
@@ -28,6 +29,9 @@ from fishlib import (
     HTTP_TIMEOUT,
     SANDBOX_PATH,
     FLUIDDB_PATH,
+    json,
+    TagValue,
+    Namespace,
 )
 import ls
 import flags
@@ -90,10 +94,10 @@ About Tag Construction
 
  Miscellaneous:
    whoami              prints username for authenticated user
-   su fiuser           set fish to use user credentials for fiuser
+   su fiuser           set Fish to use user credentials for fiuser
    help [command]      show this help, or help for the nominated comamnd.
    commands            show a list of available commands
-   quit / exit         leave fish
+   quit / exit         leave Fish
 
  Run Tests:
    test                runs all tests
@@ -125,16 +129,6 @@ class CommandError(Exception):
     pass
 
 
-class TagValue:
-    def __init__(self, name, value=None):
-        self.name = name
-        self.value = value
-
-    def __unicode__(self):
-        return (u'Tag "%s", value "%s" of type %s'
-                     % (self.name, toStr(self.value), toStr(type(self.value))))
-
-
 def error_code(n):
     code = STATUS.__dict__
     for key in code:
@@ -143,7 +137,7 @@ def error_code(n):
     return unicode(n)
 
 
-def execute_tag_command(objs, db, tags, options):
+def execute_tag_command(objs, db, tags, options, action):
     tags = form_tag_value_pairs(tags)
     actions = {
         u'id': db.tag_object_by_id,
@@ -158,14 +152,15 @@ def execute_tag_command(objs, db, tags, options):
                 if options.verbose:
                     db.Print(u'Tagged object %s with %s'
                              % (description,
-                                formatted_tag_value(tag.name, tag.value)))
+                                formatted_tag_value(tag.name, tag.value,
+                                                    prefix=u'')))
             else:
                 db.warning(u'Failed to tag object %s with %s'
                         % (description, tag.name))
                 db.warning(u'Error code %s' % error_code(o))
 
 
-def execute_untag_command(objs, db, tags, options):
+def execute_untag_command(objs, db, tags, options, action):
     actions = {
         'id': db.untag_object_by_id,
         'about': db.untag_object_by_about,
@@ -184,14 +179,16 @@ def execute_untag_command(objs, db, tags, options):
                 db.warning(u'Error code %s' % error_code(o))
 
 
-def execute_show_command(objs, db, tags, options):
+def execute_show_command(objs, db, tags, options, action):
     actions = {
         u'id': db.get_tag_value_by_id,
         u'about': db.get_tag_value_by_about,
     }
+    terse = (action == u'get')
     for obj in objs:
         description = describe_by_mode(obj.specifier, obj.mode)
-        db.Print(u'Object %s:' % description)
+        if not terse:
+            db.Print(u'Object %s:' % description)
 
         for tag in tags:
             fulltag = db.abs_tag_path(tag, inPref=True)
@@ -208,13 +205,20 @@ def execute_show_command(objs, db, tags, options):
             else:
                 status, v = actions[obj.mode](obj.specifier, tag, inPref=True)
 
+            saveForNow = True   # while getting ready to move to objects
             if status == STATUS.OK:
-                db.Print(u'  %s' % formatted_tag_value(outtag, v))
+                db.Print(formatted_tag_value(outtag, v, terse),
+                         allowSave=saveForNow)
+                obj.__dict__[outtag] = v
             elif status == STATUS.NOT_FOUND:
-                db.Print(u'  %s' % cli_bracket(u'tag %s not present' % outtag))
+                db.Print(u'  %s' % cli_bracket(u'tag %s not present' % outtag),
+                         allowSave=saveForNow)
+                obj.__dict__[outtag] = O     # Object class; signifies missing
             else:
                 db.Print(cli_bracket(u'error code %s attempting to read tag %s'
-                                     % (error_code(status), outtag)))
+                                     % (error_code(status), outtag)),
+                                     allowSave=saveForNowe)
+#            db.Print(obj, allowPrint=False)
 
 
 def execute_tags_command(objs, db, options):
@@ -229,7 +233,7 @@ def execute_tags_command(objs, db, options):
             status, v = db.get_tag_value_by_id(id, fulltag)
 
             if status == STATUS.OK:
-                db.Print(u'  %s' % formatted_tag_value(outtag, v))
+                db.Print(formatted_tag_value(outtag, v))
             elif status == STATUS.NOT_FOUND:
                 db.Print(u'  %s' % cli_bracket(u'tag %s not present' % outtag))
             else:
@@ -238,7 +242,7 @@ def execute_tags_command(objs, db, options):
 
 
 def execute_whoami_command(db):
-    db.Print(db.credentials.username)
+    db.Print(Namespace(unicode(db.credentials.username)))
 
 
 def execute_touch_command(db, args, options):
@@ -339,13 +343,19 @@ def describe_by_id(specifier):
     return specifier
 
 
-def formatted_tag_value(tag, value):
+def formatted_tag_value(tag, value, terse=False, prefix=u'  '):
+    lhs = '' if terse else '%s%s = ' % (prefix, tag)
     if value == None:
-        return tag
+        return u'%s%s' % (u'' if terse else prefix, tag)
     elif type(value) in types.StringTypes:
-        return u'%s = "%s"' % (tag, value)
+        return u'%s"%s"' % (lhs, value)
+    elif type(value) in (list, tuple):
+        vals = value[:]
+        vals.sort()
+        return u'%s{%s}' % (lhs,
+                             u', '.join(u'"%s"' % unicode(v) for v in vals))
     else:
-        return u'%s = %s' % (tag, toStr(value))
+        return u'%s%s' % (lhs, toStr(value))
 
 
 def form_tag_value_pairs(tags):
@@ -372,7 +382,7 @@ def cli_bracket(s):
 
 def get_ids_or_fail(query, db):
     ids = db.query(query)
-    if type(ids) == int:
+    if type(ids) in (int, long):
         raise CommandError(ids, 'Probably a bad query specification')
     else:
         db.Print(u'%s matched' % plural(len(ids), u'object'))
@@ -422,7 +432,7 @@ def parse_args(args=None):
     general.add_option('-q', '--query', action='append', default=[],
             help='used to specify objects with a FluidDB query')
     general.add_option('-v', '--verbose', action='store_true', default=False,
-            help='encourages FDB to report what it\'s doing (verbose mode)')
+            help='encourages Fish to report what it\'s doing (verbose mode)')
     general.add_option('-D', '--debug', action='store_true', default=False,
             help='enables debug mode (more output)')
     general.add_option('-T', '--timeout', type='float', default=HTTP_TIMEOUT,
@@ -476,6 +486,8 @@ def parse_args(args=None):
             help='don\'t list namespace; just name of namespace.')
     general.add_option('-X', '--extravals', action='append', default=[],
             help='extra values for a command.')
+    general.add_option('-O', '--outform', action='append', default=[],
+            help='Output format for results (json, python, text)')
     parser.add_option_group(general)
 
     other = OptionGroup(parser, 'Other flags')
@@ -499,6 +511,17 @@ def parse_args(args=None):
 
     return action, args, options, parser
 
+def toJSON(s):
+    if type(s) in types.StringTypes:
+        return s
+    else:
+        return s.toJSON()
+
+def toOutputString(s):
+    if type(s) in types.StringTypes:
+        return s
+    else:
+        return unicode(s)
 
 def execute_command_line(action, args, options, parser, user=None, pwd=None,
                          unixPaths=None, docbase=None, saveOut=False):
@@ -520,6 +543,7 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
         'tag',
         'untag',
         'show',
+        'get',
         'tags',
         'count',
         'ls',
@@ -577,7 +601,7 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
             db.Print('Total: %s' % (flags.Plural(len(objs), 'object')))
         elif action == 'tags':
             execute_tags_command(objs, db, options)
-        elif action in ('tag', 'untag', 'show'):
+        elif action in ('tag', 'untag', 'show', 'get'):
             if not (options.about or options.query or options.id):
                 db.Print('You must use -q, -a or -i with %s' % action)
             else:
@@ -588,9 +612,10 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
                     'tag': execute_tag_command,
                     'untag': execute_untag_command,
                     'show': execute_show_command,
+                    'get': execute_show_command,
                 }
                 command = actions[action]
-                command(objs, db, args, options)
+                command(objs, db, args, options, action)
         elif action == 'ls':
             ls.execute_ls_command(db, objs, args, options, credentials,
                                   unixPaths)
@@ -619,17 +644,25 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
             execute_abouttag_command(db, args)
         elif action == 'normalize':
             execute_normalize_command(db, args)
-        elif action in ('get', 'put', 'post', 'delete'):
-            execute_http_request(action, args, db, options)
+#        elif action in ('get', 'put', 'post', 'delete'):
+#            execute_http_request(action, args, db, options)
         elif action in ('quit', 'exit'):
             pass
         else:
             db.Print('Unrecognized command %s' % action)
     except Exception, e:
         if options.debug:
-            raise
+            db.Print(unicode(traceback.format_exc()))
+        db.Print(u'Fish failure:\n  %s' % unicode(e))
+    if db.saveOutput:
+        if db.saveOutput == u'python':
+            return db.buffer
+        elif db.saveOutput == u'json':
+            s =  json.dumps({u'result': [toJSON(s) for s in db.buffer]})
+            return json.dumps({u'result': [toJSON(s) for s in db.buffer]})
         else:
-            db.Print(u'Fish failure:\n  %s' % unicode(e))
-    return u'\n'.join(db.buffer) if saveOut else None
+            return (u'\n'.join([toOutputString(b) for b in db.buffer])
+                    if saveOut else None)
+
 
 

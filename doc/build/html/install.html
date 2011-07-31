@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Installation and Configuration &mdash; fish v3.12 documentation</title>
+    <title>Installation and Configuration &mdash; fish v4.00 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '3.12',
+        VERSION:     '4.00',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -20,7 +20,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="fish v3.12 documentation" href="index.html" />
+    <link rel="top" title="fish v4.00 documentation" href="index.html" />
     <link rel="prev" title="Using Unix-Like Paths" href="unixlike.html" /> 
   </head>
   <body>
@@ -33,7 +33,7 @@
         <li class="right" >
           <a href="unixlike.html" title="Using Unix-Like Paths"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fish v3.12 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.00 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -44,8 +44,9 @@
             
   <div class="section" id="installation-and-configuration">
 <h1>Installation and Configuration<a class="headerlink" href="#installation-and-configuration" title="Permalink to this headline">¶</a></h1>
-<p><strong>IMPORTANT CHANGE</strong> From version 2.00 onwards, Fluidinfo
-has become more conventional; see <cite>Tag Conventions</cite></p>
+<p><strong>IMPORTANT CHANGE</strong> From version 4.00 onwards, Fluidinfo
+has reverted to its original design behaviour and uses
+unix-style paths by default.   See under Credentials for details.</p>
 <div class="section" id="download">
 <h2>Download<a class="headerlink" href="#download" title="Permalink to this headline">¶</a></h2>
 <p>fish is available from Github at <a class="reference external" href="https://github.com/njr0/fish">https://github.com/njr0/fish</a> (use the
@@ -105,18 +106,20 @@ set, the fish looks for <tt class="docutils literal"><span class="pre">c:\fish\c
 <p>You can also optionally add a line, after password, saying either</p>
 <p>unix-style-paths true
 or unix-style-paths false</p>
-<p>(see next section)</p>
+<p>(see next section).   If this is not set, unix-style paths will be used.</p>
 </div>
 <div class="section" id="tag-conventions">
 <h2>Tag Conventions<a class="headerlink" href="#tag-conventions" title="Permalink to this headline">¶</a></h2>
-<p>As from version 2.00, fish uses absolute Fluidinfo-style paths all the time
-(i.e. you always specify the namespace and don&#8217;t use a leading slash).
+<p>As from version 4.00, fish uses Unix-style paths by default
+(i.e. tag paths without a leading slash are assumed to be in the
+authenticated user&#8217;s namespace; tags for other users need to be
+prefixed with  a leading slash).
 You can explicitly mandate this also by adding the line</p>
-<div class="highlight-python"><pre>unix-style-paths false</pre>
+<div class="highlight-python"><pre>unix-style-paths true</pre>
 </div>
 <p>in your credentials file (see above).
 If you instead set</p>
-<div class="highlight-python"><pre>unix-style-paths true</pre>
+<div class="highlight-python"><pre>unix-style-paths false</pre>
 </div>
 <p>on the third line of the credentials file, fish uses unix-style paths,
 meaning that paths are assumed to be relative to the user&#8217;s namespace
@@ -225,7 +228,7 @@ file for details on this functionality.</p>
         <li class="right" >
           <a href="unixlike.html" title="Using Unix-Like Paths"
              >previous</a> |</li>
-        <li><a href="index.html">fish v3.12 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.00 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

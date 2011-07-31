@@ -153,7 +153,7 @@ class FluidinfoPerms:
                     else:
                         p = db.get_raw_perm(entity, path[1:], action, isTag)
                     self.__dict__[name] = p
-                    if type(p) == int:
+                    if type(p) in (int, long):
                         self.value = False
                 else:
                     # figure out defaults etc.
@@ -351,7 +351,7 @@ class ExtendedFluidDB(fishlib.FluidDB):
         L = self.list_namespace(rootns, returnDescription=False)
         if L == fishlib.STATUS.NOT_FOUND:
             return fishlib.STATUS.NOT_FOUND
-        if type(L) == int:
+        if type(L) in (int, long):
             return {u'namespaceNames': [], u'tagNames': [], u'failures': True}
         failures = False
         namespaces = [u'%s/%s' % (rootns, space)
@@ -361,7 +361,7 @@ class ExtendedFluidDB(fishlib.FluidDB):
         subtags = []
         for s in namespaces:
             L = self.list_namespace(s, returnDescription=False)
-            if type(L) == int:
+            if type(L) in (int, long):
                 failures = True
             else:
                 subns.extend([u'%s/%s' % (s, space)
@@ -408,7 +408,7 @@ class ExtendedFluidDB(fishlib.FluidDB):
     def list_sorted_nshash(self, h, ns, long_=False, columns=True,
                            recurse=False, prnt=False, longer=False,
                            longest=False):
-        if type(h) == types.IntType:
+        if type(h) in (int, long):
             if h == fishlib.STATUS.UNAUTHORIZED:
                 return u'Permission denied.'
             else:
@@ -538,7 +538,7 @@ class ExtendedFluidDB(fishlib.FluidDB):
     def ns_perms_string(self, ns, group=False):
         h = self.get_ns_perms_hash(ns)
         for k in h:
-            if type(h[k]) == int:
+            if type(h[k]) in (int, long):
                 return ' (denied) '
         s = []
         owner = ns.split(u'/')[0]
@@ -708,7 +708,7 @@ def execute_rm_command(db, objs, tags, options, credentials, unixPaths=None):
                                        [fulltag[1:]])
             else:
                 ids = db.query(u'has %s' % fulltag[1:])
-                if type(ids) == int:
+                if type(ids) in (int, long):
                     raise RemoveError(fishlib.human_status(ids))
                 elif len(ids) > 0:
                     raise RemoveError(u'%s tagged with %s:\n%s'
