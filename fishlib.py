@@ -6,7 +6,7 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'4.00'
+__version__ = u'4.01'
 VERSION = __version__
 
 import codecs
@@ -286,6 +286,7 @@ class O:
     Set missing tags to O.
     """
     def __init__(self, hash=None):
+        self._types={}
         if hash:
             for k in hash:
                 self.__dict__[k] = hash[k]
@@ -303,6 +304,12 @@ class O:
         keys.sort()
         return u'\n'.join([u'%20s: %s' % (key, unicode(self.__dict__[key]))
                            for key in keys])
+
+    def tags(self):
+        return [t for t in self.__dict__ if not t in (u'id', u'_types')]
+
+    def typedval(self, t):
+        return (self.__dict__[t], self._types[t])
 
     def u(self, key):
         return self.__dict__[key]
@@ -482,6 +489,8 @@ class FluidDB:
         body8 = body.encode('UTF-8') if type(body) == unicode else body
         response, content, result, status = self.request(url, method,
                                                          body8, headers)
+
+            
         return status, result
 
     def request(self, url, method, body8, headers):
@@ -1159,6 +1168,7 @@ def get_values_by_query(db, query, tags):
     NOTE: All strings must be (and will be) unicode.
 
     """
+    maxTextSize = 1024
     (v, r) = db.call(u'GET', u'/values', None, {u'query': query,
                                                 u'tag': tags})
     assert_status(v, STATUS.OK)
@@ -1169,7 +1179,20 @@ def get_values_by_query(db, query, tags):
         o.__dict__[u'id'] = id
         for tag in tags:
             if tag in H[id]:
-                o.__dict__[tag] = H[id][tag][u'value']
+                try:
+                    o.__dict__[tag] = H[id][tag][u'value']
+                    o._types[tag] = None
+                except KeyError:
+                    size = H[id][tag][u'size']
+                    mime = H[id][tag][u'value-type']
+                    if (mime.startswith(u'text')
+                            and size < maxTextSize):
+                        o.__dict__[tag] = db.get_tag_value_by_about(id,
+                                                            u'/%s' % tag)
+                    else:
+                        o.__dict__[tag] = (u'%s value of size %d bytes' % (mime,
+                                                                     size))
+                    o._types[tag] = mime
         results.append(o)
     return results      # hash of objects, keyed on ID, with attributes
                         # corresponding to tags, inc id.
@@ -1191,5 +1214,3 @@ def version():
 
 def uprint(s):
     Print(s.encode('UTF-8') if type(s) == unicode else s)
-
-

@@ -9,6 +9,7 @@
 import os
 import shutil
 import sys
+import time
 import types
 import traceback
 from optparse import OptionParser, OptionGroup
@@ -295,6 +296,46 @@ def execute_normalize_command(db, args):
     check_abouttag_available()
     db.Print(':'.join(abouttag.nacolike.normalize(a, preserveAlpha=True)
              for a in args))
+
+
+def FloatDateTime():
+    """Returns datetime stamp in Miro's REV_DATETIME format as a float,
+       e.g. 20110731.123456"""
+    return float(time.strftime('%Y%m%d.%H%M%S', time.localtime()))
+
+
+def execute_sequence_command(db, args):
+    tag, content = args[0], args[1]
+    fi = abouttag.fluidinfo.FluidDB()
+    nextTag = u'%s-next' % tag
+    dateTag = u'%s-date' % tag
+    numberTag = u'%s-number' % tag
+    userAbout = fi.user(db.user)
+    s, n = db.get_tag_value_by_about(userAbout, nextTag, inPref=True)
+    if not s:
+        if  s == STATUS.NOT_FOUND:
+            pass
+        else:
+            #nasty error    # create
+            pass
+    ds = FloatDateTime()
+    o = O(((u'/about', unicode(n)), (tag, content), (dateTag, ds),
+           (numberTag, n)))
+    status = db.write_tags(o)
+    status = db.tag_object_by_about(userAbout, nextTag, n+1)
+    status = db.read_tags(o)
+    # Check Statuses and show tags.      
+    # In fact, finish with a seq thought 1 command??
+
+    # nextInSeq = get -a 'user object' tagname-next
+    # if not defined: 0 : create tags, make private if start private
+    # datestamp
+    # tag -a unicode(nextInSeq) tagname=value tagname=date tagname-number=nextInSueq
+    # tag -a 'user obkect' tagname-next+= 1
+    # get -a 
+    
+    
+    pass
 
 
 def execute_http_request(action, args, db, options):

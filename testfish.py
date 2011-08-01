@@ -86,8 +86,7 @@ class TestFluidDB(unittest.TestCase):
             u'test-fish/testrating5': None,
         }
         tagsToSet = {}
-#        object_about = u'ΔΑΔΓΑΔ'
-        object_about = u'DADGAD'
+        object_about = u'ΔΑΔΓΑΔ'
         for tag in pairs:
             db.tag_object_by_about(object_about, tag, None)   # make sure 
                                                               # tag exists
@@ -393,7 +392,7 @@ class TestCLI(unittest.TestCase):
         self.reset()
         self.assertEqual(self.out.buffer,
                 ['Object %s:' % description, '\n',
-                 '  /%s/rating = 10' % self.user, '\n',
+                 '  /%s/rating = 10' % self.user.encode('UTF-8'), '\n',
                  '  /fluiddb/about = "DADGAD"', '\n'])
         self.assertEqual(self.err.buffer, [])
 
@@ -457,7 +456,7 @@ class TestCLI(unittest.TestCase):
                     '-U rm test-fish/testns',
                     '-U ls -d test-fish/testns',)
         output = u'/%s/test-fish/testns not found' % self.user
-        self.command_sequence_test(commands, output)
+        self.command_sequence_test(commands, output.encode('UTF-8'))
         
     def test_perms_simples(self):
         # Tests the simple permissions settings for namespaces
@@ -479,7 +478,8 @@ class TestCLI(unittest.TestCase):
                   u'nr-cr--r--   %s/test-fish/testns/' % self.user,
                   u'nrwcr--r--   %s/test-fish/testns/' % self.user,
         )
-        self.command_sequence_test(commands, output)
+        self.command_sequence_test(commands,
+                                   tuple(o.encode('UTF-8') for o in output))
     
 
 if __name__ == '__main__':

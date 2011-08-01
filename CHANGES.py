@@ -396,6 +396,12 @@
 #                      Now route all HTTP requests through
 #                      FluidDB.request, which checks for 500 errors
 #                      and reports them.
+#
+# 2011/08/01 v4.01     Reinstated more unicode in the test suite now that
+#                      some API bugs have been fixed.
+#                      Started to add sequence support.
+#                      Upgraded /values support slightly.
+
 
 
 
