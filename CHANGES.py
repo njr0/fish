@@ -407,6 +407,10 @@
 #                      Also added get_values_by_id function.
 #                      Now check environment for FISHUSER variable and
 #                      use that credentials file if it is set.
+#
+# 2011/08/06 v4.03     Fixed sort_tags and removed from show.
+#                      (Still used in tags.)
+
 
 
 

@@ -185,8 +185,9 @@ def sort_tags(tags):
     for t in ['fluiddb/about', '/about', '/fluiddb/about']:
         try:
             i = tags.index(t)
-            del tags[i]
-            tags = [t] + tags
+            if i > 0:
+                del tags[i]
+                tags = [t] + tags
         except ValueError:
             pass
 
@@ -201,7 +202,7 @@ def execute_show_command(objs, db, tags, options, action):
         description = describe_by_mode(obj.specifier, obj.mode)
         if not terse:
             db.Print(u'Object %s:' % description)
-            sort_tags(tags)
+#            sort_tags(tags)
         for tag in tags:
             fulltag = db.abs_tag_path(tag, inPref=True)
             outtag = db.abs_tag_path(tag, inPref=True, outPref=True)
