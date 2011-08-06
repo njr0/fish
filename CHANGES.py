@@ -401,6 +401,12 @@
 #                      some API bugs have been fixed.
 #                      Started to add sequence support.
 #                      Upgraded /values support slightly.
+#
+# 2011/08/05 v4.02     Now sort tags when using tags command, always with
+#                      about tag first, and otherwise in alphabetical order.
+#                      Also added get_values_by_id function.
+#                      Now check environment for FISHUSER variable and
+#                      use that credentials file if it is set.
 
 
 

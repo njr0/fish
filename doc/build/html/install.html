@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Installation and Configuration &mdash; fish v4.00 documentation</title>
+    <title>Installation and Configuration &mdash; fish v4.02 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '4.00',
+        VERSION:     '4.02',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -20,7 +20,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="fish v4.00 documentation" href="index.html" />
+    <link rel="top" title="fish v4.02 documentation" href="index.html" />
     <link rel="prev" title="Using Unix-Like Paths" href="unixlike.html" /> 
   </head>
   <body>
@@ -33,7 +33,7 @@
         <li class="right" >
           <a href="unixlike.html" title="Using Unix-Like Paths"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fish v4.00 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.02 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -107,6 +107,16 @@ set, the fish looks for <tt class="docutils literal"><span class="pre">c:\fish\c
 <p>unix-style-paths true
 or unix-style-paths false</p>
 <p>(see next section).   If this is not set, unix-style paths will be used.</p>
+<p>If you want to use multiple Fluidinfo accounts, store extra sets of
+credentials in files with an extra extention corresponding to the user name.
+For example, if you want to use accounts <tt class="docutils literal"><span class="pre">alice</span></tt> and <tt class="docutils literal"><span class="pre">bob</span></tt> store
+Alice&#8217;s credentials in <tt class="docutils literal"><span class="pre">~/.fluidDBcredentials.alice</span></tt> and Bob&#8217;s in
+<tt class="docutils literal"><span class="pre">~/.fluidDBcredentials.bob</span></tt>.   The <tt class="docutils literal"><span class="pre">su</span></tt> command will then copy
+the appropriate set of credentials to <tt class="docutils literal"><span class="pre">~/.fluidDBcredentials</span></tt>.
+When operating in this mode, you also have the option of setting
+the environment variable <tt class="docutils literal"><span class="pre">FISHUSER</span></tt> to <tt class="docutils literal"><span class="pre">alice</span></tt> or <tt class="docutils literal"><span class="pre">bob</span></tt>, and
+that will cause Fish to user those credentials.   This allows different
+shell instances to use different users, should you need that.</p>
 </div>
 <div class="section" id="tag-conventions">
 <h2>Tag Conventions<a class="headerlink" href="#tag-conventions" title="Permalink to this headline">¶</a></h2>
@@ -228,7 +238,7 @@ file for details on this functionality.</p>
         <li class="right" >
           <a href="unixlike.html" title="Using Unix-Like Paths"
              >previous</a> |</li>
-        <li><a href="index.html">fish v4.00 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.02 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

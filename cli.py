@@ -180,6 +180,17 @@ def execute_untag_command(objs, db, tags, options, action):
                 db.warning(u'Error code %s' % error_code(o))
 
 
+def sort_tags(tags):
+    tags.sort()
+    for t in ['fluiddb/about', '/about', '/fluiddb/about']:
+        try:
+            i = tags.index(t)
+            del tags[i]
+            tags = [t] + tags
+        except ValueError:
+            pass
+
+
 def execute_show_command(objs, db, tags, options, action):
     actions = {
         u'id': db.get_tag_value_by_id,
@@ -190,7 +201,7 @@ def execute_show_command(objs, db, tags, options, action):
         description = describe_by_mode(obj.specifier, obj.mode)
         if not terse:
             db.Print(u'Object %s:' % description)
-
+            sort_tags(tags)
         for tag in tags:
             fulltag = db.abs_tag_path(tag, inPref=True)
             outtag = db.abs_tag_path(tag, inPref=True, outPref=True)
@@ -228,7 +239,9 @@ def execute_tags_command(objs, db, options):
         db.Print(u'Object %s:' % description)
         id = (db.create_object(obj.specifier).id if obj.mode == u'about'
               else obj.specifier)
-        for tag in db.get_object_tags_by_id(id):
+        tags = db.get_object_tags_by_id(id)
+        sort_tags(tags)
+        for tag in tags:
             fulltag = u'/%s' % tag
             outtag = u'/%s' % tag if db.unixStyle else tag
             status, v = db.get_tag_value_by_id(id, fulltag)
@@ -312,17 +325,23 @@ def execute_sequence_command(db, args):
     numberTag = u'%s-number' % tag
     userAbout = fi.user(db.user)
     s, n = db.get_tag_value_by_about(userAbout, nextTag, inPref=True)
-    if not s:
-        if  s == STATUS.NOT_FOUND:
-            pass
+    if s != STATUS.OK:
+        if s == STATUS.NOT_FOUND:
+            db.warning(u'No previous item.\n Please use:\n'
+                       u'  touch %s %s %s %s\n'
+                       u'and then set permissions as appropriate.'
+                       % (tag, tag, tag, tag))
         else:
-            #nasty error    # create
-            pass
+            #nasty error
+            db.warning(u'Failed to read last item number from %s'
+                        % (nextTag))
+            db.warning(u'Error code %s' % error_code(o))
+
     ds = FloatDateTime()
     o = O(((u'/about', unicode(n)), (tag, content), (dateTag, ds),
            (numberTag, n)))
     status = db.write_tags(o)
-    status = db.tag_object_by_about(userAbout, nextTag, n+1)
+    status = db.tag_object_by_about(userAbout, nextTag, n + 1)
     status = db.read_tags(o)
     # Check Statuses and show tags.      
     # In fact, finish with a seq thought 1 command??
@@ -421,12 +440,16 @@ def cli_bracket(s):
     return u'(%s)' % s
 
 
-def get_ids_or_fail(query, db):
+def get_ids_or_fail(query, db, quiet=False):
     ids = db.query(query)
     if type(ids) in (int, long):
-        raise CommandError(ids, 'Probably a bad query specification')
+        if ids == STATUS.NOT_FOUND:
+            return []
+        else:
+            raise CommandError(ids, 'Probably a bad query specification')
     else:
-        db.Print(u'%s matched' % plural(len(ids), u'object'))
+        if not quiet:
+            db.Print(u'%s matched' % plural(len(ids), u'object'))
         return ids
 
 
@@ -573,7 +596,9 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
     db = ls.ExtendedFluidDB(host=options.hostname, credentials=credentials,
                             debug=options.debug, unixStylePaths=unixPaths,
                             saveOut=saveOut)
-    ids_from_queries = chain(*imap(lambda q: get_ids_or_fail(q, db),
+    quiet = (action == 'get')
+    ids_from_queries = chain(*imap(lambda q: get_ids_or_fail(q, db,
+                                                             quiet=quiet),
         options.query))
     ids = chain(options.id, ids_from_queries)
 

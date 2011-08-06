@@ -6,7 +6,7 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'4.01'
+__version__ = u'4.02'
 VERSION = __version__
 
 import codecs
@@ -32,6 +32,7 @@ DADGAD_ID = u'ca0f03b5-3c0d-4c00-aa62-bdb07f29599c'
 PARIS_ID = u'17ecdfbc-c148-41d3-b898-0b5396ebe6cc'
 UNICODE = True
 DEFAULT_UNIX_STYLE_PATHS = True
+FISHUSER = 'FISHUSER'
 toStr = unicode if UNICODE else str
 
 
@@ -333,6 +334,9 @@ class Credentials:
             self.username = username
             self.password = password
         else:
+            e = os.environ
+            if FISHUSER in e:
+                filename = get_credentials_file(username=e[FISHUSER])
             if filename == None:
                 filename = get_credentials_file(username=username)
             if os.path.exists(filename):
@@ -487,8 +491,11 @@ class FluidDB:
                 if not k == u'Authorization':
                     self.Print(u'  %s=%s' % (k, headers[k]))
         body8 = body.encode('UTF-8') if type(body) == unicode else body
-        response, content, result, status = self.request(url, method,
+        try:
+            response, content, result, status = self.request(url, method,
                                                          body8, headers)
+        except:
+            raise Exception(url)
 
             
         return status, result
@@ -771,7 +778,7 @@ class FluidDB:
         return self.untag_object(about, tag, True, True, inPref)
 
 
-    def get_tag_value(self, spec, tag, byAbout, inPref=False):
+    def get_tag_value(self, spec, tag, byAbout, inPref=False, getMime=False):
         """Gets the value of a tag on an object identified by the
            object's ID or about value..
 
@@ -784,12 +791,15 @@ class FluidDB:
         """
         objTagParts = self.path_parts(byAbout, spec, tag, inPref)
         status, (value, value_type) = self._get_tag_value(objTagParts)
-        return status, (value if status == STATUS.OK else None)
+        if getMime:
+            return status, (value if status == STATUS.OK else None, value_type)
+        else:
+            return status, (value if status == STATUS.OK else None)
 
-    def get_tag_value_by_id(self, id, tag, inPref=False):
+    def get_tag_value_by_id(self, id, tag, inPref=False, getMime=False):
         return self.get_tag_value(id, tag, False, inPref)
     
-    def get_tag_value_by_about(self, about, tag, inPref=False):
+    def get_tag_value_by_about(self, about, tag, inPref=False, getMime=False):
         return self.get_tag_value(about, tag, True, inPref)
 
     def get_tag_values_by_id(self, id, tags):
@@ -1196,6 +1206,47 @@ def get_values_by_query(db, query, tags):
         results.append(o)
     return results      # hash of objects, keyed on ID, with attributes
                         # corresponding to tags, inc id.
+        
+
+def get_values_by_id(db, id, tags):
+    """
+    Gets the values of a set of tags satisfying a given query.
+    Returns them as a dictionary (hash) keyed on object ID.
+    The values in the dictionary are simple objects with each tag
+    value in the object's dictionary (__dict__).
+
+    db         is an instantiated FluidDB instance.
+
+    query      is a unicode string representing a valid Fluidinfo query.
+               e.g. 'has njr/rating'
+
+    tags       is a list (or tuple) containing the tags whose values are
+               required.
+
+    Example:
+
+        db = FluidDB()
+        tag_by_query(db, u'has njr/rating < 3', ('fluiddb/about',))
+
+    NOTE: Unlike in much of the rest of fish.py, tags need to be full paths
+    without a leading slash.
+
+    NOTE: All strings must be (and will be) unicode.
+
+    """
+    maxTextSize = 1024
+    o = O()
+    o.__dict__[u'id'] = id
+    for tag in tags:
+        status, value, mime = db.get_tag_value_by_id(id, tag, getMime=True)
+        assert_status(v, STATUS.OK)
+        o.__dict__[tag] = value
+        o._types[tag] = None if mime == PRIMITIVE_CONTENT_TYPE else 0
+        if (mime.startswith(u'text') and size < maxTextSize):
+            o.__dict__[tag] = db.get_tag_value_by_about(id, u'/%s' % tag)
+        else:
+            o.__dict__[tag] = (u'%s value of size %d bytes' % (mime, size))
+    return o
         
 
 def path_style(options):

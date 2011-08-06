@@ -86,6 +86,17 @@ unix-style-paths true or unix-style-paths false
 (see next section).   If this is not set, unix-style paths will be
 used.
 
+If you want to use multiple Fluidinfo accounts, store extra sets of
+credentials in files with an extra extention corresponding to the user
+name. For example, if you want to use accounts ``alice`` and ``bob``
+store Alice's credentials in ``~/.fluidDBcredentials.alice`` and Bob's
+in ``~/.fluidDBcredentials.bob``.   The ``su`` command will then copy
+the appropriate set of credentials to ``~/.fluidDBcredentials``. When
+operating in this mode, you also have the option of setting the
+environment variable ``FISHUSER`` to ``alice`` or ``bob``, and that
+will cause Fish to user those credentials.   This allows different
+shell instances to use different users, should you need that.
+
 
 Tag Conventions
 ===============
