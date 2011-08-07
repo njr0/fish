@@ -10,10 +10,10 @@ import unittest
 from fishlib import *
 from cli import *
 
-class TestFluidDB(unittest.TestCase):
+class TestFluidinfo(unittest.TestCase):
 
     def setUp(self):
-        self.db = FluidDB()
+        self.db = Fluidinfo()
         self.user = self.db.credentials.username   # UNICODE
         self.db.set_connection_from_global()
         self.db.set_debug_timeout(5.0)
@@ -23,7 +23,7 @@ class TestFluidDB(unittest.TestCase):
         db = self.db
         o = db.create_object(u'DADGAD')
         self.assertEqual(o.id, self.dadgadID)
-        self.assertEqual(o.URI, object_uri(self.dadgadID))
+        self.assertEqual(o.tags[u'URI'], object_uri(self.dadgadID))
 
     def testCreateObjectNoAbout(self):
         db = self.db
@@ -32,7 +32,7 @@ class TestFluidDB(unittest.TestCase):
 
     def testCreateObjectFail(self):
         bad = Credentials(u'doesnotexist', u'certainlywiththispassword')
-        db = FluidDB(bad)
+        db = Fluidinfo(bad)
         o = db.create_object(u'DADGAD')
         self.assertEqual(o, STATUS.UNAUTHORIZED)
 
@@ -45,7 +45,7 @@ class TestFluidDB(unittest.TestCase):
                         u"%s's test-fish/testrating (0-10; more is better)"
                         % self.user)
         self.assertEqual(type(o.id) in types.StringTypes, True)
-        self.assertEqual(unicode(urllib.unquote(o.URI.encode('UTF-8')),
+        self.assertEqual(unicode(urllib.unquote(o.tags['URI'].encode('UTF-8')),
                                  'UTF-8'),
                          tag_uri(db.credentials.username,
                          u'test-fish/testrating'))
@@ -98,7 +98,7 @@ class TestFluidDB(unittest.TestCase):
         self.assertEqual(len(objects), 1)
         o = objects[0]
         for key in tagsToSet:
-            self.assertEqual(o.__dict__[key], tagsToSet[key])
+            self.assertEqual(o.tags[key], tagsToSet[key])
             db.delete_abstract_tag(u'/' + tag)
 
     def testSetTagByID(self):
@@ -203,7 +203,7 @@ class TestFluidDB(unittest.TestCase):
 class TestFDBUtilityFunctions(unittest.TestCase):
 
     def setUp(self):
-        self.db = FluidDB()
+        self.db = Fluidinfo()
         self.user = self.db.credentials.username
         self.db.set_connection_from_global()
         self.db.set_debug_timeout(5.0)
@@ -306,11 +306,11 @@ class TestFDBUtilityFunctions(unittest.TestCase):
 
 def specify_DADGAD(mode, host):
     if mode == 'about':
-        return ('-a', 'DADGAD')
+        return ('-a', 'DADGAD', O(about=u'DADGAD'))
     elif mode == 'id':
-        return ('-i', id('DADGAD', host))
+        return ('-i', id('DADGAD', host), O(id=id('DADGAD', host)))
     elif mode == 'query':
-        return ('-q', 'fluiddb/about="DADGAD"')
+        return ('-q', 'fluiddb/about="DADGAD"', O(about=u'DADGAD'))
     else:
         raise ModeError('Bad mode')
 
@@ -318,7 +318,7 @@ def specify_DADGAD(mode, host):
 class TestCLI(unittest.TestCase):
 
     def setUp(self):
-        self.db = FluidDB()
+        self.db = Fluidinfo()
         self.user = self.db.credentials.username
         self.db.set_connection_from_global()
         self.db.set_debug_timeout(5.0)
@@ -350,8 +350,8 @@ class TestCLI(unittest.TestCase):
 
     def tagTest(self, mode, verbose=True):
         self.stealOutput()
-        (flag, spec) = specify_DADGAD(mode, self.db.host)
-        description = describe_by_mode(spec, mode)
+        (flag, spec, o) = specify_DADGAD(mode, self.db.host)
+        description = describe_by_mode(o)
         flags = ['-v', flag] if verbose else [flag]
         args = ['tag'] + ['-U'] + flags + [spec, 'rating=10'] + self.hostname
         execute_command_line(*parse_args(args))
@@ -368,8 +368,8 @@ class TestCLI(unittest.TestCase):
 
     def untagTest(self, mode, verbose=True):
         self.stealOutput()
-        (flag, spec) = specify_DADGAD(mode, self.db.host)
-        description = describe_by_mode(spec, mode)
+        (flag, spec, o) = specify_DADGAD(mode, self.db.host)
+        description = describe_by_mode(o)
         flags = ['-v', flag] if verbose else [flag]
         args = ['untag'] + ['-U'] + flags + [spec, 'rating'] + self.hostname
         execute_command_line(*parse_args(args))
@@ -384,8 +384,8 @@ class TestCLI(unittest.TestCase):
 
     def showTaggedSuccessTest(self, mode):
         self.stealOutput()
-        (flag, spec) = specify_DADGAD(mode, self.db.host)
-        description = describe_by_mode(spec, mode)
+        (flag, spec, o) = specify_DADGAD(mode, self.db.host)
+        description = describe_by_mode(o)
         args = (['show', '-U', '-v', flag, spec, 'rating', '/fluiddb/about']
                 + self.hostname)
         execute_command_line(*parse_args(args))
@@ -398,8 +398,8 @@ class TestCLI(unittest.TestCase):
 
     def showUntagSuccessTest(self, mode):
         self.stealOutput()
-        (flag, spec) = specify_DADGAD(mode, self.db.host)
-        description = describe_by_mode(spec, mode)
+        (flag, spec, o) = specify_DADGAD(mode, self.db.host)
+        description = describe_by_mode(o)
         args = (['show', '-U', '-v', flag, spec, 'rating', '/fluiddb/about']
                  + self.hostname)
         execute_command_line(*parse_args(args))

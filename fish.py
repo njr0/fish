@@ -133,7 +133,7 @@ def go(args=None, user=None, pwd=None, unixPaths=None, docbase=None,
     if action.startswith('test') and not user:
         cases = {
             'testcli': TestCLI,
-            'testdb': TestFluidDB,
+            'testdb': TestFluidinfo,
             'testutil': TestFDBUtilityFunctions,
         }
         try:

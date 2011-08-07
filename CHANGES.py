@@ -414,4 +414,8 @@
 # 2011/08/06 v4.04     Completed first implementation of seq and listseq
 #                      commands.
 #                      
+# 2011/08/07 v4.05     Refactored class O in anticipation of pickling it.
+#                      for aliases etc.
+#                      Renamed FluidDB class Fluidinfo 
+
 

@@ -1,6 +1,6 @@
 #
 # delicious2fluiddb.py: Import all public bookmarks and their tags
-#                       from del.icio.us and upload them to FluidDB.
+#                       from del.icio.us and upload them to Fluidinfo.
 #
 # Copyright (c) Nicholas J. Radcliffe 2009
 #
@@ -74,7 +74,7 @@ if __name__ == '__main__':
     nShared = len(entries)
     print 'Removed %d private entries' % (nTotal - nShared)
 
-    db = fdb.FluidDB()
+    db = fdb.Fluidinfo()
     nURLs = nTags = 0
     tagsUsed = set()
     for i, entry in enumerate(entries[startAt:]):
@@ -98,6 +98,6 @@ if __name__ == '__main__':
                 else:
                     print '\n ---> FAILURE!'
             print
-    print ('%d URLs tagged in FluidDB, with a total of %d tags (%d distinct)'
+    print ('%d URLs tagged in FluidInfo with a total of %d tags (%d distinct)'
                 % (nURLs, nTags, len (tagsUsed)))
     print '\nTags were: %s' % (' '.join ([tag for tag in tagsUsed]))

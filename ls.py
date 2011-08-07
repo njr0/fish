@@ -332,12 +332,12 @@ def to_string_grid(items, pageWidth=78, maxCols=9):
                                    for row in range(nRows)])
 
 
-class ExtendedFluidDB(fishlib.FluidDB):
+class ExtendedFluidinfo(fishlib.Fluidinfo):
     def __init__(self, credentials=None, host=None, debug=False,
                  encoding=fishlib.DEFAULT_ENCODING, unixStylePaths=None,
                  saveOut=False):
-        fishlib.FluidDB.__init__(self, credentials, host, debug,
-                                encoding, unixStylePaths, saveOut)
+        fishlib.Fluidinfo.__init__(self, credentials, host, debug,
+                                   encoding, unixStylePaths, saveOut)
 
     def list_namespace(self, ns, returnDescription=True,
                         returnNamespaces=True, returnTags=True):

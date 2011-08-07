@@ -15,7 +15,7 @@ import traceback
 from optparse import OptionParser, OptionGroup
 from itertools import chain, imap
 from fishlib import (
-    FluidDB,
+    Fluidinfo,
     O,
     Credentials,
     get_credentials_file,
@@ -104,8 +104,8 @@ About Tag Construction
  Run Tests:
    test                runs all tests
    testcli             tests command line interface only
-   testdb              tests core FluidDB interface only
-   testutil            runs tests not requiring FluidDB access
+   testdb              tests core Fluidinfo interface only
+   testutil            runs tests not requiring Fluidinfo access
 
 
 ''' % (PARIS_ID, PARIS_ID, PARIS_ID, PARIS_ID)
@@ -141,15 +141,17 @@ def error_code(n):
 
 def execute_tag_command(objs, db, tags, options, action):
     tags = form_tag_value_pairs(tags)
-    actions = {
-        u'id': db.tag_object_by_id,
-        u'about': db.tag_object_by_about,
-    }
     for obj in objs:
-        description = describe_by_mode(obj.specifier, obj.mode)
+        description = describe_by_mode(obj)
         for tag in tags:
-            o = actions[obj.mode](obj.specifier, tag.name, tag.value,
-                                  inPref=True)
+            if obj.about:
+                o = db.tag_object_by_about(obj.about, tag.name, tag.value,
+                                           inPref=True)
+            else:
+                o = db.tag_object_by_id(obj.id, tag.name, tag.value,
+                                        inPref=True)
+                
+                                  
             if o == 0:
                 if options.verbose:
                     db.Print(u'Tagged object %s with %s'
@@ -163,14 +165,13 @@ def execute_tag_command(objs, db, tags, options, action):
 
 
 def execute_untag_command(objs, db, tags, options, action):
-    actions = {
-        'id': db.untag_object_by_id,
-        'about': db.untag_object_by_about,
-    }
     for obj in objs:
-        description = describe_by_mode(obj.specifier, obj.mode)
+        description = describe_by_mode(obj)
         for tag in tags:
-            o = actions[obj.mode](obj.specifier, tag, inPref=True)
+            if obj.about:
+                o = db.untag_object_by_about(obj.about, tag, inPref=True)
+            else:
+                o = db.untag_object_by_id(obj.id, tag, inPref=True)
             if o == 0:
                 if options.verbose:
                     db.Print('Removed tag %s from object %s\n'
@@ -200,7 +201,7 @@ def execute_show_command(objs, db, tags, options, action):
     }
     terse = (action == u'get')
     for obj in objs:
-        description = describe_by_mode(obj.specifier, obj.mode)
+        description = describe_by_mode(obj)
         if not terse:
             db.Print(u'Object %s:' % description)
 #            sort_tags(tags)
@@ -208,7 +209,7 @@ def execute_show_command(objs, db, tags, options, action):
             fulltag = db.abs_tag_path(tag, inPref=True)
             outtag = db.abs_tag_path(tag, inPref=True, outPref=True)
             if tag == u'/id':
-                if obj.mode == u'about':
+                if obj.about:
                     o = db.query(u'fluiddb/about = "%s"' % obj.specifier)
                     if type(o) == types.IntType:  # error
                         status, v = o, None
@@ -217,17 +218,22 @@ def execute_show_command(objs, db, tags, options, action):
                 else:
                     status, v = STATUS.OK, obj.specifier
             else:
-                status, v = actions[obj.mode](obj.specifier, tag, inPref=True)
+                if obj.about:
+                    status, v = db.get_tag_value_by_about(obj.about, tag,
+                                                          inPref=True)
+                else:
+                    status, v = db.get_tag_value_by_id(obj.id, tag,
+                                                       inPref=True)
 
             saveForNow = True   # while getting ready to move to objects
             if status == STATUS.OK:
                 db.Print(formatted_tag_value(outtag, v, terse),
                          allowSave=saveForNow)
-                obj.__dict__[outtag] = v
+                obj.tags[outtag] = v
             elif status == STATUS.NOT_FOUND:
                 db.Print(u'  %s' % cli_bracket(u'tag %s not present' % outtag),
                          allowSave=saveForNow)
-                obj.__dict__[outtag] = O     # Object class; signifies missing
+                obj.tags[outtag] = O     # Object class; signifies missing
             else:
                 db.Print(cli_bracket(u'error code %s attempting to read tag %s'
                                      % (error_code(status), outtag)),
@@ -237,10 +243,10 @@ def execute_show_command(objs, db, tags, options, action):
 
 def execute_tags_command(objs, db, options):
     for obj in objs:
-        description = describe_by_mode(obj.specifier, obj.mode)
+        description = describe_by_mode(obj)
         db.Print(u'Object %s:' % description)
-        id = (db.create_object(obj.specifier).id if obj.mode == u'about'
-              else obj.specifier)
+        id = (db.create_object(obj.about).id if obj.about == u'about'
+              else obj.id)
         tags = db.get_object_tags_by_id(id)
         sort_tags(tags)
         for tag in tags:
@@ -282,7 +288,7 @@ def execute_su_command(db, args):
     source =  get_credentials_file(username=args[0])
     dest = get_credentials_file()
     shutil.copyfile(source, dest)
-    db = FluidDB(Credentials(filename=dest))
+    db = Fluidinfo(Credentials(filename=dest))
     username = db.credentials.username
     file = args[0].decode(DEFAULT_ENCODING)
     extra = u'' if args[0] == username else (u' (file %s)' % file)
@@ -321,7 +327,7 @@ def FloatDateTime():
 
 def execute_listseq_command(db, args, options):
     tag = db.abs_tag_path(args[0])[1:]
-    fi = abouttag.fluiddb.FluidDB()
+    fi = abouttag.fluiddb.Fluidinfo()
     nextTag = u'%s-next' % tag
     dateTag = u'%s-date' % tag
     numberTag = u'%s-number' % tag
@@ -331,8 +337,8 @@ def execute_listseq_command(db, args, options):
                                   [tag, dateTag, numberTag])
     for o in results:
         db.Print(unicode(o) + u'\n')
-    z = [(o.__dict__[numberTag], o) for o in results
-                                    if numberTag in o.__dict__]
+    z = [(o.tags[numberTag], o) for o in results if numberTag in o.tags]
+                                    
     z.sort()
     for (i, o) in z:
         db.Print(u'%s: %s\n%s\n' % (format_number(o.get(numberTag)),
@@ -361,7 +367,7 @@ def execute_seq_command(db, args, options):
         raise CommandError('Usage: seq basetag value')
 
     tag = db.abs_tag_path(args[0])[1:]
-    fi = abouttag.fluiddb.FluidDB()
+    fi = abouttag.fluiddb.Fluidinfo()
     nextTag = u'%s-next' % tag
     dateTag = u'%s-date' % tag
     numberTag = u'%s-number' % tag
@@ -430,24 +436,22 @@ def execute_http_request(action, args, db, options):
     db.Print(u'Result: %s' % toStr(result))
 
 
-def describe_by_mode(specifier, mode):
-    """mode can be a string (about, id or query) or a flags object
-        with flags.about, flags.query and flags.id"""
-    if mode == u'about':
-        return describe_by_about(specifier)
-    elif mode == u'id':
-        return describe_by_id(specifier)
-    elif mode == u'query':
-        return describe_by_id(specifier)
+def describe_by_mode(o):
+    """o is an object, which must have either about or id set
+    """
+    if o.about:
+        return describe_by_about(o.about)
+    elif o.id:
+        return describe_by_id(o.id)
     raise ModeError(u'Bad Mode')
 
 
-def describe_by_about(specifier):
-    return u'with about="%s"' % specifier
+def describe_by_about(about):
+    return u'with about="%s"' % about
 
 
-def describe_by_id(specifier):
-    return specifier
+def describe_by_id(id):
+    return id
 
 
 def formatted_tag_value(tag, value, terse=False, prefix=u'  '):
@@ -541,7 +545,7 @@ def parse_args(args=None):
     general.add_option('-i', '--id', action='append', default=[],
             help='used to specify objects by ID')
     general.add_option('-q', '--query', action='append', default=[],
-            help='used to specify objects with a FluidDB query')
+            help='used to specify objects with a Fluidinfo query')
     general.add_option('-v', '--verbose', action='store_true', default=False,
             help='encourages Fish to report what it\'s doing (verbose mode)')
     general.add_option('-D', '--debug', action='store_true', default=False,
@@ -640,9 +644,9 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
                    if (user or options.user) else None)
     unixPaths = (path_style(options) if path_style(options) is not None
                                      else unixPaths)
-    db = ls.ExtendedFluidDB(host=options.hostname, credentials=credentials,
-                            debug=options.debug, unixStylePaths=unixPaths,
-                            saveOut=saveOut)
+    db = ls.ExtendedFluidinfo(host=options.hostname, credentials=credentials,
+                              debug=options.debug, unixStylePaths=unixPaths,
+                              saveOut=saveOut)
     quiet = (action == 'get')
     ids_from_queries = chain(*imap(lambda q: get_ids_or_fail(q, db,
                                                              quiet=quiet),
@@ -686,8 +690,7 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
     ]
     command_list.sort()
 
-    objs = [O({'mode': 'about', 'specifier': a}) for a in options.about] + \
-            [O({'mode': 'id', 'specifier': id}) for id in ids]
+    objs = [O(about=a) for a in options.about] + [O(id=id) for id in ids]
 
     if action == 'version' or options.version:
         db.Print('fish %s' % version())

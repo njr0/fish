@@ -6,7 +6,7 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'4.04'
+__version__ = u'4.05'
 VERSION = __version__
 
 import codecs
@@ -276,51 +276,45 @@ def _get_http(timeout):
 
 class O:
     """
-    This is really a dummy class that just sticks everything in
-    the hash (dictionary) that initializes it into self.dict
-    so that you can use o.id instead of hash['id'] etc.,
-    and to allow some string formatting etc.
-
-    Most objects returned natively as hashes by the FluidDB API
-    are mapped to these dummy objects in this library.
-
-    Set missing tags to O.
+        This class is used to represent objects locally.
+        Missing tags are normally set to O.
+        The tags are stored in self.tags and there is usually
+        either self.about or self.id set.
     """
-    def __init__(self, hash=None):
-        self._types={}
-        if hash:
-            for k in hash:
-                self.__dict__[k] = hash[k]
+    def __init__(self, tags=None, about=None, id=None):
+        self.about = about
+        self.id = id
+        self.tags = tags if tags else {}
+        self.types = {}
+        for t in self.tags:
+            self.types[t] = type(self.tags[t])
 
     def __str__(self):
-        keys = self.__dict__.keys()
+        keys = self.tags.keys()
         keys.sort()
-        return u'\n'.join([u'%20s: %s' % (key, toStr(self.__dict__[key]
-                           if not self.__dict__[key] is O
+        return u'\n'.join([u'%20s: %s' % (key, toStr(self.tags[key]
+                           if not self.tags[key] is O
                                 else u'(not present)'))
                                 for key in keys])
 
     def __unicode__(self):
-        keys = self.__dict__.keys()
+        keys = self.tags.keys()
         keys.sort()
-        return u'\n'.join([u'%20s: %s' % (key, unicode(self.__dict__[key]))
+        return u'\n'.join([u'%20s: %s' % (key, unicode(self.tags[key]))
                            for key in keys if not key.startswith('_')])
 
-    def tags(self):
-        return [t for t in self.__dict__ if not t in (u'id', u'_types')]
-
     def typedval(self, t):
-        return (self.__dict__[t], self._types[t])
+        return (self.tags[t], self._types[t])
 
     def u(self, key):
-        return self.__dict__[key]
+        return self.tags[key]
 
     def toJSON(self):
-        return {'item': 'object', 'tags': self.__dict__}
+        return {'item': 'object', 'tags': self.tags}
 
     def get(self, tag, retNone=True):
         try:
-            return self.__dict__[tag]
+            return self.tags[tag]
         except KeyError:
             if retNone:
                 return None
@@ -384,9 +378,9 @@ def format_param(v):
     return quote_u_8(v) if type(v) == unicode else str(v)
 
 
-class FluidDB:
+class Fluidinfo:
     """
-    Connection to FluidDB that remembers credentials and provides
+    Connection to Fluidinfo that remembers credentials and provides
     methods for some of the common operations.
 
     Although currently unused, the unixStylePaths parameter
@@ -476,7 +470,7 @@ class FluidDB:
 
     def call(self, method, path, body=None, hash=None, **kw):
         """
-        Calls FluidDB with the attributes given.
+        Calls Fluidinfo with the attributes given.
         This function was lifted nearly verbatim from fluiddb.py,
         by Sanghyeon Seo, with additions by Nicholas Tollervey.
 
@@ -566,7 +560,7 @@ class FluidDB:
 
         Returns: the object returned if successful, wrapped up in
         an (O) object whose class variables correspond to the
-        values returned by FluidDB, in particular, o.id and o.URL.
+        values returned by Fluidinfo, in particular, o.id and o.URL.
         If there's a failure, the return value is an integer error code.
         """
         if about:
@@ -574,7 +568,8 @@ class FluidDB:
         else:
             body = None
         (status, o) = self.call(u'POST', u'/objects', body)
-        return O(o) if status == STATUS.CREATED else status
+        return (O({u'URI': o[u'URI']}, id=o[u'id']) if status == STATUS.CREATED
+                                                    else status)
 
     def create_namespace(self, path, description=u'',
                          createParentIfNeeded=True, verbose=False):
@@ -594,7 +589,7 @@ class FluidDB:
 
         Returns ID of namespace object if created successfully.
         If not, but the request is well formed, the error code returned
-        by FluidDB is returned.
+        by Fluidinfo is returned.
 
         If the request is ill-formed (doesn't look like a valid namespace),
         an exception is raised.
@@ -706,7 +701,7 @@ class FluidDB:
             else:
                 raise FailedToCreateNamespaceError(u'FDB could not create'
                         u' the required namespace %s' % namespace)
-        return O(o) if status == STATUS.CREATED else status
+        return O(o, id=o[u'id']) if status == STATUS.CREATED else status
 
     def delete_abstract_tag(self, tag):
         """Deletes an abstract tag, removing all of its concrete
@@ -872,7 +867,7 @@ class FluidDB:
 
         Setting inPref to True will change the way the input is handled
         if the self.unixStyle is False.   In this case, the input will
-        be assume to be a FluidDB-style path already, i.e. it will
+        be assume to be a Fluidinfo-style path already, i.e. it will
         be assumed to be a full path with no leading slash.
 
         Setting outPref to True will change the way the input is handled
@@ -914,7 +909,7 @@ class FluidDB:
             return u'/tags%s' % self.abs_tag_path(tag)
 
     def tag_path_split(self, tag):
-        """A bit like os.path.split, this splits any old kind of a FluidDB
+        """A bit like os.path.split, this splits any old kind of a Fluidinfo
            tag path into a user, a subnamespace (if there is one) and a tag.
            But unlike os.path.split, if no namespace is given,
            the one from the user credentials is returned.
@@ -963,24 +958,24 @@ class FluidDB:
 
     def read_tags(self, about, o):
         return get_values_by_query(self, u'fluiddb/about = "%s"' % about,
-                            [k for k in o.__dict__ if not k.startswith(u'_')])
+                            [k for k in o.tags])
 
     def write_tags(self, about, o):
         values = {}
-        for k in o.__dict__:
+        for k in o.tags:
             if not k.startswith(u'_'):
-                values[k] = o.__dict__[k]
+                values[k] = o.tags[k]
         return tag_by_query(self, u'fluiddb/about = "%s"' % about, values)
                             
 
 
 def object_uri(id):
-    """Returns the full URI for the FluidDB object with the given id."""
+    """Returns the full URI for the Fluidinfo object with the given id."""
     return u'%s/objects/%s' % (FLUIDDB_PATH, id)
 
 
 def tag_uri(namespace, tag):
-    """Returns the full URI for the FluidDB tag with the given id."""
+    """Returns the full URI for the Fluidinfo tag with the given id."""
     return u'%s/tags/%s/%s' % (FLUIDDB_PATH, namespace, tag)
 
 
@@ -1105,7 +1100,7 @@ def tag_by_query(db, query, tagsToSet):
     """
     Sets one or more tags on objects that match a query.
 
-    db         is an instantiated FluidDB instance.
+    db         is an instantiated Fluidinfo instance.
 
     query      is a unicode string representing a valid Fluidinfo query.
                e.g. 'has njr/rating'
@@ -1115,7 +1110,7 @@ def tag_by_query(db, query, tagsToSet):
 
     Example:
 
-        db = FluidDB()
+        db = Fluidinfo()
         tag_by_query(db, u'has njr/rating', {'njr/rated': True})
 
     sets an njr/rated tag to True for every object having an njr/rating.
@@ -1140,7 +1135,7 @@ def untag_by_query(db, query, tags):
     """
     Deletes one or more tags on objects that match a query.
 
-    db         is an instantiated FluidDB instance.
+    db         is an instantiated Fluidinfo instance.
 
     query      is a unicode string representing a valid Fluidinfo query.
                e.g. 'has njr/rating'
@@ -1149,7 +1144,7 @@ def untag_by_query(db, query, tags):
 
     Example:
 
-        db = FluidDB()
+        db = Fluidinfo()
         untag_by_query(db, u'has njr/rating', ['njr/rating'])
 
     removes an njr/rating tag from every object that has one.
@@ -1180,7 +1175,7 @@ def get_values_by_query(db, query, tags):
     The values in the dictionary are simple objects with each tag
     value in the object's dictionary (__dict__).
 
-    db         is an instantiated FluidDB instance.
+    db         is an instantiated Fluidinfo instance.
 
     query      is a unicode string representing a valid Fluidinfo query.
                e.g. 'has njr/rating'
@@ -1190,7 +1185,7 @@ def get_values_by_query(db, query, tags):
 
     Example:
 
-        db = FluidDB()
+        db = Fluidinfo()
         tag_by_query(db, u'has njr/rating < 3', ('fluiddb/about',))
 
     NOTE: Unlike in much of the rest of fish.py, tags need to be full paths
@@ -1207,23 +1202,23 @@ def get_values_by_query(db, query, tags):
     results = []
     for id in H:
         o = O()
-        o.__dict__[u'id'] = id
+        o.id = id
         for tag in tags:
             if tag in H[id]:
                 try:
-                    o.__dict__[tag] = H[id][tag][u'value']
-                    o._types[tag] = None
+                    o.tags[tag] = H[id][tag][u'value']
+                    o.types[tag] = None
                 except KeyError:
                     size = H[id][tag][u'size']
                     mime = H[id][tag][u'value-type']
                     if (mime.startswith(u'text')
                             and size < maxTextSize):
-                        o.__dict__[tag] = db.get_tag_value_by_about(id,
+                        o.tags[tag] = db.get_tag_value_by_about(id,
                                                             u'/%s' % tag)
                     else:
-                        o.__dict__[tag] = (u'%s value of size %d bytes' % (mime,
+                        o.tags[tag] = (u'%s value of size %d bytes' % (mime,
                                                                      size))
-                    o._types[tag] = mime
+                    o.types[tag] = mime
         results.append(o)
     return results      # hash of objects, keyed on ID, with attributes
                         # corresponding to tags, inc id.
@@ -1234,9 +1229,9 @@ def get_values_by_id(db, id, tags):
     Gets the values of a set of tags satisfying a given query.
     Returns them as a dictionary (hash) keyed on object ID.
     The values in the dictionary are simple objects with each tag
-    value in the object's dictionary (__dict__).
+    value in the object's dictionary (tags).
 
-    db         is an instantiated FluidDB instance.
+    db         is an instantiated Fluidinfo instance.
 
     query      is a unicode string representing a valid Fluidinfo query.
                e.g. 'has njr/rating'
@@ -1246,7 +1241,7 @@ def get_values_by_id(db, id, tags):
 
     Example:
 
-        db = FluidDB()
+        db = Fluidinfo()
         tag_by_query(db, u'has njr/rating < 3', ('fluiddb/about',))
 
     NOTE: Unlike in much of the rest of fish.py, tags need to be full paths
@@ -1257,16 +1252,16 @@ def get_values_by_id(db, id, tags):
     """
     maxTextSize = 1024
     o = O()
-    o.__dict__[u'id'] = id
+    o.id = id
     for tag in tags:
         status, value, mime = db.get_tag_value_by_id(id, tag, getMime=True)
         assert_status(v, STATUS.OK)
-        o.__dict__[tag] = value
-        o._types[tag] = None if mime == PRIMITIVE_CONTENT_TYPE else 0
+        o.tags[tag] = value
+        o.tags[tag] = None if mime == PRIMITIVE_CONTENT_TYPE else 0
         if (mime.startswith(u'text') and size < maxTextSize):
-            o.__dict__[tag] = db.get_tag_value_by_about(id, u'/%s' % tag)
+            o.tags[tag] = db.get_tag_value_by_about(id, u'/%s' % tag)
         else:
-            o.__dict__[tag] = (u'%s value of size %d bytes' % (mime, size))
+            o.tags[tag] = (u'%s value of size %d bytes' % (mime, size))
     return o
         
 
