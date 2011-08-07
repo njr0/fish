@@ -6,10 +6,11 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'4.05'
+__version__ = u'4.06'
 VERSION = __version__
 
 import codecs
+import cPickle as pickle
 import os
 import re
 import sys
@@ -33,7 +34,13 @@ PARIS_ID = u'17ecdfbc-c148-41d3-b898-0b5396ebe6cc'
 UNICODE = True
 DEFAULT_UNIX_STYLE_PATHS = True
 FISHUSER = 'FISHUSER'
+ALIAS_TAG = u'.fish/alias'
 toStr = unicode if UNICODE else str
+DEFAULT_DEBUG = True
+
+
+class CacheError(Exception):
+    pass
 
 
 class ProblemReadingCredentialsFileError(Exception):
@@ -99,12 +106,13 @@ class STATUS:
 FLUIDDB_PATH = u'http://fluiddb.fluidinfo.com'
 SANDBOX_PATH = u'http://sandbox.fluidinfo.com'
 UNIX_CREDENTIALS_FILE = u'.fluidDBcredentials'
-WINDOWS_CREDENTIALS_FILE = u'fluidDBcredentials.ini'
 UNIX_USER_CREDENTIALS_FILE = u'.fluidDBcredentials.%s'
-WINDOWS_USER_CREDENTIALS_FILE = u'fluidDBcredentials-%s.ini'
 
-CRED_FILE_VAR = 'FDB_CREDENTIALS_FILE'
+CRED_FILE_VAR = 'FISH_CREDENTIALS_FILE'
 WIN_CRED_FILE = 'c:\\fish\\credentials.txt'
+
+CACHE_FILE = {u'unix': u'.fishcache.%s',
+              u'windows': u'c:\\fish\\credentials-%s.txt'}
 
 HTTP_TIMEOUT = 300.123456       # unlikey the user will choose this
 PRIMITIVE_CONTENT_TYPE = u'application/vnd.fluiddb.value+json'
@@ -189,6 +197,73 @@ class Namespace:
         return {'item': 'namespace', 'name': self.name}
 
     toUnicode = __unicode__
+
+
+class Cache:
+    def __init__(self, username):
+        self.username = username
+        self.objects = {}
+        self.cacheFile = get_user_file(CACHE_FILE, username)
+        self.read()
+
+    def read(self):
+        try:
+            f = open(self.cacheFile, 'rb')
+            try:
+                self.objects = pickle.load(f)
+                f.close()
+            except:
+                raise CacheError('Cache %s appears corrupt' % self.cacheFile)
+        except IOError:  # No cache
+            pass
+
+
+    def __unicode__(self):
+        out = [u'Cache:']
+        for about in self.objects:
+            out.append(u'  fluiddb/about="%s":\n    %s' % (about,
+                                                unicode(self.objects[about])))
+        return u'\n\n'.join(out)
+
+    def write(self):
+        f = open(self.cacheFile, 'wb')
+        pickle.dump(self.objects, f)
+        f.close()
+
+    def add(self, o, write=True):
+        objects = o if type(o) in (list, tuple) else [o]
+        for o in objects:
+            self.objects[o.about] = o
+        if write:
+            self.write()
+
+    def sync(self, db):
+        alias_tag = u'%s/%s' % (self.username, ALIAS_TAG)
+        objects = get_values_by_query(db, u'has %s' % alias_tag,
+                                      [u'fluiddb/about', alias_tag])
+        if objects:
+            self.objects = {}
+            for o in objects:
+                self.objects[o.about] = o
+            self.write()
+        else:
+            db.warning('Nothing to sync from Fluidinfo')
+
+    def aliases(self, name=None):
+        alias_tag = u'%s/%s' % (self.username, ALIAS_TAG)
+        if name:
+            return [self.objects[about] for about in self.objects
+                    if alias_tag in self.objects[about].tags and about == name]
+        else:
+            return [self.objects[about] for about in self.objects
+                    if alias_tag in self.objects[about].tags]
+
+    def get_alias(self, name):
+        try:
+            alias_tag = u'%s/%s' % (self.username, ALIAS_TAG)
+            return self.objects[name].tags[alias_tag]
+        except KeyError:
+            return None
 
 
 def quote_u_u(s):
@@ -292,7 +367,7 @@ class O:
     def __str__(self):
         keys = self.tags.keys()
         keys.sort()
-        return u'\n'.join([u'%20s: %s' % (key, toStr(self.tags[key]
+        return u'\n'.join([u'  %s=%s' % (key, toStr(self.tags[key]
                            if not self.tags[key] is O
                                 else u'(not present)'))
                                 for key in keys])
@@ -300,8 +375,9 @@ class O:
     def __unicode__(self):
         keys = self.tags.keys()
         keys.sort()
-        return u'\n'.join([u'%20s: %s' % (key, unicode(self.tags[key]))
-                           for key in keys if not key.startswith('_')])
+        return u'\n'.join([formatted_tag_value(key, self.tags[key])
+                           for key in keys
+                           if not key.startswith('_')])
 
     def typedval(self, t):
         return (self.tags[t], self._types[t])
@@ -378,6 +454,21 @@ def format_param(v):
     return quote_u_8(v) if type(v) == unicode else str(v)
 
 
+def formatted_tag_value(tag, value, terse=False, prefix=u'  '):
+    lhs = '' if terse else '%s%s = ' % (prefix, tag)
+    if value == None:
+        return u'%s%s' % (u'' if terse else prefix, tag)
+    elif type(value) in types.StringTypes:
+        return u'%s"%s"' % (lhs, value)
+    elif type(value) in (list, tuple):
+        vals = value[:]
+        vals.sort()
+        return u'%s{%s}' % (lhs,
+                             u', '.join(u'"%s"' % unicode(v) for v in vals))
+    else:
+        return u'%s%s' % (lhs, toStr(value))
+
+
 class Fluidinfo:
     """
     Connection to Fluidinfo that remembers credentials and provides
@@ -394,7 +485,7 @@ class Fluidinfo:
        'python' (save python objects)
     """
 
-    def __init__(self, credentials=None, host=None, debug=False,
+    def __init__(self, credentials=None, host=None, debug=DEFAULT_DEBUG,
                  encoding=DEFAULT_ENCODING, unixStylePaths=None,
                  saveOutput=False):
         if credentials == None:
@@ -423,6 +514,7 @@ class Fluidinfo:
         self.headers = {
             u'Authorization': auth
         }
+        self.cache = Cache(self.credentials.username)
 
     def Print(self, s, allowSave=True, allowPrint=True):
         if self.saveOutput:
@@ -979,18 +1071,28 @@ def tag_uri(namespace, tag):
     return u'%s/tags/%s/%s' % (FLUIDDB_PATH, namespace, tag)
 
 
-def get_credentials_file(unixFile=None, windowsFile=None, username=None):
+def get_credentials_file(username=None):
     if os.name == 'posix':
         homeDir = os.path.expanduser('~')
         file = ((UNIX_USER_CREDENTIALS_FILE % username) if username
                 else UNIX_CREDENTIALS_FILE)
         return os.path.join(homeDir, file)
+
     elif os.name:
         e = os.environ
         return e[CRED_FILE_VAR] if CRED_FILE_VAR in e else WIN_CRED_FILE
     else:
         return None
 
+
+def get_user_file(file, username):
+    if os.name == 'posix':
+        return os.path.join(os.path.expanduser(u'~'), file['unix'] % username)
+    elif os.name:
+        return file[u'windows'] % username
+    else:
+        return None
+    
 
 def get_typed_tag_value(v):
     """Uses some simple rules to extract simple typed values from strings.
@@ -1206,8 +1308,11 @@ def get_values_by_query(db, query, tags):
         for tag in tags:
             if tag in H[id]:
                 try:
-                    o.tags[tag] = H[id][tag][u'value']
-                    o.types[tag] = None
+                    if tag == u'fluiddb/about':
+                        o.about = H[id][tag][u'value']
+                    else:
+                        o.tags[tag] = H[id][tag][u'value']
+                        o.types[tag] = None
                 except KeyError:
                     size = H[id][tag][u'size']
                     mime = H[id][tag][u'value-type']

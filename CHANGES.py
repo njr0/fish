@@ -417,5 +417,11 @@
 # 2011/08/07 v4.05     Refactored class O in anticipation of pickling it.
 #                      for aliases etc.
 #                      Renamed FluidDB class Fluidinfo 
+#
+# 2011/08/07 v4.06     Completed seq, listseq, mkseq commands.
+#                      Added alias command
+#                      Added cache and showcache command to view it.
+#                      Added sync command to refresh the cache.
+#
 
 

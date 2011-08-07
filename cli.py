@@ -22,6 +22,7 @@ from fishlib import (
     get_typed_tag_value,
     path_style,
     toStr,
+    formatted_tag_value,
     version,
     DEFAULT_ENCODING,
     STATUS,
@@ -30,6 +31,7 @@ from fishlib import (
     HTTP_TIMEOUT,
     SANDBOX_PATH,
     FLUIDDB_PATH,
+    ALIAS_TAG,
     json,
     TagValue,
     Namespace,
@@ -45,10 +47,8 @@ except ImportError:
     pass
 
 
-HTTP_METHODS = ['GET', 'PUT', 'POST', 'DELETE', 'HEAD']
-
-ARGLESS_COMMANDS = ['COUNT', 'TAGS', 'LS', 'PWD', 'PWN', 'WHOAMI', 'QUIT',
-                    'EXIT']
+ARGLESS_COMMANDS = ['count', 'tags', 'ls', 'pwd', 'pwn', 'whoami', 'quit',
+                    'exit', 'alias', 'showcache', 'sync']
 
 AT_ERROR = (u'You need the abouttag library to use the abouttag command.\n'
             u'This is available from http://github.com/njr0/abouttag.')
@@ -115,6 +115,7 @@ USAGE_FI = USAGE.replace('/about', 'fluiddb/about').replace('/alice',
 USAGE_FISH = USAGE.replace('/alice/','')
 
 
+
 class ModeError(Exception):
     pass
 
@@ -150,8 +151,6 @@ def execute_tag_command(objs, db, tags, options, action):
             else:
                 o = db.tag_object_by_id(obj.id, tag.name, tag.value,
                                         inPref=True)
-                
-                                  
             if o == 0:
                 if options.verbose:
                     db.Print(u'Tagged object %s with %s'
@@ -162,6 +161,7 @@ def execute_tag_command(objs, db, tags, options, action):
                 db.warning(u'Failed to tag object %s with %s'
                         % (description, tag.name))
                 db.warning(u'Error code %s' % error_code(o))
+    return o  # 0 if OK
 
 
 def execute_untag_command(objs, db, tags, options, action):
@@ -327,7 +327,7 @@ def FloatDateTime():
 
 def execute_listseq_command(db, args, options):
     tag = db.abs_tag_path(args[0])[1:]
-    fi = abouttag.fluiddb.Fluidinfo()
+    fi = abouttag.fluiddb.FluidDB()
     nextTag = u'%s-next' % tag
     dateTag = u'%s-date' % tag
     numberTag = u'%s-number' % tag
@@ -344,6 +344,20 @@ def execute_listseq_command(db, args, options):
         db.Print(u'%s: %s\n%s\n' % (format_number(o.get(numberTag)),
                                     o.get(tag),
                                     format_date(o.get(dateTag))))
+
+def execute_mkseq_command(db, args, options):
+    seqname = args[0]
+    pluralTag = args[1] if len(args) > 1 else '%ss' % seqname
+    baseTag = args[2] if len(args) > 2 else seqname
+    if len(args) > 3:
+        raise(u'Form: mknseq sequence-name [plural-form [base-tag]]')
+    create_alias(db, seqname, u'seq %s' % baseTag, options)
+    create_alias(db, pluralTag, u'listseq %s' % baseTag, options)
+    if options.verbose:
+        db.Print(u'Aliases created.\n'
+                 u'  Use %s to add to the sequence.\n'
+                 u'  Use %s to list items in the sequence.'
+                 % (seqname, pluralTag))
 
 
 def format_date(d):
@@ -367,7 +381,7 @@ def execute_seq_command(db, args, options):
         raise CommandError('Usage: seq basetag value')
 
     tag = db.abs_tag_path(args[0])[1:]
-    fi = abouttag.fluiddb.Fluidinfo()
+    fi = abouttag.fluiddb.FluidDB()
     nextTag = u'%s-next' % tag
     dateTag = u'%s-date' % tag
     numberTag = u'%s-number' % tag
@@ -399,41 +413,39 @@ def execute_seq_command(db, args, options):
                                 o.get(tag),
                                 format_date(o.get(dateTag))))
 
-    # Check Statuses and show tags.
-    # In fact, finish with a seq thought 1 command??
 
-    # nextInSeq = get -a 'user object' tagname-next
-    # if not defined: 0 : create tags, make private if start private
-    # datestamp
-    # tag -a unicode(nextInSeq) tagname=value tagname=date tagname-number=nextInSueq
-    # tag -a 'user obkect' tagname-next+= 1
-    # get -a 
-
-
-def execute_http_request(action, args, db, options):
-    """Executes a raw HTTP command (GET, PUT, POST, DELETE or HEAD)
-       as specified on the command line."""
-    method = action.upper()
-    if method not in HTTP_METHODS:
-        raise UnrecognizedHTTPMethodError(u'Only supported HTTP methods are'
-                u'%s and %s' % (' '.join(HTTP_METHODS[:-1], HTTP_METHODS[-1])))
-
-    if len(args) == 0:
-        raise TooFewArgsForHTTPError(u'HTTP command %s requires a URI'
-                                     % method)
-    uri = args[0]
-    tags = form_tag_value_pairs(args[1:])
-    if method == u'PUT':
-        body = {tags[0].tag: tags[0].value}
-        tags = tags[1:]
+def execute_alias_command(db, args, options):
+    abstag = db.abs_tag_path(ALIAS_TAG)[1:]
+    if len(args) < 2:
+        aliases = db.cache.aliases(args[0] if len(args) == 1 else None)
+        for a in aliases:
+            db.Print(u'%s:' % unicode(a.about))
+            db.Print(unicode(a) + u'\n')
+    elif len(args) == 1:
+        for o in db.cache.aliases(args[0]):
+            db.Print(unicode(o) + u'\n')
     else:
-        body = None
-    hash = {}
-    for pair in tags:
-        hash[pair.name] = pair.value
-    status, result = db.call(method, uri, body, hash)
-    db.Print(u'Status: %d' % status)
-    db.Print(u'Result: %s' % toStr(result))
+        create_alias(db, args[0], u' '.join(args[1:]), options)
+
+
+def create_alias(db, name, definition, options):
+    abstag = db.abs_tag_path(ALIAS_TAG)[1:]
+    o = O({abstag: definition}, about=name)
+    e = execute_tag_command([o], db, [u"%s='%s'" % (ALIAS_TAG, definition)],
+                            options, u'tag')
+    if e != 0:
+        db.warning(u'Failed to create alias %s' % name)
+        db.warning(u'Error code %s' % error_code(e))
+        return
+    db.cache.add(o)
+
+
+def execute_showcache_command(db, args, options):
+    db.Print(unicode(db.cache))
+
+
+def execute_sync_command(db, args, options):
+    db.cache.sync(db)
 
 
 def describe_by_mode(o):
@@ -452,21 +464,6 @@ def describe_by_about(about):
 
 def describe_by_id(id):
     return id
-
-
-def formatted_tag_value(tag, value, terse=False, prefix=u'  '):
-    lhs = '' if terse else '%s%s = ' % (prefix, tag)
-    if value == None:
-        return u'%s%s' % (u'' if terse else prefix, tag)
-    elif type(value) in types.StringTypes:
-        return u'%s"%s"' % (lhs, value)
-    elif type(value) in (list, tuple):
-        vals = value[:]
-        vals.sort()
-        return u'%s{%s}' % (lhs,
-                             u', '.join(u'"%s"' % unicode(v) for v in vals))
-    else:
-        return u'%s%s' % (lhs, toStr(value))
 
 
 def form_tag_value_pairs(tags):
@@ -685,10 +682,20 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
         'normalize',
         'seq',
         'listseq',
+        'mkseq',
+        'alias',
+        'showcache',
+        'sync',
         'quit',
         'exit',
     ]
     command_list.sort()
+
+    # Expand aliases
+    alias = db.cache.get_alias(action)
+    if alias:
+        args = alias.split() + args
+        action, args, options, parser = parse_args(args)
 
     objs = [O(about=a) for a in options.about] + [O(id=id) for id in ids]
 
@@ -712,7 +719,7 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
             db.Print(' '.join(command_list))
         elif action not in command_list:
             db.Print('Unrecognized command %s' % action)        
-        elif (action.upper() not in HTTP_METHODS + ARGLESS_COMMANDS
+        elif (action.lower() not in ARGLESS_COMMANDS
               and not args):
             db.Print('Too few arguments for action %s' % action)
         elif action == 'count':
@@ -766,8 +773,14 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
             execute_seq_command(db, args, options)
         elif action == 'listseq':
             execute_listseq_command(db, args, options)
-#        elif action in ('get', 'put', 'post', 'delete'):
-#            execute_http_request(action, args, db, options)
+        elif action == 'mkseq':
+            execute_mkseq_command(db, args, options)
+        elif action == 'alias':
+            execute_alias_command(db, args, options)
+        elif action == 'showcache':
+            execute_showcache_command(db, args, options)
+        elif action == 'sync':
+            execute_sync_command(db, args, options)
         elif action in ('quit', 'exit'):
             pass
         else:
@@ -785,6 +798,3 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
         else:
             return (u'\n'.join([toOutputString(b) for b in db.buffer])
                     if saveOut else None)
-
-
-
