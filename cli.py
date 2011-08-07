@@ -48,7 +48,7 @@ except ImportError:
 
 
 ARGLESS_COMMANDS = ['count', 'tags', 'ls', 'pwd', 'pwn', 'whoami', 'quit',
-                    'exit', 'alias', 'showcache', 'sync']
+                    'exit', 'alias', 'showcache', 'sync', 'init']
 
 AT_ERROR = (u'You need the abouttag library to use the abouttag command.\n'
             u'This is available from http://github.com/njr0/abouttag.')
@@ -414,8 +414,18 @@ def execute_seq_command(db, args, options):
                                 format_date(o.get(dateTag))))
 
 
+def execute_unalias_command(db, args, options):
+    abstag = db.abs_tag_path(ALIAS_TAG)
+    options.unixstylepaths=True
+    if len(args) < 1:
+        raise CommandError(u'Form unalias alias [alias2...]')
+    for a in args:
+        db.untag_object_by_about(args[0], abstag, inPref=False)
+        db.cache.sync(db)        
+
+
 def execute_alias_command(db, args, options):
-    abstag = db.abs_tag_path(ALIAS_TAG)[1:]
+    abstag = db.abs_tag_path(ALIAS_TAG, inPref=True, outPref=False)
     if len(args) < 2:
         aliases = db.cache.aliases(args[0] if len(args) == 1 else None)
         for a in aliases:
@@ -429,9 +439,10 @@ def execute_alias_command(db, args, options):
 
 
 def create_alias(db, name, definition, options):
-    abstag = db.abs_tag_path(ALIAS_TAG)[1:]
-    o = O({abstag: definition}, about=name)
-    e = execute_tag_command([o], db, [u"%s='%s'" % (ALIAS_TAG, definition)],
+    abstag = db.abs_tag_path(ALIAS_TAG)
+    options.unixstylepaths=True
+    o = O({abstag[1:]: definition}, about=name)
+    e = execute_tag_command([o], db, [u"%s='%s'" % (abstag, definition)],
                             options, u'tag')
     if e != 0:
         db.warning(u'Failed to create alias %s' % name)
@@ -446,6 +457,16 @@ def execute_showcache_command(db, args, options):
 
 def execute_sync_command(db, args, options):
     db.cache.sync(db)
+
+
+def execute_init_command(db, args, options):
+    path = u'.fish'
+    fullpath = db.abs_tag_path(path, inPref=False)
+    if not db.tag_exists(fullpath):
+        db.create_namespace(fullpath, description='For use by Fish')
+    options.unixstylepaths=True
+    ls.execute_perms_command(db, [], [u'private', path], options,
+                             credentials=None)
 
 
 def describe_by_mode(o):
@@ -684,6 +705,8 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
         'listseq',
         'mkseq',
         'alias',
+        'unalias',
+        'init',
         'showcache',
         'sync',
         'quit',
@@ -777,10 +800,14 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
             execute_mkseq_command(db, args, options)
         elif action == 'alias':
             execute_alias_command(db, args, options)
+        elif action == 'unalias':
+            execute_unalias_command(db, args, options)
         elif action == 'showcache':
             execute_showcache_command(db, args, options)
         elif action == 'sync':
             execute_sync_command(db, args, options)
+        elif action == 'init':
+            execute_init_command(db, args, options)
         elif action in ('quit', 'exit'):
             pass
         else:

@@ -6,7 +6,7 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'4.06'
+__version__ = u'4.07'
 VERSION = __version__
 
 import codecs
@@ -36,7 +36,7 @@ DEFAULT_UNIX_STYLE_PATHS = True
 FISHUSER = 'FISHUSER'
 ALIAS_TAG = u'.fish/alias'
 toStr = unicode if UNICODE else str
-DEFAULT_DEBUG = True
+DEFAULT_DEBUG = False
 
 
 class CacheError(Exception):
@@ -264,6 +264,13 @@ class Cache:
             return self.objects[name].tags[alias_tag]
         except KeyError:
             return None
+
+#    def unalias(self, name):
+#        alias_tag = u'%s/%s' % (self.username, ALIAS_TAG)
+#        if not name in self.objects:
+#            return 1
+#        del self.objects[name].tags[alias_tag]
+        
 
 
 def quote_u_u(s):
