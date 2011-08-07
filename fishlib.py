@@ -6,7 +6,7 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'4.03'
+__version__ = u'4.04'
 VERSION = __version__
 
 import codecs
@@ -304,7 +304,7 @@ class O:
         keys = self.__dict__.keys()
         keys.sort()
         return u'\n'.join([u'%20s: %s' % (key, unicode(self.__dict__[key]))
-                           for key in keys])
+                           for key in keys if not key.startswith('_')])
 
     def tags(self):
         return [t for t in self.__dict__ if not t in (u'id', u'_types')]
@@ -317,6 +317,15 @@ class O:
 
     def toJSON(self):
         return {'item': 'object', 'tags': self.__dict__}
+
+    def get(self, tag, retNone=True):
+        try:
+            return self.__dict__[tag]
+        except KeyError:
+            if retNone:
+                return None
+            else:
+                raise
 
 
 class Credentials:
@@ -951,6 +960,18 @@ class FluidDB:
     def ns_exists(self, ns):
         (status, o) = self.call(u'GET', u'/namespaces' + self.abs_tag_path(ns))
         return status == 200
+
+    def read_tags(self, about, o):
+        return get_values_by_query(self, u'fluiddb/about = "%s"' % about,
+                            [k for k in o.__dict__ if not k.startswith(u'_')])
+
+    def write_tags(self, about, o):
+        values = {}
+        for k in o.__dict__:
+            if not k.startswith(u'_'):
+                values[k] = o.__dict__[k]
+        return tag_by_query(self, u'fluiddb/about = "%s"' % about, values)
+                            
 
 
 def object_uri(id):

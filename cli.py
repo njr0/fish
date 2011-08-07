@@ -33,6 +33,7 @@ from fishlib import (
     json,
     TagValue,
     Namespace,
+    get_values_by_query,
 )
 import ls
 import flags
@@ -318,33 +319,81 @@ def FloatDateTime():
     return float(time.strftime('%Y%m%d.%H%M%S', time.localtime()))
 
 
-def execute_sequence_command(db, args):
-    tag, content = args[0], args[1]
-    fi = abouttag.fluidinfo.FluidDB()
+def execute_listseq_command(db, args, options):
+    tag = db.abs_tag_path(args[0])[1:]
+    fi = abouttag.fluiddb.FluidDB()
     nextTag = u'%s-next' % tag
     dateTag = u'%s-date' % tag
     numberTag = u'%s-number' % tag
-    userAbout = fi.user(db.user)
-    s, n = db.get_tag_value_by_about(userAbout, nextTag, inPref=True)
+    userAbout = fi.user(db.credentials.username)
+
+    results = get_values_by_query(db, u'has %s' % tag,
+                                  [tag, dateTag, numberTag])
+    for o in results:
+        db.Print(unicode(o) + u'\n')
+    z = [(o.__dict__[numberTag], o) for o in results
+                                    if numberTag in o.__dict__]
+    z.sort()
+    for (i, o) in z:
+        db.Print(u'%s: %s\n%s\n' % (format_number(o.get(numberTag)),
+                                    o.get(tag),
+                                    format_date(o.get(dateTag))))
+
+
+def format_date(d):
+    if d is None or not type(d) in (int, long, float):
+        return u'(no date)'
+    s = u'%.0f' % d
+    if len(s) == 8:
+        return u'%s-%s-%s' % (s[:4], s[4:6], s[7:])
+    else:
+        return s
+
+
+def format_number(n):
+    if n is None or not type(n) in (int, long, float):
+        return u''
+    return u'%d' % n
+
+
+def execute_seq_command(db, args, options):
+    if len(args) != 2:
+        raise CommandError('Usage: seq basetag value')
+
+    tag = db.abs_tag_path(args[0])[1:]
+    fi = abouttag.fluiddb.FluidDB()
+    nextTag = u'%s-next' % tag
+    dateTag = u'%s-date' % tag
+    numberTag = u'%s-number' % tag
+    userAbout = fi.user(db.credentials.username)
+
+    content = args[1]
+    s, n = db.get_tag_value_by_about(userAbout, u'/' + nextTag, inPref=True)
     if s != STATUS.OK:
         if s == STATUS.NOT_FOUND:
             db.warning(u'No previous item.\n Please use:\n'
-                       u'  touch %s %s %s %s\n'
+                       u'  touch /%s /%s-next /%s-date /%s-number\n'
                        u'and then set permissions as appropriate.'
                        % (tag, tag, tag, tag))
+            return
         else:
             #nasty error
             db.warning(u'Failed to read last item number from %s'
                         % (nextTag))
             db.warning(u'Error code %s' % error_code(o))
-
+            return
     ds = FloatDateTime()
-    o = O(((u'/about', unicode(n)), (tag, content), (dateTag, ds),
-           (numberTag, n)))
-    status = db.write_tags(o)
-    status = db.tag_object_by_about(userAbout, nextTag, n + 1)
-    status = db.read_tags(o)
-    # Check Statuses and show tags.      
+    o = O({tag: content, dateTag: ds, numberTag: n})
+    itemAbout = unicode(n)
+    db.write_tags(itemAbout, o)
+    status = db.tag_object_by_about(userAbout, u'/' + nextTag, n + 1)
+    assert status == 0
+    o = db.read_tags(itemAbout, o)[0]
+    db.Print(u'%s: %s\n%s\n' % (format_number(o.get(numberTag)),
+                                o.get(tag),
+                                format_date(o.get(dateTag))))
+
+    # Check Statuses and show tags.
     # In fact, finish with a seq thought 1 command??
 
     # nextInSeq = get -a 'user object' tagname-next
@@ -353,9 +402,6 @@ def execute_sequence_command(db, args):
     # tag -a unicode(nextInSeq) tagname=value tagname=date tagname-number=nextInSueq
     # tag -a 'user obkect' tagname-next+= 1
     # get -a 
-    
-    
-    pass
 
 
 def execute_http_request(action, args, db, options):
@@ -633,6 +679,8 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
         'abouttag',
         'about',
         'normalize',
+        'seq',
+        'listseq',
         'quit',
         'exit',
     ]
@@ -711,6 +759,10 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
             execute_abouttag_command(db, args)
         elif action == 'normalize':
             execute_normalize_command(db, args)
+        elif action == 'seq':
+            execute_seq_command(db, args, options)
+        elif action == 'listseq':
+            execute_listseq_command(db, args, options)
 #        elif action in ('get', 'put', 'post', 'delete'):
 #            execute_http_request(action, args, db, options)
         elif action in ('quit', 'exit'):

@@ -410,11 +410,8 @@
 #
 # 2011/08/06 v4.03     Fixed sort_tags and removed from show.
 #                      (Still used in tags.)
-
-
-
-
-
-
-
+#
+# 2011/08/06 v4.04     Completed first implementation of seq and listseq
+#                      commands.
+#                      
 
