@@ -59,6 +59,9 @@ class REPL():
     def __init__(self, welcome=None):
         if welcome:
             print welcome
+        print 'Synchronizing . . .',
+        line_go(u'sync')
+        print 'synchronized.'
         self.repl()
 
     def get_history(self):
@@ -124,9 +127,10 @@ def line_go(line, user=None, pwd=None, unixPaths=None, docbase=None,
     return expander.e_go(lineArgs, saveOut=saveOut)
 
 
-def go(args=None, user=None, pwd=None, unixPaths=None, docbase=None,
+def go(rawargs=None, user=None, pwd=None, unixPaths=None, docbase=None,
        saveOut=False):
-    action, args, options, parser = parse_args(args)
+    action, args, options, parser = parse_args(rawargs)
+    rawargs = [a.decode(DEFAULT_ENCODING) for a in sys.argv[1:]]
     if not saveOut and options.outform:
         if options.outform[0] in ('json', 'python'):
             saveOut = options.outform[0]
@@ -153,7 +157,7 @@ def go(args=None, user=None, pwd=None, unixPaths=None, docbase=None,
            words = args
         return execute_command_line(action, words, options, parser,
                                     user, pwd, unixPaths, docbase,
-                                    saveOut=saveOut)
+                                    saveOut=saveOut, rawargs=rawargs)
 
 
 def repl_or_go():

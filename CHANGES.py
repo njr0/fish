@@ -424,4 +424,7 @@
 #                      Added sync command to refresh the cache.
 #
 # 2011/08/07 v4.07     Added unalias and init commands.
+#
+# 2011/08/07 v4.08     Alias handlin enchaned (preserving options better)
+#
 

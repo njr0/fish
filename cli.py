@@ -39,6 +39,7 @@ from fishlib import (
 )
 import ls
 import flags
+import cline
 try:
     import abouttag.amazon
     import abouttag.generic
@@ -555,7 +556,7 @@ def parse_args(args=None):
         else:
             usage = USAGE_FISH if '-U' in args else USAGE_FI
     else:
-        usage = USAGE_FI
+        usage = USAGE_FISH
     parser = OptionParser(usage=usage)
     general = OptionGroup(parser, 'General options')
     general.add_option('-a', '--about', action='append', default=[],
@@ -657,7 +658,8 @@ def toOutputString(s):
         return unicode(s)
 
 def execute_command_line(action, args, options, parser, user=None, pwd=None,
-                         unixPaths=None, docbase=None, saveOut=False):
+                         unixPaths=None, docbase=None, saveOut=False,
+                         rawargs=None):
     credentials = (Credentials(user or options.user[0], pwd)
                    if (user or options.user) else None)
     unixPaths = (path_style(options) if path_style(options) is not None
@@ -666,10 +668,6 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
                               debug=options.debug, unixStylePaths=unixPaths,
                               saveOut=saveOut)
     quiet = (action == 'get')
-    ids_from_queries = chain(*imap(lambda q: get_ids_or_fail(q, db,
-                                                             quiet=quiet),
-        options.query))
-    ids = chain(options.id, ids_from_queries)
 
     command_list = [
         'help',
@@ -715,11 +713,21 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
     command_list.sort()
 
     # Expand aliases
+#    oldoptions = options
     alias = db.cache.get_alias(action)
     if alias:
-        args = alias.split() + args
+        words = cline.CScanSplit(alias, ' \t', quotes='"\'').words
+        loc = rawargs.index(action)
+        args = words + rawargs[:loc] + rawargs[loc + 1:]
         action, args, options, parser = parse_args(args)
+        if options.verbose or options.debug:
+            db.Print('Expanded to %s %s' % (action, u'   '.join(args)))
+            db.Print('  with Query %s' % (options.query))
 
+    ids_from_queries = chain(*imap(lambda q: get_ids_or_fail(q, db,
+                                                             quiet=quiet),
+        options.query))
+    ids = chain(options.id, ids_from_queries)
     objs = [O(about=a) for a in options.about] + [O(id=id) for id in ids]
 
     if action == 'version' or options.version:
