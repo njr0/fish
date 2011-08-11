@@ -7,6 +7,7 @@
 # Licence terms in LICENCE.
 
 import os
+import re
 import shutil
 import sys
 import time
@@ -32,6 +33,8 @@ from fishlib import (
     SANDBOX_PATH,
     FLUIDDB_PATH,
     ALIAS_TAG,
+    INTEGER_RE,
+    INTEGER_RANGE_RE,
     json,
     TagValue,
     Namespace,
@@ -246,14 +249,18 @@ def execute_tags_command(objs, db, options):
     for obj in objs:
         description = describe_by_mode(obj)
         db.Print(u'Object %s:' % description)
-        id = (db.create_object(obj.about).id if obj.about == u'about'
-              else obj.id)
-        tags = db.get_object_tags_by_id(id)
+        if obj.about:
+            tags = db.get_object_tags_by_about(obj.about)
+        else:
+            tags = db.get_object_tags_by_id(obj.id)
         sort_tags(tags)
         for tag in tags:
             fulltag = u'/%s' % tag
             outtag = u'/%s' % tag if db.unixStyle else tag
-            status, v = db.get_tag_value_by_id(id, fulltag)
+            if obj.about:
+                status, v = db.get_tag_value_by_about(obj.about, fulltag)
+            else:
+                status, v = db.get_tag_value_by_about(obj.id, fulltag)
 
             if status == STATUS.OK:
                 db.Print(formatted_tag_value(outtag, v))
@@ -333,25 +340,49 @@ def execute_listseq_command(db, args, options):
     dateTag = u'%s-date' % tag
     numberTag = u'%s-number' % tag
     userAbout = fi.user(db.credentials.username)
+    n = first = last = 0
+    query = u'has %s' % tag
 
-    results = get_values_by_query(db, u'has %s' % tag,
-                                  [tag, dateTag, numberTag])
-    for o in results:
-        db.Print(unicode(o) + u'\n')
+    if len(args) > 1:
+        s = args[1]
+
+        if re.match(INTEGER_RE, s):
+            nItems = get_next_seq_number(db, nextTag, userAbout)
+            n = int(s)
+            if n < nItems:
+                query += u' and %s > %d' % (numberTag, nItems - n - 1)
+        m = re.match(INTEGER_RANGE_RE, s)
+        if m:
+            first, last = int(m.group(1)), int(m.group(2))
+            query += u' and %s > %d and %s < %d' % (numberTag, first - 1,
+                                                   numberTag, last + 1)
+
+    keywords = args[2:] if (n or last) else args[1:]
+    query = u' and '.join([query] + [u'%s matches "%s"'
+                                     % (tag, word) for word in keywords])
+
+    if options.verbose:
+        db.Print(query)
+    results = get_values_by_query(db, query, [tag, dateTag, numberTag])
     z = [(o.tags[numberTag], o) for o in results if numberTag in o.tags]
                                     
     z.sort()
-    for (i, o) in z:
-        db.Print(u'%s: %s\n%s\n' % (format_number(o.get(numberTag)),
-                                    o.get(tag),
-                                    format_date(o.get(dateTag))))
+    if options.long:
+        for (n, o) in z:
+            db.Print(u'Fluidinfo object with about="%s"' % o.get(numberTag))
+            db.Print(unicode(o) + u'\n')
+    else:
+        for (i, o) in z:
+            db.Print(u'%s: %s\n%s\n' % (format_number(o.get(numberTag)),
+                                        o.get(tag),
+                                        format_date(o.get(dateTag))))
 
 def execute_mkseq_command(db, args, options):
     seqname = args[0]
     pluralTag = args[1] if len(args) > 1 else '%ss' % seqname
     baseTag = args[2] if len(args) > 2 else seqname
     if len(args) > 3:
-        raise(u'Form: mknseq sequence-name [plural-form [base-tag]]')
+        raise(u'Form: mkseq sequence-name [plural-form [base-tag]]')
     create_alias(db, seqname, u'seq %s' % baseTag, options)
     create_alias(db, pluralTag, u'listseq %s' % baseTag, options)
     if options.verbose:
@@ -366,7 +397,7 @@ def format_date(d):
         return u'(no date)'
     s = u'%.0f' % d
     if len(s) == 8:
-        return u'%s-%s-%s' % (s[:4], s[4:6], s[7:])
+        return u'%s-%s-%s' % (s[:4], s[4:6], s[6:])
     else:
         return s
 
@@ -375,6 +406,20 @@ def format_number(n):
     if n is None or not type(n) in (int, long, float):
         return u''
     return u'%d' % n
+
+
+def get_next_seq_number(db, nextTag, userAbout):
+    s, n = db.get_tag_value_by_about(userAbout, u'/' + nextTag, inPref=True)
+    if s != STATUS.OK:
+        if s == STATUS.NOT_FOUND:
+            db.error(u'No previous item.\n Please use:\n'
+                     u'  newseq to create')
+        else:
+            #nasty error
+            db.warning(u'Failed to read last item number from %s'
+                        % (nextTag))
+            db.error(u'Error code %s' % error_code(o))
+    return n
 
 
 def execute_seq_command(db, args, options):
@@ -389,20 +434,8 @@ def execute_seq_command(db, args, options):
     userAbout = fi.user(db.credentials.username)
 
     content = args[1]
-    s, n = db.get_tag_value_by_about(userAbout, u'/' + nextTag, inPref=True)
-    if s != STATUS.OK:
-        if s == STATUS.NOT_FOUND:
-            db.warning(u'No previous item.\n Please use:\n'
-                       u'  touch /%s /%s-next /%s-date /%s-number\n'
-                       u'and then set permissions as appropriate.'
-                       % (tag, tag, tag, tag))
-            return
-        else:
-            #nasty error
-            db.warning(u'Failed to read last item number from %s'
-                        % (nextTag))
-            db.warning(u'Error code %s' % error_code(o))
-            return
+    n = get_next_seq_number(db, nextTag, userAbout)
+
     ds = FloatDateTime()
     o = O({tag: content, dateTag: ds, numberTag: n})
     itemAbout = unicode(n)
@@ -429,7 +462,9 @@ def execute_alias_command(db, args, options):
     abstag = db.abs_tag_path(ALIAS_TAG, inPref=True, outPref=False)
     if len(args) < 2:
         aliases = db.cache.aliases(args[0] if len(args) == 1 else None)
-        for a in aliases:
+        z = [(a.about, a) for a in aliases]
+        z.sort()
+        for (about, a) in z:
             db.Print(u'%s:' % unicode(a.about))
             db.Print(unicode(a) + u'\n')
     elif len(args) == 1:
@@ -458,6 +493,13 @@ def execute_showcache_command(db, args, options):
 
 def execute_sync_command(db, args, options):
     db.cache.sync(db)
+
+
+def execute_search_command(db, args, options):
+    abouts, info, n = db.search(words=args, maxResults=options.pagesize,
+                                page=options.page)
+    db.Print(info)
+    db.Print(u'\n'.join(u'%d: %s' % (n + i, a) for i, a in enumerate(abouts)))
 
 
 def execute_init_command(db, args, options):
@@ -606,9 +648,10 @@ def parse_args(args=None):
     general.add_option('-d', '--namespace', action='store_true',
                        default=False,
             help='don\'t list namespace; just name of namespace.')
-    general.add_option('-P', '--policy', action='store_true',
-                       default=False,
-            help='policy (i.e. default permission).')
+    general.add_option('-p', '--page', type='int', default=1,
+                       help='page number.')
+    general.add_option('-N', '--pagesize', type='int', default=100,
+                       help='page size.')
     general.add_option('-n', '--ns', action='store_true',
                        default=False,
             help='don\'t list namespace; just name of namespace.')
@@ -705,6 +748,7 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
         'alias',
         'unalias',
         'init',
+        'search',
         'showcache',
         'sync',
         'quit',
@@ -816,6 +860,8 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
             execute_sync_command(db, args, options)
         elif action == 'init':
             execute_init_command(db, args, options)
+        elif action == 'search':
+            execute_search_command(db, args, options)
         elif action in ('quit', 'exit'):
             pass
         else:

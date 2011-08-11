@@ -118,6 +118,7 @@ HTTP_TIMEOUT = 300.123456       # unlikey the user will choose this
 PRIMITIVE_CONTENT_TYPE = u'application/vnd.fluiddb.value+json'
 
 INTEGER_RE = re.compile(ur'^[+\-]{0,1}[0-9]+$')
+INTEGER_RANGE_RE = re.compile(ur'^([0-9]+)\-([0-9]+)$')
 DECIMAL_RE = re.compile(ur'^[+\-]{0,1}[0-9]+[\.\,]{0,1}[0-9]*$')
 DECIMAL_RE2 = re.compile(ur'^[+\-]{0,1}[\.\,]{1}[0-9]+$')
 
@@ -127,6 +128,14 @@ IDS_SAND = {u'DADGAD': DADGAD_ID}
 #DEFAULT_ENCODING = 'UTF-8'
 DEFAULT_ENCODING = sys.getfilesystemencoding()
 
+# SEARCH:
+
+MAX_RESULTS = 100
+SHORT_WORDS = ['a', 'the', 'on', 'in', 'to', 'with', 'of', 'at', 'by',
+               'i', 'you', 'me', '1', '2', '0', '10', '99', '100']
+COMMON_WORDS = ['artist', 'album', 'track']
+
+STOP_WORDS = SHORT_WORDS + COMMON_WORDS
 
 class SaveOut:
     def __init__(self):
@@ -203,8 +212,11 @@ class Cache:
     def __init__(self, username):
         self.username = username
         self.objects = {}
-        self.cacheFile = get_user_file(CACHE_FILE, username)
-        self.read()
+        if username:
+            self.cacheFile = get_user_file(CACHE_FILE, username)
+            self.read()
+        else:
+            self.objects = {}
 
     def read(self):
         try:
@@ -497,6 +509,9 @@ class Fluidinfo:
                  saveOutput=False):
         if credentials == None:
             credentials = Credentials()
+            self.cache = Cache(credentials.username)
+        else:
+            self.cache = Cache(None)
         self.credentials = credentials
         if unixStylePaths == None:
             self.unixStyle = credentials.unixStyle
@@ -521,7 +536,6 @@ class Fluidinfo:
         self.headers = {
             u'Authorization': auth
         }
-        self.cache = Cache(self.credentials.username)
 
     def Print(self, s, allowSave=True, allowPrint=True):
         if self.saveOutput:
@@ -667,8 +681,9 @@ class Fluidinfo:
         else:
             body = None
         (status, o) = self.call(u'POST', u'/objects', body)
-        return (O({u'URI': o[u'URI']}, id=o[u'id']) if status == STATUS.CREATED
-                                                    else status)
+        return (O({u'URI': o[u'URI']}, id=o[u'id'])
+                if status == STATUS.CREATED else status)
+                                                    
 
     def create_namespace(self, path, description=u'',
                          createParentIfNeeded=True, verbose=False):
@@ -1065,6 +1080,72 @@ class Fluidinfo:
             if not k.startswith(u'_'):
                 values[k] = o.tags[k]
         return tag_by_query(self, u'fluiddb/about = "%s"' % about, values)
+
+    def search(self, words, maxResults=MAX_RESULTS, page=1):
+        queryWords = []
+        stopWords = []
+        if maxResults < 1 or page < 1:
+            return ([], u'No results for you, funny guy.', 0)
+        for W in words:
+            w = W.lower()
+            if (w in STOP_WORDS or (w.endswith(u':')
+                                and w[:-1] in COMMON_WORDS)):
+                stopWords.append(w)
+            else:
+                queryWords.append(w)
+        if len(queryWords) == 0:
+            queryWords = stopWords
+            stopWords = []
+        query = (u' and '.join(u'fluiddb/about matches "%s"'
+                             % word for word in queryWords))
+        tags = [u'fluiddb/about']
+        objects = get_values_by_query(self, query, tags)
+
+        z = self.filter_query_results(objects, stopWords)
+        abouts = [self.search_tuple(about) for about in z]
+        abouts.sort()
+        abouts = [a for (L, a) in abouts]
+        N = len(abouts)
+        start = (page - 1) * maxResults + 1
+        end = min(start + maxResults, N + 1)
+        nShown = end - start
+        if N > maxResults:
+            if start > N:
+                info = u'No more results'
+            else:
+                info = (u'Results %d - %d of %d matches for search "%s"'
+                            % (start, end - 1, N, query))
+        elif nShown > 1:
+            info = u'%d matches for search "%s":' % (N, query)
+        elif nShown == 1:
+            info = u'1 match for search "%s":' % query
+        else:
+            info = 'No matches for search "%s":' % query
+            
+        return (abouts[start - 1:end - 1], info, start)
+
+    def filter_query_results(self, objects, stopWords):
+        abouts = []
+        for object in objects:
+            about = object.about
+            lAbout = about.lower()
+            match = True
+            for stop in stopWords:
+                if not stop in lAbout:
+                    match = False
+            if match:
+                abouts.append(about)
+        return abouts
+
+    def search_tuple(self, about):
+        if u':' in about:
+            parts = about.split(u':')
+            L = len(u':'.join(parts[1:])) - 4
+        else:
+            L = len(about)
+        return (L, about)
+
+
                             
 
 

@@ -643,15 +643,6 @@ def write_status(writes):
 
 def execute_ls_command(db, objs, tags, options, credentials, unixPaths=None):
     long_ = options.long or options.group or options.longest
-    if options.policy:
-        if len(tags) > 0:
-            db.Print(u'Form: ls -P')
-        else:
-            db.Print(unicode(FluidinfoPerms(db, u'/' + db.credentials.username,
-                                   isTag=False, isPolicy=True)))
-            db.Print(unicode(FluidinfoPerms(db, u'/' + db.credentials.username,
-                                   isTag=True, isPolicy=True)))
-        return
     if len(tags) == 0:
         tags = [(u'/' if db.unixStyle else u'') + db.credentials.username]
     for tag in tags:
