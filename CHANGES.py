@@ -428,5 +428,9 @@
 # 2011/08/07 v4.08     Alias handlin enchaned (preserving options better)
 #
 # 2011/08/10 v4.09     Filtering on sequences
+#
+# 2011/08/12 v4.12     Corrected an ._types to a .types, reflecting previous
+#                      changes to class O.
+
 
 

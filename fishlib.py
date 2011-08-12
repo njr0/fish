@@ -6,7 +6,7 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'4.08'
+__version__ = u'4.10'
 VERSION = __version__
 
 import codecs
@@ -399,7 +399,7 @@ class O:
                            if not key.startswith('_')])
 
     def typedval(self, t):
-        return (self.tags[t], self._types[t])
+        return (self.tags[t], self.types[t])
 
     def u(self, key):
         return self.tags[key]
