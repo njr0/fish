@@ -65,18 +65,18 @@ For a list of commands, type commands.
  Tag objects:
    tag -a 'Paris' /alice/visited /alice/rating=10
    tag -i %s /bert/visited /bert/rating=10
-   tag -q 'about = "Paris"' /alice/visited /alice/rating=10
+   tag -q 'fluiddb/about = "Paris"' /alice/visited /alice/rating=10
    [On windows: tag -q "about = "Paris""" /alice/visited /alice/rating=10
 
  Untag objects:
    untag -a 'Paris' /bert/visited /alice/rating
    untag -i %s
-   untag -q 'about = "Paris"' /alice/visited /alice/rating
+   untag -q 'fluiddb/about = "Paris"' /alice/visited /alice/rating
 
  Fetch objects and show tags
    show -a 'Paris' /bert/visited /bert/rating
    show -i %s /alice/visited /alice/rating
-   show -q 'about = "Paris"' /alice/visited /alice/rating
+   show -q 'fluiddb/about = "Paris"' /alice/visited /alice/rating
 
  Count objects matching query:
    count -q 'has fluiddb/users/username'
