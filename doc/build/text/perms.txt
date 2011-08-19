@@ -8,7 +8,7 @@ there are powerful enough to cover the vast bulk of common situations.
 
 **FORM**
 
-   fish [flags] perms permissions-spec list-of-one-or-more-tags-or-namespaces
+   perms [flags] permissions-spec list-of-one-or-more-tags-or-namespaces
 
 Here ``permissions-spec`` can be one of the short forms:
 
@@ -48,7 +48,7 @@ or one of three low-level forms:
    ``-X name -X name2`` The ``-X`` flag is used two allow fully
       fine-grained control over permissions. If one or more ``-X``
       flags are used. only the finest-grained permissions with the
-      fish names specified are changed. These are the names shown by
+      Fish names specified are changed. These are the names shown by
       ls -L:
 
          * ``metadata``, ``delete``, ``acontrol`` for abstract tags
@@ -60,7 +60,7 @@ or one of three low-level forms:
 
       For example:
 
-         fish perms write -X delete closed except alice /fish/z
+         $ fish perms write -X delete closed except alice /fish/z
 
       Changes the fine-grained write permission ``delete`` on
       ``fish/z`` so that only ``alice`` has the permission.

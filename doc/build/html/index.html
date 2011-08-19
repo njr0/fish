@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>The fish Command Line for Fluidinfo &mdash; fish v4.10 documentation</title>
+    <title>The Fish Command Line for Fluidinfo &mdash; fish v4.11 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '4.10',
+        VERSION:     '4.11',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,9 +19,8 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="fish v4.10 documentation" href="" />
-    <link rel="next" title="An Overview of the fish Command Line for Fluidinfo" href="cli.html" /> 
+    <link rel="top" title="fish v4.11 documentation" href="" />
+    <link rel="next" title="An Overview of the Fish Command Line for Fluidinfo" href="cli.html" /> 
   </head>
   <body>
     <div class="related">
@@ -31,9 +30,9 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="cli.html" title="An Overview of the fish Command Line for Fluidinfo"
+          <a href="cli.html" title="An Overview of the Fish Command Line for Fluidinfo"
              accesskey="N">next</a> |</li>
-        <li><a href="">fish v4.10 documentation</a> &raquo;</li> 
+        <li><a href="">fish v4.11 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -43,10 +42,10 @@
           <div class="body">
             
   <div class="section" id="the-fish-command-line-for-fluidinfo">
-<h1>The fish Command Line for Fluidinfo<a class="headerlink" href="#the-fish-command-line-for-fluidinfo" title="Permalink to this headline">¶</a></h1>
+<h1>The Fish Command Line for Fluidinfo<a class="headerlink" href="#the-fish-command-line-for-fluidinfo" title="Permalink to this headline">¶</a></h1>
 <p><strong>Overview</strong></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="cli.html">An Overview of the fish Command Line for Fluidinfo</a></li>
+<li class="toctree-l1"><a class="reference external" href="cli.html">An Overview of the Fish Command Line for Fluidinfo</a></li>
 <li class="toctree-l1"><a class="reference external" href="shell-fish.html">Shell-Fish: The Online version of Fish</a></li>
 </ul>
 <p><strong>Commands for Reading and Writing Tags</strong></p>
@@ -58,6 +57,9 @@
 <li class="toctree-l1"><a class="reference external" href="tags.html">tags — shows all the tags on an object with their values</a></li>
 <li class="toctree-l1"><a class="reference external" href="count.html">count — counts the number of objects satisfying a query</a></li>
 </ul>
+<p><strong>Search</strong></p>
+<ul class="simple">
+</ul>
 <p><strong>Commands for Listing and Managing Tags and Namespaces</strong></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="ls.html">ls — lists tags and namespaces and their properties</a></li>
@@ -65,16 +67,20 @@
 <li class="toctree-l1"><a class="reference external" href="rm.html">rm — removes tags and namespaces</a></li>
 <li class="toctree-l1"><a class="reference external" href="touch.html">touch — creates a tags and optionally sets their descriptions</a></li>
 <li class="toctree-l1"><a class="reference external" href="mkns.html">mkns — makes a new namespace</a></li>
-<li class="toctree-l1"><a class="reference external" href="mkdir.html">mkdir - makes a new namespace (the Fluidinfo equivalent of a directory)</a></li>
-<li class="toctree-l1"><a class="reference external" href="pwd.html">pwd — prints the name of the working directory (root user namespace)</a></li>
-<li class="toctree-l1"><a class="reference external" href="pwn.html">pwn — prints the name of the working namespace (root user directory)</a></li>
+<li class="toctree-l1"><a class="reference external" href="mkdir.html">mkdir — makes a new namespace (the Fluidinfo equivalent of a directory)</a></li>
+<li class="toctree-l1"><a class="reference external" href="pwd.html">pwd (or pwn) — prints the name of the working directory (root user namespace)</a></li>
 </ul>
 <p><strong>Commands for Finding About Tags</strong></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="abouttag.html">abouttag — returns the canonical about tag for an object based on properties</a></li>
-<li class="toctree-l1"><a class="reference external" href="about.html">about — returns the canonical about tag for an object based on properties</a></li>
 <li class="toctree-l1"><a class="reference external" href="amazon.html">amazon — finds the about tag for an item specified by an Amazon product page</a></li>
 <li class="toctree-l1"><a class="reference external" href="normalize.html">normalize — performs canonical normalization for use with about tags</a></li>
+</ul>
+<p><strong>Cache &amp; Aliases</strong></p>
+<ul class="simple">
+</ul>
+<p><strong>Sequences</strong></p>
+<ul class="simple">
 </ul>
 <p><strong>Miscellaneous Commands</strong></p>
 <ul>
@@ -84,7 +90,6 @@
 <li class="toctree-l1"><a class="reference external" href="su.html">su — sets the Fluidinfo user</a></li>
 <li class="toctree-l1"><a class="reference external" href="whoami.html">whoami — prints the name of the current Fluidinfo user</a></li>
 <li class="toctree-l1"><a class="reference external" href="quit.html">quit — quits fish</a></li>
-<li class="toctree-l1"><a class="reference external" href="exit.html">exit — exits fish</a></li>
 <li class="toctree-l1"><a class="reference external" href="test.html">test — runs fish&#8217;s test suite</a></li>
 </ul>
 <p><strong>Installation and Configuration</strong></p>
@@ -105,7 +110,7 @@
             </a></p>
             <h4>Next topic</h4>
             <p class="topless"><a href="cli.html"
-                                  title="next chapter">An Overview of the fish Command Line for Fluidinfo</a></p>
+                                  title="next chapter">An Overview of the Fish Command Line for Fluidinfo</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
               <li><a href="_sources/index.txt"
@@ -135,9 +140,9 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="cli.html" title="An Overview of the fish Command Line for Fluidinfo"
+          <a href="cli.html" title="An Overview of the Fish Command Line for Fluidinfo"
              >next</a> |</li>
-        <li><a href="">fish v4.10 documentation</a> &raquo;</li> 
+        <li><a href="">fish v4.11 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

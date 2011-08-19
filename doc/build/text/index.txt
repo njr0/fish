@@ -1,10 +1,10 @@
 
-The fish Command Line for Fluidinfo
+The Fish Command Line for Fluidinfo
 ***********************************
 
 **Overview**
 
-* An Overview of the fish Command Line for Fluidinfo
+* An Overview of the Fish Command Line for Fluidinfo
 * Shell-Fish: The Online version of Fish
 **Commands for Reading and Writing Tags**
 
@@ -14,6 +14,8 @@ The fish Command Line for Fluidinfo
 * get — gets the values (only) of tags on objects
 * tags — shows all the tags on an object with their values
 * count — counts the number of objects satisfying a query
+**Search**
+
 **Commands for Listing and Managing Tags and Namespaces**
 
 * ls — lists tags and namespaces and their properties
@@ -21,19 +23,21 @@ The fish Command Line for Fluidinfo
 * rm — removes tags and namespaces
 * touch — creates a tags and optionally sets their descriptions
 * mkns — makes a new namespace
-* mkdir - makes a new namespace (the Fluidinfo equivalent of a
+* mkdir — makes a new namespace (the Fluidinfo equivalent of a
   directory)
-* pwd — prints the name of the working directory (root user namespace)
-* pwn — prints the name of the working namespace (root user directory)
+* pwd (or pwn) — prints the name of the working directory (root user
+  namespace)
 **Commands for Finding About Tags**
 
 * abouttag — returns the canonical about tag for an object based on
   properties
-* about — returns the canonical about tag for an object based on
-  properties
 * amazon — finds the about tag for an item specified by an Amazon
   product page
 * normalize — performs canonical normalization for use with about tags
+**Cache & Aliases**
+
+**Sequences**
+
 **Miscellaneous Commands**
 
 * help — provides help overview or help with a specific fish command
@@ -42,7 +46,6 @@ The fish Command Line for Fluidinfo
 * su — sets the Fluidinfo user
 * whoami — prints the name of the current Fluidinfo user
 * quit — quits fish
-* exit — exits fish
 * test — runs fish's test suite
 **Installation and Configuration**
 

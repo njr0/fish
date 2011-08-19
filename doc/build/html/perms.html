@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>perms — sets access permissions on tags and namespaces &mdash; fish v4.10 documentation</title>
+    <title>perms — sets access permissions on tags and namespaces &mdash; fish v4.11 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '4.10',
+        VERSION:     '4.11',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,8 +19,7 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="fish v4.10 documentation" href="index.html" />
+    <link rel="top" title="fish v4.11 documentation" href="index.html" />
     <link rel="next" title="rm — removes tags and namespaces" href="rm.html" />
     <link rel="prev" title="ls — lists tags and namespaces and their properties" href="ls.html" /> 
   </head>
@@ -37,7 +36,7 @@
         <li class="right" >
           <a href="ls.html" title="ls — lists tags and namespaces and their properties"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fish v4.10 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.11 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -53,7 +52,7 @@ permissions on tags and namespaces.   It only supports five cases,
 but there are powerful enough to cover the vast bulk of common
 situations.</p>
 <p><strong>FORM</strong></p>
-<div class="highlight-python"><pre>fish [flags] perms permissions-spec list-of-one-or-more-tags-or-namespaces</pre>
+<div class="highlight-python"><pre>perms [flags] permissions-spec list-of-one-or-more-tags-or-namespaces</pre>
 </div>
 <p>Here <tt class="docutils literal"><span class="pre">permissions-spec</span></tt> can be one of the short forms:</p>
 <blockquote>
@@ -86,7 +85,7 @@ flag.</dd>
 <dd><p class="first">fine-grained control over permissions.
 If one or more <tt class="docutils literal"><span class="pre">-X</span></tt> flags are used.
 only the finest-grained permissions with
-the fish names specified are changed.
+the Fish names specified are changed.
 These are the names shown by ls -L:</p>
 <blockquote>
 <ul class="simple">
@@ -98,7 +97,7 @@ for namespaces.</li>
 </ul>
 </blockquote>
 <p>For example:</p>
-<div class="highlight-python"><pre>fish perms write -X delete closed except alice /fish/z</pre>
+<div class="highlight-python"><pre>$ fish perms write -X delete closed except alice /fish/z</pre>
 </div>
 <p>Changes the fine-grained write permission
 <tt class="docutils literal"><span class="pre">delete</span></tt> on <tt class="docutils literal"><span class="pre">fish/z</span></tt> so that only <tt class="docutils literal"><span class="pre">alice</span></tt> has
@@ -351,7 +350,7 @@ $ fish perms control closed except alice+bert /bert/alice/a</pre>
         <li class="right" >
           <a href="ls.html" title="ls — lists tags and namespaces and their properties"
              >previous</a> |</li>
-        <li><a href="index.html">fish v4.10 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.11 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

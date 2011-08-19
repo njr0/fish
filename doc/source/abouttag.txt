@@ -3,15 +3,15 @@ abouttag — returns the canonical about tag for an object based on properties
 
 The ``abouttag`` command is used to find the normalized about tag
 for various classes of objects according the the conventions in the
-abouttag.py library, available from http://github.com/alice0/abouttag.
+``abouttag.py`` library, available from http://github.com/alice0/abouttag.
 The abouttag command is only available if this library is installed
 and available to ``fish`` on the ``PYTHONPATH``.
 
 **FORM**
 ::
 
-    [fish] aboutag object-type <object-specifier>
-    [fish] about object-type <object-specifier>
+    aboutag object-type <object-specifier>
+    about object-type <object-specifier>
 
 **EXAMPLES**
 
@@ -94,6 +94,3 @@ and available to ``fish`` on the ``PYTHONPATH``.
        $ fish abouttag element 'Helium'
        element:Helium
 
-**SEE ALSO**
-
-``about`` (synonym)

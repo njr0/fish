@@ -8,7 +8,7 @@ unix-style paths by default.   See under Credentials for details.
 Download
 --------
 
-fish is available from Github at https://github.com/njr0/fish (use the
+Fish is available from Github at https://github.com/njr0/fish (use the
 download button).   The main program is ``fish.py`` in the top
 level folder and the ``fish`` script, which simply executes ``fish.py``.
 
@@ -16,8 +16,8 @@ level folder and the ``fish`` script, which simply executes ``fish.py``.
 Dependencies
 ------------
 
-If you're running python 2.6, fish.py should just run.   With earlier
-version of python, you need to get access to simplejson and httplib2.
+If you're running python 2.6, ``fish.py`` should just run.   With earlier
+version of python, you need to get access to ``simplejson`` and ``httplib2``.
 You can get simplejson from http://pypi.python.org/pypi/simplejson/
 and httplib2 from http://code.google.com/p/httplib2/.
 
@@ -27,7 +27,7 @@ library to be available on your python path.
 This is available from http://github.com/njr0/abouttag.
 
 
-Making the fish command available
+Making the Fish command available
 ---------------------------------
 
 The file ``fish`` included in the download is executable provided that
@@ -46,15 +46,15 @@ or, if ``~/bin`` is on your ``PATH``:
 
 
 
-The fish Python Library and Command Line
+The Fish Python Library and Command Line
 ----------------------------------------
 
-fish is a primarily a command line tool for providing access to the
+Fish is a primarily a command line tool for providing access to the
 Fluidinfo data store (from Fluidinfo (http://fluidinfo.com/.)
 There is lots of coverage of the library (and its evolution) at
 http://blog.abouttag.com/.
 
-fish can also be used as a python library for accessing Fluidinfo, but
+Fish can also be used as a python library for accessing Fluidinfo, but
 it is less complete and less conventional the Ali Afshar's FOM library
 (https://launchpad.net/fom), which is generally preferred for
 programmatic use.
@@ -68,7 +68,7 @@ and credentials (a username and password).   You can get these from
 
     http://fluidinfo.com/accounts/new
 
-fish expects your credentials to be available in a two-line file
+Fish expects your credentials to be available in a two-line file
 in the format
 
 username
@@ -79,7 +79,7 @@ for this is ``~/.fluidDBcredentials``.
 
 On windows, the lcoation of the credentials file is specified
 by the environment variable ``FDB_CREDENTIALS_FILE``; if that is not
-set, the fish looks for ``c:\fish\credentials.txt``.
+set, the Fish looks for ``c:\fish\credentials.txt``.
 
 You can also optionally add a line, after password, saying either
 
@@ -102,7 +102,7 @@ shell instances to use different users, should you need that.
 Tag Conventions
 ---------------
 
-As from version 4.00, fish uses Unix-style paths by default
+As from version 4.00, Fish uses Unix-style paths by default
 (i.e. tag paths without a leading slash are assumed to be in the
 authenticated user's namespace; tags for other users need to be
 prefixed with  a leading slash).
@@ -117,7 +117,7 @@ If you instead set
 
     unix-style-paths false
 
-on the third line of the credentials file, fish uses unix-style paths,
+on the third line of the credentials file, Fish uses unix-style paths,
 meaning that paths are assumed to be relative to the user's namespace
 unless they are introduced with a leading slash.  Also, the about tag
 (fluiddb/about) may be referred to as /about.  This affects input and
@@ -134,7 +134,7 @@ Tests
 
 The library includes a set of tests.   If you have valid credentials,
 and everything is OK, these should run successfully if you just execute
-the file testfish.py or say
+the file ``testfish.py`` or say
 ::
 
     python fish.py test
@@ -149,26 +149,26 @@ Using the Library
 
 Four ways of exploring the library are:
 
-  1. look at the tests (the ones in the class TestFluidDB)
+  1. look at the tests (the ones in the class ``TestFluidDB``)
 
   2. look at the blog (http://abouttag.blogspot.com)
 
   3. read the function documentation in the source.
 
-  4. look at and run example.py, which should print DADGAD and 10.
+  4. look at and run ``example.py``, which should print DADGAD and 10.
 
 
 Documentation
 -------------
 
 This documentation is included with the release in the ``doc``
-subdirectory of with doc/build/html/index.html being the main
+subdirectory of with ``doc/build/html/index.html`` being the main
 web page.
 
 Delicious
 ---------
 
-Also distributed with fish itself is code for accessing delicious.com
+Also distributed with Fish itself is code for accessing delicious.com
 (http://del.icio.us/, as was), and for migrating bookmarks and other
 data to FluidDB.   This also includes functionality for creating web
 homepages from delicious based on a home tag.   See the README-DELICIOUS

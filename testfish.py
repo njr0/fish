@@ -93,8 +93,8 @@ class TestFluidinfo(unittest.TestCase):
             tagsToSet[db.abs_tag_path(tag)[1:]] = pairs[tag]
 
         query = u'fluiddb/about = "%s"' % object_about
-        tag_by_query(db, query, tagsToSet)
-        objects = get_values_by_query(db, query, tagsToSet)
+        db.tag_by_query(query, tagsToSet)
+        objects = db.get_values_by_query(query, tagsToSet)
         self.assertEqual(len(objects), 1)
         o = objects[0]
         for key in tagsToSet:

@@ -7,7 +7,7 @@ to set its description.
 **FORM**
 ::
 
-    [fish] touch path
+    touch path
 
 **FLAGS**
 

@@ -211,3 +211,8 @@ tt {
     color: #004000;
 }
 
+blockquote {
+    margin-left: 0px;
+    padding-left: 0px;
+    border-left: 0px;
+}

@@ -6,7 +6,7 @@ Show the list of tags (and their values) present on an objects
 
 **FORM**
 
-   [fish] tag [flags] <object specifier>
+   tags [flags] <object specifier>
 
 **EXAMPLES**
 

@@ -15,11 +15,11 @@ import types
 import traceback
 from optparse import OptionParser, OptionGroup
 from itertools import chain, imap
+from fishbase import get_credentials_file
 from fishlib import (
     Fluidinfo,
     O,
     Credentials,
-    get_credentials_file,
     get_typed_tag_value,
     path_style,
     toStr,
@@ -32,14 +32,13 @@ from fishlib import (
     HTTP_TIMEOUT,
     SANDBOX_PATH,
     FLUIDDB_PATH,
-    ALIAS_TAG,
     INTEGER_RE,
     INTEGER_RANGE_RE,
     json,
     TagValue,
     Namespace,
-    get_values_by_query,
 )
+from cache import ALIAS_TAG
 import ls
 import flags
 import cline
@@ -363,7 +362,7 @@ def execute_listseq_command(db, args, options):
 
     if options.verbose:
         db.Print(query)
-    results = get_values_by_query(db, query, [tag, dateTag, numberTag])
+    results = db.get_values_by_query(query, [tag, dateTag, numberTag])
     z = [(o.tags[numberTag], o) for o in results if numberTag in o.tags]
                                     
     z.sort()
@@ -377,19 +376,36 @@ def execute_listseq_command(db, args, options):
                                         o.get(tag),
                                         format_date(o.get(dateTag))))
 
+
+class SequenceTags:
+    def __init__(self, db, baseTag, zeroIfMissing=False):
+        fi = abouttag.fluiddb.FluidDB()
+        self.uTag = db.abs_tag_path(baseTag)
+        self.fiTag = self.uTag[1:]
+        self.nextTag = u'%s-next' % self.fiTag
+        self.dateTag = u'%s-date' % self.fiTag
+        self.numberTag = u'%s-number' % self.fiTag
+        self.userAbout = fi.user(db.credentials.username)
+        self.next = get_next_seq_number(db, self.nextTag, self.userAbout,
+                                        noneIfNone=zeroIfMissing) or 0
+
+
 def execute_mkseq_command(db, args, options):
-    seqname = args[0]
-    pluralTag = args[1] if len(args) > 1 else '%ss' % seqname
-    baseTag = args[2] if len(args) > 2 else seqname
     if len(args) > 3:
         raise(u'Form: mkseq sequence-name [plural-form [base-tag]]')
-    create_alias(db, seqname, u'seq %s' % baseTag, options)
-    create_alias(db, pluralTag, u'listseq %s' % baseTag, options)
+    name = args[0]
+    plural = args[1] if len(args) > 1 else '%ss' % args[0]
+    seq = SequenceTags(db, args[2] if len(args) > 2 else args[0],
+                       zeroIfMissing=True)
+    db.tag_object_by_about(seq.userAbout, u'/%s' % seq.nextTag, seq.next)
+    create_alias(db, name, u'seq %s' % seq.uTag, options)
+    create_alias(db, plural, u'listseq %s' % seq.uTag, options)
     if options.verbose:
         db.Print(u'Aliases created.\n'
                  u'  Use %s to add to the sequence.\n'
                  u'  Use %s to list items in the sequence.'
-                 % (seqname, pluralTag))
+                 % (name, plural))
+    db.Print(u'Next %s number: %d' % (name, seq.next))
 
 
 def format_date(d):
@@ -408,12 +424,16 @@ def format_number(n):
     return u'%d' % n
 
 
-def get_next_seq_number(db, nextTag, userAbout):
+def get_next_seq_number(db, nextTag, userAbout, noneIfNone=False):
     s, n = db.get_tag_value_by_about(userAbout, u'/' + nextTag, inPref=True)
     if s != STATUS.OK:
         if s == STATUS.NOT_FOUND:
-            db.error(u'No previous item.\n Please use:\n'
-                     u'  newseq to create')
+            if noneIfNone:
+                return None
+            else:
+                raise CommandError(u'No previous item.\n  Use mkseq command '
+                                   u'to create a sequence.')
+                           
         else:
             #nasty error
             db.warning(u'Failed to read last item number from %s'
@@ -702,14 +722,14 @@ def toOutputString(s):
 
 def execute_command_line(action, args, options, parser, user=None, pwd=None,
                          unixPaths=None, docbase=None, saveOut=False,
-                         rawargs=None):
+                         rawargs=None, cache=None):
     credentials = (Credentials(user or options.user[0], pwd)
                    if (user or options.user) else None)
     unixPaths = (path_style(options) if path_style(options) is not None
                                      else unixPaths)
     db = ls.ExtendedFluidinfo(host=options.hostname, credentials=credentials,
                               debug=options.debug, unixStylePaths=unixPaths,
-                              saveOut=saveOut)
+                              saveOut=saveOut, cache=cache)
     quiet = (action == 'get')
 
     command_list = [

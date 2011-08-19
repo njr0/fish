@@ -6,7 +6,7 @@ Shows the values of the tags nominated from the objects specified.
 **FORM**
 ::
 
-    [fish] show [flags] <object specifier> <tags>
+    show [flags] <object specifier> <tags>
 
 **EXAMPLES**
 

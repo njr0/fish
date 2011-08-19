@@ -1,31 +1,31 @@
-show — shows the values of tags on objects
-******************************************
+get — gets the values (only) of tags on objects
+***********************************************
 
-Shows the values of the tags nominated from the objects specified.
+Gets the values of the tags nominated from the objects specified
+and reports them in a short form,
 
 **FORM**
 ::
 
-    show [flags] <object specifier> <tags>
+    [fish] get [flags] <object specifier> <tags>
 
 **EXAMPLES**
 
 When authenticated as  user ``alice``:
 ::
 
-    $ fish show -a "Eiffel Tower" rating seen bert/seen
-    Object with about="Eiffel Tower":
-      alice/rating = 7
+    $ fish get -a "Eiffel Tower" rating seen /bert/seen
+      7
       alice/seen
       (tag bert/seen not present)
 
 Alternative specifications:
 ::
 
-    show -a "Eiffel Tower" rating seen /bert/seen
-    show -i 93bd1999-0998-49cc-8004-af457ce34ce4 rating seen /bert/seen
-    show -q 'fluiddb/about matches "Eiffel Tower"' rating seen /bert/seen
-    show -F -a "Eiffel Tower" alice/rating alice/seen bert/seen
+    get -a "Eiffel Tower" rating seen /bert/seen
+    get -i 93bd1999-0998-49cc-8004-af457ce34ce4 rating seen /bert/seen
+    get -q 'fluiddb/about matches "Eiffel Tower"' rating seen /bert/seen
+    get -F -a "Eiffel Tower" alice/rating alice/seen bert/seen
 
 All of these commands will show the values the tags ``alice/rating``,
 ``alice/seen`` and ``bert/seen`` from the object with about tag "Eiffel Tower"
@@ -39,6 +39,7 @@ is search-engine-style string match that will match any about tag
 containing the words ``Eiffel`` and ``Tower``, ignoring case, other words
 and punctuation.
 
+
 **NOTES**
 
 The ``-F`` option specifies "Fluidinfo-style" full paths; when this option
@@ -51,4 +52,4 @@ The user's ability to read tags is regulated by the permissions system.
 See also:
 ---------
 
-``get``, ``tags``
+``show``, ``tags``
