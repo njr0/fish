@@ -6,7 +6,7 @@ Removes one or more tags from the object or objects specified.
 
 **FORM**
 
-   [fish] untag [flags] <object specifier> <tags>
+   untag [flags] <object specifier> <tags>
 
 **EXAMPLES**
 

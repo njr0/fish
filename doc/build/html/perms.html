@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -5,22 +7,23 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>perms — sets access permissions on tags and namespaces &mdash; fish v4.02 documentation</title>
+    <title>perms — sets access permissions on tags and namespaces &mdash; fish v4.10 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '4.02',
-        COLLAPSE_MODINDEX: false,
+        VERSION:     '4.10',
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="fish v4.02 documentation" href="index.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="fish v4.10 documentation" href="index.html" />
     <link rel="next" title="rm — removes tags and namespaces" href="rm.html" />
     <link rel="prev" title="ls — lists tags and namespaces and their properties" href="ls.html" /> 
   </head>
@@ -37,7 +40,7 @@
         <li class="right" >
           <a href="ls.html" title="ls — lists tags and namespaces and their properties"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fish v4.02 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.10 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -53,11 +56,11 @@ permissions on tags and namespaces.   It only supports five cases,
 but there are powerful enough to cover the vast bulk of common
 situations.</p>
 <p><strong>FORM</strong></p>
-<div class="highlight-python"><pre>fish [flags] perms permissions-spec list-of-one-or-more-tags-or-namespaces</pre>
+<div class="highlight-python"><pre>perms [flags] permissions-spec list-of-one-or-more-tags-or-namespaces</pre>
 </div>
 <p>Here <tt class="docutils literal"><span class="pre">permissions-spec</span></tt> can be one of the short forms:</p>
 <blockquote>
-<ul class="simple">
+<div><ul class="simple">
 <li><tt class="docutils literal"><span class="pre">private</span></tt></li>
 <li><tt class="docutils literal"><span class="pre">default</span></tt></li>
 <li><tt class="docutils literal"><span class="pre">lock</span></tt></li>
@@ -66,18 +69,18 @@ situations.</p>
 <li><tt class="docutils literal"><span class="pre">group-write</span> <span class="pre">list+of+usernames+separated+by+pluses</span></tt></li>
 <li><tt class="docutils literal"><span class="pre">group-read</span> <span class="pre">list+of+usernames+separated+by+pluses</span></tt></li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p>or one of three low-level forms:</p>
 <blockquote>
-<ul class="simple">
+<div><ul class="simple">
 <li><tt class="docutils literal"><span class="pre">read</span> <span class="pre">[open|closed]</span> <span class="pre">[except</span> <span class="pre">list+of+usernames+separated+by+pluses]</span></tt></li>
 <li><tt class="docutils literal"><span class="pre">write</span> <span class="pre">[open|closed]</span> <span class="pre">[except</span> <span class="pre">list+of+usernames+separated+by+pluses]</span></tt></li>
 <li><tt class="docutils literal"><span class="pre">control</span> <span class="pre">[open|closed]</span> <span class="pre">[except</span> <span class="pre">list+of+usernames+separated+by+pluses]</span></tt></li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p><strong>FLAGS</strong></p>
 <blockquote>
-<dl class="docutils">
+<div><dl class="docutils">
 <dt><tt class="docutils literal"><span class="pre">-f</span></tt>  The <tt class="docutils literal"><span class="pre">-f</span></tt> flag is used to force <tt class="docutils literal"><span class="pre">fish</span></tt> to set a policy it</dt>
 <dd>would otherwise resist.  In particular, setting any policy that
 does not include owner control always requires use of the <tt class="docutils literal"><span class="pre">-f</span></tt>
@@ -86,19 +89,19 @@ flag.</dd>
 <dd><p class="first">fine-grained control over permissions.
 If one or more <tt class="docutils literal"><span class="pre">-X</span></tt> flags are used.
 only the finest-grained permissions with
-the fish names specified are changed.
+the Fish names specified are changed.
 These are the names shown by ls -L:</p>
 <blockquote>
-<ul class="simple">
+<div><ul class="simple">
 <li><tt class="docutils literal"><span class="pre">metadata</span></tt>, <tt class="docutils literal"><span class="pre">delete</span></tt>, <tt class="docutils literal"><span class="pre">acontrol</span></tt> for abstract
 tags</li>
 <li><tt class="docutils literal"><span class="pre">read</span></tt>, <tt class="docutils literal"><span class="pre">tag</span></tt>, <tt class="docutils literal"><span class="pre">untag</span></tt>, <tt class="docutils literal"><span class="pre">tcontrol</span></tt> for tags</li>
 <li><tt class="docutils literal"><span class="pre">read</span></tt>, <tt class="docutils literal"><span class="pre">create</span></tt>, <tt class="docutils literal"><span class="pre">delete</span></tt>, <tt class="docutils literal"><span class="pre">control</span></tt>
 for namespaces.</li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p>For example:</p>
-<div class="highlight-python"><pre>fish perms write -X delete closed except alice /fish/z</pre>
+<div class="highlight-python"><pre>$ fish perms write -X delete closed except alice /fish/z</pre>
 </div>
 <p>Changes the fine-grained write permission
 <tt class="docutils literal"><span class="pre">delete</span></tt> on <tt class="docutils literal"><span class="pre">fish/z</span></tt> so that only <tt class="docutils literal"><span class="pre">alice</span></tt> has
@@ -106,13 +109,13 @@ the permission.</p>
 <p class="last"><tt class="docutils literal"><span class="pre">-X</span></tt> is rarely used.</p>
 </dd>
 </dl>
-</blockquote>
+</div></blockquote>
 <p><strong>EXAMPLES</strong></p>
 <p>The eight special cases supported are as follows and apply equally
 namespaces and tags.  In what follows, we&#8217;ll use a <tt class="docutils literal"><span class="pre">rating</span></tt> tag and
 a namespace called <tt class="docutils literal"><span class="pre">friends</span></tt>.</p>
 <blockquote>
-<ul>
+<div><ul>
 <li><p class="first">Make a tag or namespace completely private.</p>
 <div class="highlight-python"><pre>$ fish perms private rating
 $ fish perms private fi</pre>
@@ -128,7 +131,7 @@ The abbreviated view of this is shown by</p>
 trwc------   alice/rating
 nrwc------   alice/fi/</pre>
 </div>
-<p>(See <a class="reference external" href="ls.html#fishls"><em>ls — lists tags and namespaces and their properties</em></a> for an detailed explanation of the permissions codes.)</p>
+<p>(See <a class="reference internal" href="ls.html#fishls"><em>ls — lists tags and namespaces and their properties</em></a> for an detailed explanation of the permissions codes.)</p>
 <p>The full listing after this is:</p>
 <div class="highlight-python"><pre>$ fish -F ls -Ld rating fi
 
@@ -233,7 +236,7 @@ nrwcrw----   miro   alice/fi/</pre>
 </div>
 </li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p>The three low-level case are exemplified by the following.
 In these forms, the Fluidinfo-style policy is explicitly
 given as <tt class="docutils literal"><span class="pre">open</span></tt> or <tt class="docutils literal"><span class="pre">closed</span></tt>, optionally foollowed by the
@@ -311,30 +314,30 @@ $ fish perms control closed except alice+bert /bert/alice/a</pre>
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/fish-doc-logo.png" alt="Logo"/>
             </a></p>
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="ls.html"
-                                  title="previous chapter">ls — lists tags and namespaces and their properties</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="rm.html"
-                                  title="next chapter">rm — removes tags and namespaces</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="_sources/perms.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="ls.html"
+                        title="previous chapter">ls — lists tags and namespaces and their properties</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="rm.html"
+                        title="next chapter">rm — removes tags and namespaces</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/perms.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -351,12 +354,12 @@ $ fish perms control closed except alice+bert /bert/alice/a</pre>
         <li class="right" >
           <a href="ls.html" title="ls — lists tags and namespaces and their properties"
              >previous</a> |</li>
-        <li><a href="index.html">fish v4.02 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.10 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2011, Nicholas J. Radcliffe.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.2.
+        &copy; Copyright 2011, Nicholas J. Radcliffe.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>

@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -5,22 +7,23 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Using Unix-Like Paths &mdash; fish v4.02 documentation</title>
+    <title>Using Unix-Like Paths &mdash; fish v4.10 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '4.02',
-        COLLAPSE_MODINDEX: false,
+        VERSION:     '4.10',
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="fish v4.02 documentation" href="index.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="fish v4.10 documentation" href="index.html" />
     <link rel="next" title="Installation and Configuration" href="install.html" />
     <link rel="prev" title="test — runs fish’s test suite" href="test.html" /> 
   </head>
@@ -37,7 +40,7 @@
         <li class="right" >
           <a href="test.html" title="test — runs fish’s test suite"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fish v4.02 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.10 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -84,7 +87,7 @@ you can add a third line to your <cite>Credentials</cite> file saying</p>
 <p>When using the default use unix-style paths, the following behaviours
 occur:</p>
 <blockquote>
-<ul>
+<div><ul>
 <li><p class="first">All paths not beginning with a <tt class="docutils literal"><span class="pre">/</span></tt> are taken to be relative
 to the user&#8217;s namespace.   So if you authenticate as <tt class="docutils literal"><span class="pre">alice</span></tt>,
 then <tt class="docutils literal"><span class="pre">rating</span></tt> is a shorthand for <tt class="docutils literal"><span class="pre">/alice/rating</span></tt>
@@ -94,14 +97,14 @@ then <tt class="docutils literal"><span class="pre">rating</span></tt> is a shor
 <li><p class="first">Paths in other users&#8217; namespaces must be introduced with a slash.
 Thus, to refer to <tt class="docutils literal"><span class="pre">jacqui</span></tt>&#8216;s rating, use <tt class="docutils literal"><span class="pre">/jacqui/rating</span></tt> etc.
 For example,</p>
-<div class="highlight-python"><pre>fish show -a DADGAD rating /jacqui/rating</pre>
+<div class="highlight-python"><pre>$ fish show -a DADGAD rating /jacqui/rating</pre>
 </div>
 <p>will request the Fluidinfo tags <tt class="docutils literal"><span class="pre">alice/rating</span></tt> and <tt class="docutils literal"><span class="pre">jacqui/rating</span></tt>.</p>
 </li>
 <li><p class="first">The <em>about tag</em>, <tt class="docutils literal"><span class="pre">fluiddb/about</span></tt> may be referred to with the
 special abbreviation <tt class="docutils literal"><span class="pre">/about</span></tt>.
 For example,</p>
-<div class="highlight-python"><pre>fish show -a DADGAD rating /jacqui/rating /about</pre>
+<div class="highlight-python"><pre>$ fish show -a DADGAD rating /jacqui/rating /about</pre>
 </div>
 <p>(though requesting the about tag for an object specified by about
 tag is obviously a bit pointless).</p>
@@ -113,17 +116,17 @@ tag is obviously a bit pointless).</p>
 rewrite queries, which are passed directly to Fluidinfo.
 Thus, to request the about tags for all objects containing DADGAD,
 you would say:</p>
-<div class="highlight-python"><pre>fish show -q 'fluiddb/about matches "DADGAD"' /about</pre>
+<div class="highlight-python"><pre>$ fish show -q 'fluiddb/about matches "DADGAD"' /about</pre>
 </div>
 <p>Similarly, to request all objects <tt class="docutils literal"><span class="pre">alice</span></tt> has rated 10:</p>
-<div class="highlight-python"><pre>fish show -q 'alice/rating = 10' /about</pre>
+<div class="highlight-python"><pre>$ fish show -q 'alice/rating = 10' /about</pre>
 </div>
 </li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p><strong>NOTES</strong></p>
 <blockquote>
-<ul class="simple">
+<div><ul class="simple">
 <li>At present, although there is a <tt class="docutils literal"><span class="pre">pwd</span></tt> command, it always simply
 returns the authenticated user&#8217;s username; there is no <tt class="docutils literal"><span class="pre">cd</span></tt>
 command at present.   This may change.</li>
@@ -132,7 +135,7 @@ are in use, Fish will rewrite queries too, i.e. unix-style
 paths will be extended to the query; however, that is a slightly more
 delicate operation, so hasn&#8217;t been tackled yet.</li>
 </ul>
-</blockquote>
+</div></blockquote>
 </div>
 </div>
 
@@ -145,38 +148,38 @@ delicate operation, so hasn&#8217;t been tackled yet.</li>
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/fish-doc-logo.png" alt="Logo"/>
             </a></p>
-            <h3><a href="index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="">Using Unix-Like Paths</a><ul>
-<li><a class="reference external" href="#the-differences-between-using-unix-style-paths-and-fluidinfo-style-paths">The Differences Between Using Unix-Style Paths and Fluidinfo-style Paths</a></li>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Using Unix-Like Paths</a><ul>
+<li><a class="reference internal" href="#the-differences-between-using-unix-style-paths-and-fluidinfo-style-paths">The Differences Between Using Unix-Style Paths and Fluidinfo-style Paths</a></li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="test.html"
-                                  title="previous chapter">test — runs fish&#8217;s test suite</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="install.html"
-                                  title="next chapter">Installation and Configuration</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="_sources/unixlike.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="test.html"
+                        title="previous chapter">test — runs fish&#8217;s test suite</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="install.html"
+                        title="next chapter">Installation and Configuration</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/unixlike.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -193,12 +196,12 @@ delicate operation, so hasn&#8217;t been tackled yet.</li>
         <li class="right" >
           <a href="test.html" title="test — runs fish’s test suite"
              >previous</a> |</li>
-        <li><a href="index.html">fish v4.02 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.10 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2011, Nicholas J. Radcliffe.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.2.
+        &copy; Copyright 2011, Nicholas J. Radcliffe.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>

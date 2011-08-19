@@ -84,11 +84,13 @@ class REPL():
 
 
 class ExpandGo:
-    def __init__(self, user=None, pwd=None, unixPaths=None, docbase=None):
+    def __init__(self, user=None, pwd=None, unixPaths=None, docbase=None,
+                 cache=None):
         self.user = user
         self.pwd = pwd
         self.unixPaths = unixPaths
         self.docbase = docbase
+        self.cache = cache
 
     def e_go(self, lineArgs, saveOut=False):
         if lineArgs.words:
@@ -101,7 +103,7 @@ class ExpandGo:
             else:
                 self.expand(lineArgs)
                 return go(lineArgs.words, self.user, self.pwd, self.unixPaths,
-                          self.docbase, saveOut=saveOut)
+                          self.docbase, saveOut=saveOut, cache=self.cache)
 
     def expand(self, lineArgs):
         i = 0
@@ -121,16 +123,17 @@ class ExpandGo:
 
 
 def line_go(line, user=None, pwd=None, unixPaths=None, docbase=None,
-            saveOut=False):
-    expander = ExpandGo(user, pwd, unixPaths, docbase)
+            saveOut=False, cache=None):
+    expander = ExpandGo(user, pwd, unixPaths, docbase, cache=cache)
     lineArgs = cline.CScanSplit(line, SEPARATORS, quotes='"\'`')
     return expander.e_go(lineArgs, saveOut=saveOut)
 
 
 def go(rawargs=None, user=None, pwd=None, unixPaths=None, docbase=None,
-       saveOut=False):
+       saveOut=False, cache=None):
     action, args, options, parser = parse_args(rawargs)
-    rawargs = [a.decode(DEFAULT_ENCODING) for a in sys.argv[1:]]
+    if not rawargs:
+        rawargs = [a.decode(DEFAULT_ENCODING) for a in sys.argv[1:]]
     if not saveOut and options.outform:
         if options.outform[0] in ('json', 'python'):
             saveOut = options.outform[0]
@@ -157,7 +160,8 @@ def go(rawargs=None, user=None, pwd=None, unixPaths=None, docbase=None,
            words = args
         return execute_command_line(action, words, options, parser,
                                     user, pwd, unixPaths, docbase,
-                                    saveOut=saveOut, rawargs=rawargs)
+                                    saveOut=saveOut, rawargs=rawargs,
+                                    cache=cache)
 
 
 def repl_or_go():

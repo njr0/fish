@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -5,22 +7,23 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>rm — removes tags and namespaces &mdash; fish v4.02 documentation</title>
+    <title>rm — removes tags and namespaces &mdash; fish v4.10 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '4.02',
-        COLLAPSE_MODINDEX: false,
+        VERSION:     '4.10',
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="fish v4.02 documentation" href="index.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="fish v4.10 documentation" href="index.html" />
     <link rel="next" title="touch — creates a tags and optionally sets their descriptions" href="touch.html" />
     <link rel="prev" title="perms — sets access permissions on tags and namespaces" href="perms.html" /> 
   </head>
@@ -37,7 +40,7 @@
         <li class="right" >
           <a href="perms.html" title="perms — sets access permissions on tags and namespaces"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fish v4.02 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.10 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -53,21 +56,21 @@ Namespaces normally have to be empty for this to work (unless
 the <tt class="docutils literal"><span class="pre">-r</span></tt> options is specified) and tags have to be unused
 (unless the <tt class="docutils literal"><span class="pre">-f</span></tt> option is used).</p>
 <p><strong>FORM</strong></p>
-<div class="highlight-python"><pre>[fish] rm [flags] [&lt;namespace&gt;|&lt;tag&gt;]</pre>
+<div class="highlight-python"><pre>rm [flags] [&lt;namespace&gt;|&lt;tag&gt;]</pre>
 </div>
 <p><strong>FLAGS</strong></p>
 <blockquote>
-<ul class="simple">
+<div><ul class="simple">
 <li><tt class="docutils literal"><span class="pre">-r</span></tt> recurse (remove all tags and subnamespaces)</li>
 <li><tt class="docutils literal"><span class="pre">-f</span></tt> force (currently, don&#8217;t complain if it doesn&#8217;t exist or if
 in the case of a tag, the tag is in use.   In future, this will
 also override permissions if necessary, where possible.)</li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p><strong>EXAMPLES</strong></p>
 <p>When authenticated as  user <tt class="docutils literal"><span class="pre">alice</span></tt>:</p>
 <blockquote>
-<ol class="arabic">
+<div><ol class="arabic">
 <li><p class="first">Remove an unused tag <tt class="docutils literal"><span class="pre">alice/unused</span></tt>:</p>
 <div class="highlight-python"><pre>$ rm unused</pre>
 </div>
@@ -87,7 +90,7 @@ namespaces under it:</p>
 </div>
 </li>
 </ol>
-</blockquote>
+</div></blockquote>
 <p><strong>NOTES</strong></p>
 <p><tt class="docutils literal"><span class="pre">-R</span></tt> may also be used for recurse.   (<tt class="docutils literal"><span class="pre">-R</span></tt> and <tt class="docutils literal"><span class="pre">-r</span></tt> are interchangeable
 on all commands in <tt class="docutils literal"><span class="pre">fish</span></tt>.)</p>
@@ -112,30 +115,30 @@ Use the <tt class="docutils literal"><span class="pre">-r</span></tt> and <tt cl
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/fish-doc-logo.png" alt="Logo"/>
             </a></p>
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="perms.html"
-                                  title="previous chapter">perms — sets access permissions on tags and namespaces</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="touch.html"
-                                  title="next chapter">touch — creates a tags and optionally sets their descriptions</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="_sources/rm.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="perms.html"
+                        title="previous chapter">perms — sets access permissions on tags and namespaces</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="touch.html"
+                        title="next chapter">touch — creates a tags and optionally sets their descriptions</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/rm.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -152,12 +155,12 @@ Use the <tt class="docutils literal"><span class="pre">-r</span></tt> and <tt cl
         <li class="right" >
           <a href="perms.html" title="perms — sets access permissions on tags and namespaces"
              >previous</a> |</li>
-        <li><a href="index.html">fish v4.02 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.10 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2011, Nicholas J. Radcliffe.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.2.
+        &copy; Copyright 2011, Nicholas J. Radcliffe.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>

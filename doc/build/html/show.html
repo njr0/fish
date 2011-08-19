@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -5,23 +7,24 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>show — shows the values of tags on objects &mdash; fish v4.02 documentation</title>
+    <title>show — shows the values of tags on objects &mdash; fish v4.10 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '4.02',
-        COLLAPSE_MODINDEX: false,
+        VERSION:     '4.10',
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="fish v4.02 documentation" href="index.html" />
-    <link rel="next" title="get — gets the values (only) of tags on objects" href="get.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="fish v4.10 documentation" href="index.html" />
+    <link rel="next" title="tags — shows all the tags on an object with their values" href="tags.html" />
     <link rel="prev" title="untag — removes tags from objects" href="untag.html" /> 
   </head>
   <body>
@@ -32,12 +35,12 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="get.html" title="get — gets the values (only) of tags on objects"
+          <a href="tags.html" title="tags — shows all the tags on an object with their values"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="untag.html" title="untag — removes tags from objects"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fish v4.02 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.10 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -50,7 +53,7 @@
 <h1>show — shows the values of tags on objects<a class="headerlink" href="#show-shows-the-values-of-tags-on-objects" title="Permalink to this headline">¶</a></h1>
 <p>Shows the values of the tags nominated from the objects specified.</p>
 <p><strong>FORM</strong></p>
-<div class="highlight-python"><pre>[fish] show [flags] &lt;object specifier&gt; &lt;tags&gt;</pre>
+<div class="highlight-python"><pre>show [flags] &lt;object specifier&gt; &lt;tags&gt;</pre>
 </div>
 <p><strong>EXAMPLES</strong></p>
 <p>When authenticated as  user <tt class="docutils literal"><span class="pre">alice</span></tt>:</p>
@@ -95,38 +98,38 @@ the username.</p>
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/fish-doc-logo.png" alt="Logo"/>
             </a></p>
-            <h3><a href="index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="">show — shows the values of tags on objects</a><ul>
-<li><a class="reference external" href="#see-also">See also:</a></li>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">show — shows the values of tags on objects</a><ul>
+<li><a class="reference internal" href="#see-also">See also:</a></li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="untag.html"
-                                  title="previous chapter">untag — removes tags from objects</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="get.html"
-                                  title="next chapter">get — gets the values (only) of tags on objects</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="_sources/show.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="untag.html"
+                        title="previous chapter">untag — removes tags from objects</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tags.html"
+                        title="next chapter">tags — shows all the tags on an object with their values</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/show.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -138,17 +141,17 @@ the username.</p>
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="get.html" title="get — gets the values (only) of tags on objects"
+          <a href="tags.html" title="tags — shows all the tags on an object with their values"
              >next</a> |</li>
         <li class="right" >
           <a href="untag.html" title="untag — removes tags from objects"
              >previous</a> |</li>
-        <li><a href="index.html">fish v4.02 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.10 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2011, Nicholas J. Radcliffe.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.2.
+        &copy; Copyright 2011, Nicholas J. Radcliffe.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>

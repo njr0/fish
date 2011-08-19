@@ -9,7 +9,7 @@ Namespaces normally have to be empty for this to work (unless the
 
 **FORM**
 
-   [fish] rm [flags] [<namespace>|<tag>]
+   rm [flags] [<namespace>|<tag>]
 
 **FLAGS**
 

@@ -6,7 +6,7 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'4.10'
+__version__ = u'4.11'
 VERSION = __version__
 
 import codecs
@@ -19,6 +19,8 @@ import urllib
 from functools import wraps
 from httplib2 import Http
 import cline
+from cache import Cache
+from fishbase import get_credentials_file, O, formatted_tag_value
 
 if sys.version_info < (2, 6):
     try:
@@ -34,13 +36,8 @@ PARIS_ID = u'17ecdfbc-c148-41d3-b898-0b5396ebe6cc'
 UNICODE = True
 DEFAULT_UNIX_STYLE_PATHS = True
 FISHUSER = 'FISHUSER'
-ALIAS_TAG = u'.fish/alias'
 toStr = unicode if UNICODE else str
 DEFAULT_DEBUG = False
-
-
-class CacheError(Exception):
-    pass
 
 
 class ProblemReadingCredentialsFileError(Exception):
@@ -105,14 +102,6 @@ class STATUS:
 
 FLUIDDB_PATH = u'http://fluiddb.fluidinfo.com'
 SANDBOX_PATH = u'http://sandbox.fluidinfo.com'
-UNIX_CREDENTIALS_FILE = u'.fluidDBcredentials'
-UNIX_USER_CREDENTIALS_FILE = u'.fluidDBcredentials.%s'
-
-CRED_FILE_VAR = 'FISH_CREDENTIALS_FILE'
-WIN_CRED_FILE = 'c:\\fish\\credentials.txt'
-
-CACHE_FILE = {u'unix': u'.fishcache.%s',
-              u'windows': u'c:\\fish\\credentials-%s.txt'}
 
 HTTP_TIMEOUT = 300.123456       # unlikey the user will choose this
 PRIMITIVE_CONTENT_TYPE = u'application/vnd.fluiddb.value+json'
@@ -208,83 +197,6 @@ class Namespace:
     toUnicode = __unicode__
 
 
-class Cache:
-    def __init__(self, username):
-        self.username = username
-        self.objects = {}
-        if username:
-            self.cacheFile = get_user_file(CACHE_FILE, username)
-            self.read()
-        else:
-            self.objects = {}
-
-    def read(self):
-        try:
-            f = open(self.cacheFile, 'rb')
-            try:
-                self.objects = pickle.load(f)
-                f.close()
-            except:
-                raise CacheError('Cache %s appears corrupt' % self.cacheFile)
-        except IOError:  # No cache
-            pass
-
-
-    def __unicode__(self):
-        out = [u'Cache:']
-        for about in self.objects:
-            out.append(u'  fluiddb/about="%s":\n    %s' % (about,
-                                                unicode(self.objects[about])))
-        return u'\n\n'.join(out)
-
-    def write(self):
-        f = open(self.cacheFile, 'wb')
-        pickle.dump(self.objects, f)
-        f.close()
-
-    def add(self, o, write=True):
-        objects = o if type(o) in (list, tuple) else [o]
-        for o in objects:
-            self.objects[o.about] = o
-        if write:
-            self.write()
-
-    def sync(self, db):
-        alias_tag = u'%s/%s' % (self.username, ALIAS_TAG)
-        objects = get_values_by_query(db, u'has %s' % alias_tag,
-                                      [u'fluiddb/about', alias_tag])
-        if objects:
-            self.objects = {}
-            for o in objects:
-                self.objects[o.about] = o
-            self.write()
-        else:
-            db.warning('Nothing to sync from Fluidinfo')
-
-    def aliases(self, name=None):
-        alias_tag = u'%s/%s' % (self.username, ALIAS_TAG)
-        if name:
-            return [self.objects[about] for about in self.objects
-                    if alias_tag in self.objects[about].tags and about == name]
-        else:
-            return [self.objects[about] for about in self.objects
-                    if alias_tag in self.objects[about].tags]
-
-    def get_alias(self, name):
-        try:
-            alias_tag = u'%s/%s' % (self.username, ALIAS_TAG)
-            return self.objects[name].tags[alias_tag]
-        except KeyError:
-            return None
-
-#    def unalias(self, name):
-#        alias_tag = u'%s/%s' % (self.username, ALIAS_TAG)
-#        if not name in self.objects:
-#            return 1
-#        del self.objects[name].tags[alias_tag]
-        
-
-
 def quote_u_u(s):
     """Quote a unicode string s using %-encoding.
 
@@ -368,55 +280,6 @@ def _get_http(timeout):
     return http
 
 
-class O:
-    """
-        This class is used to represent objects locally.
-        Missing tags are normally set to O.
-        The tags are stored in self.tags and there is usually
-        either self.about or self.id set.
-    """
-    def __init__(self, tags=None, about=None, id=None):
-        self.about = about
-        self.id = id
-        self.tags = tags if tags else {}
-        self.types = {}
-        for t in self.tags:
-            self.types[t] = type(self.tags[t])
-
-    def __str__(self):
-        keys = self.tags.keys()
-        keys.sort()
-        return u'\n'.join([u'  %s=%s' % (key, toStr(self.tags[key]
-                           if not self.tags[key] is O
-                                else u'(not present)'))
-                                for key in keys])
-
-    def __unicode__(self):
-        keys = self.tags.keys()
-        keys.sort()
-        return u'\n'.join([formatted_tag_value(key, self.tags[key])
-                           for key in keys
-                           if not key.startswith('_')])
-
-    def typedval(self, t):
-        return (self.tags[t], self.types[t])
-
-    def u(self, key):
-        return self.tags[key]
-
-    def toJSON(self):
-        return {'item': 'object', 'tags': self.tags}
-
-    def get(self, tag, retNone=True):
-        try:
-            return self.tags[tag]
-        except KeyError:
-            if retNone:
-                return None
-            else:
-                raise
-
-
 class Credentials:
     """
     Simple store for user credentials.
@@ -473,21 +336,6 @@ def format_param(v):
     return quote_u_8(v) if type(v) == unicode else str(v)
 
 
-def formatted_tag_value(tag, value, terse=False, prefix=u'  '):
-    lhs = '' if terse else '%s%s = ' % (prefix, tag)
-    if value == None:
-        return u'%s%s' % (u'' if terse else prefix, tag)
-    elif type(value) in types.StringTypes:
-        return u'%s"%s"' % (lhs, value)
-    elif type(value) in (list, tuple):
-        vals = value[:]
-        vals.sort()
-        return u'%s{%s}' % (lhs,
-                             u', '.join(u'"%s"' % unicode(v) for v in vals))
-    else:
-        return u'%s%s' % (lhs, toStr(value))
-
-
 class Fluidinfo:
     """
     Connection to Fluidinfo that remembers credentials and provides
@@ -506,12 +354,10 @@ class Fluidinfo:
 
     def __init__(self, credentials=None, host=None, debug=DEFAULT_DEBUG,
                  encoding=DEFAULT_ENCODING, unixStylePaths=None,
-                 saveOutput=False):
+                 saveOutput=False, cache=None):
         if credentials == None:
             credentials = Credentials()
-            self.cache = Cache(credentials.username)
-        else:
-            self.cache = Cache(None)
+        self.cache = cache or Cache(credentials.username)
         self.credentials = credentials
         if unixStylePaths == None:
             self.unixStyle = credentials.unixStyle
@@ -1071,15 +917,15 @@ class Fluidinfo:
         return status == 200
 
     def read_tags(self, about, o):
-        return get_values_by_query(self, u'fluiddb/about = "%s"' % about,
-                            [k for k in o.tags])
+        return self.get_values_by_query(u'fluiddb/about = "%s"' % about,
+                                        [k for k in o.tags])
 
     def write_tags(self, about, o):
         values = {}
         for k in o.tags:
             if not k.startswith(u'_'):
                 values[k] = o.tags[k]
-        return tag_by_query(self, u'fluiddb/about = "%s"' % about, values)
+        return self.tag_by_query(u'fluiddb/about = "%s"' % about, values)
 
     def search(self, words, maxResults=MAX_RESULTS, page=1):
         queryWords = []
@@ -1099,7 +945,7 @@ class Fluidinfo:
         query = (u' and '.join(u'fluiddb/about matches "%s"'
                              % word for word in queryWords))
         tags = [u'fluiddb/about']
-        objects = get_values_by_query(self, query, tags)
+        objects = self.get_values_by_query(query, tags)
 
         z = self.filter_query_results(objects, stopWords)
         abouts = [self.search_tuple(about) for about in z]
@@ -1145,8 +991,166 @@ class Fluidinfo:
             L = len(about)
         return (L, about)
 
+    def tag_by_query(self, query, tagsToSet):
+        """
+        Sets one or more tags on objects that match a query.
 
-                            
+        db         is an instantiated Fluidinfo instance.
+
+        query      is a unicode string representing a valid Fluidinfo query.
+                   e.g. 'has njr/rating'
+
+        tagsToSet  is a dictionary containing tag names (as keys)
+                   and values to be set.   (Use None to set a tag with no value.)
+
+        Example:
+
+            db = Fluidinfo()
+            db.tag_by_query(u'has njr/rating', {'njr/rated': True})
+
+        sets an njr/rated tag to True for every object having an njr/rating.
+
+        NOTE: Unlike in much of the rest of fish.py, tags need to be full paths
+        without a leading slash.
+
+        NOTE: Tags must exist before being used.   (This will change.)
+
+        NOTE: All strings must be (and will be) unicode.
+
+
+        """
+        strHash = u'{%s}' % u', '.join(u'"%s": {"value": %s}'
+                                       % (tag, format_val(tagsToSet[tag]))
+                                       for tag in tagsToSet)
+        (v, r) = self.call(u'PUT', u'/values', strHash, {u'query': query})
+        assert_status(v, STATUS.NO_CONTENT)
+
+
+    def untag_by_query(self, query, tags):
+        """
+        Deletes one or more tags on objects that match a query.
+
+        query      is a unicode string representing a valid Fluidinfo query.
+                   e.g. 'has njr/rating'
+
+        tags       a list tag names to delete.
+
+        Example:
+
+            db = Fluidinfo()
+            db.untag_by_query(u'has njr/rating', ['njr/rating'])
+
+        removes an njr/rating tag from every object that has one.
+
+        NOTE: Unlike in much of the rest of fish.py, tags need to be full paths
+        without a leading slash.   (This will change.)
+
+        NOTE: All strings must be (and will be) unicode.
+
+
+        """
+        if not tags:
+            return
+        kw = {u'tag': tags, u'query': query}
+        (v, r) = self.call(u'DELETE', u'/values', None, kw)
+        assert_status(v, STATUS.NO_CONTENT)
+
+
+    def get_values_by_query(self, query, tags):
+        """
+        Gets the values of a set of tags satisfying a given query.
+        Returns them as a dictionary (hash) keyed on object ID.
+        The values in the dictionary are simple objects with each tag
+        value in the object's dictionary (__dict__).
+
+        query      is a unicode string representing a valid Fluidinfo query.
+                   e.g. 'has njr/rating'
+
+        tags       is a list (or tuple) containing the tags whose values are
+                   required.
+
+        Example:
+
+            db = Fluidinfo()
+            tag_by_query(db, u'has njr/rating < 3', ('fluiddb/about',))
+
+        NOTE: Unlike in much of the rest of fish.py, tags need to be full paths
+        without a leading slash.
+
+        NOTE: All strings must be (and will be) unicode.
+
+        """
+        maxTextSize = 1024
+        (v, r) = self.call(u'GET', u'/values', None, {u'query': query,
+                                                    u'tag': tags})
+        assert_status(v, STATUS.OK)
+        H = r[u'results'][u'id']
+        results = []
+        for id in H:
+            o = O()
+            o.id = id
+            for tag in tags:
+                if tag in H[id]:
+                    try:
+                        if tag == u'fluiddb/about':
+                            o.about = H[id][tag][u'value']
+                        else:
+                            o.tags[tag] = H[id][tag][u'value']
+                            o.types[tag] = None
+                    except KeyError:
+                        size = H[id][tag][u'size']
+                        mime = H[id][tag][u'value-type']
+                        if (mime.startswith(u'text')
+                                and size < maxTextSize):
+                            o.tags[tag] = self.get_tag_value_by_about(id,
+                                                                u'/%s' % tag)
+                        else:
+                            o.tags[tag] = (u'%s value of size %d bytes' % (mime,
+                                                                         size))
+                        o.types[tag] = mime
+            results.append(o)
+        return results      # hash of objects, keyed on ID, with attributes
+                            # corresponding to tags, inc id.
+
+
+    def get_values_by_id(self, id, tags):
+        """
+        Gets the values of a set of tags satisfying a given query.
+        Returns them as a dictionary (hash) keyed on object ID.
+        The values in the dictionary are simple objects with each tag
+        value in the object's dictionary (tags).
+
+        query      is a unicode string representing a valid Fluidinfo query.
+                   e.g. 'has njr/rating'
+
+        tags       is a list (or tuple) containing the tags whose values are
+                   required.
+
+        Example:
+
+            db = Fluidinfo()
+            db.tag_by_query(u'has njr/rating < 3', ('fluiddb/about',))
+
+        NOTE: Unlike in much of the rest of fish.py, tags need to be full paths
+        without a leading slash.
+
+        NOTE: All strings must be (and will be) unicode.
+
+        """
+        maxTextSize = 1024
+        o = O()
+        o.id = id
+        for tag in tags:
+            status, value, mime = self.get_tag_value_by_id(id, tag,
+                                                           getMime=True)
+            assert_status(v, STATUS.OK)
+            o.tags[tag] = value
+            o.tags[tag] = None if mime == PRIMITIVE_CONTENT_TYPE else 0
+            if (mime.startswith(u'text') and size < maxTextSize):
+                o.tags[tag] = self.get_tag_value_by_about(id, u'/%s' % tag)
+            else:
+                o.tags[tag] = (u'%s value of size %d bytes' % (mime, size))
+        return o
 
 
 def object_uri(id):
@@ -1158,29 +1162,6 @@ def tag_uri(namespace, tag):
     """Returns the full URI for the Fluidinfo tag with the given id."""
     return u'%s/tags/%s/%s' % (FLUIDDB_PATH, namespace, tag)
 
-
-def get_credentials_file(username=None):
-    if os.name == 'posix':
-        homeDir = os.path.expanduser('~')
-        file = ((UNIX_USER_CREDENTIALS_FILE % username) if username
-                else UNIX_CREDENTIALS_FILE)
-        return os.path.join(homeDir, file)
-
-    elif os.name:
-        e = os.environ
-        return e[CRED_FILE_VAR] if CRED_FILE_VAR in e else WIN_CRED_FILE
-    else:
-        return None
-
-
-def get_user_file(file, username):
-    if os.name == 'posix':
-        return os.path.join(os.path.expanduser(u'~'), file['unix'] % username)
-    elif os.name:
-        return file[u'windows'] % username
-    else:
-        return None
-    
 
 def get_typed_tag_value(v):
     """Uses some simple rules to extract simple typed values from strings.
@@ -1286,177 +1267,10 @@ def to_typed(v):
         return unicode(v)
 
 
-def tag_by_query(db, query, tagsToSet):
-    """
-    Sets one or more tags on objects that match a query.
-
-    db         is an instantiated Fluidinfo instance.
-
-    query      is a unicode string representing a valid Fluidinfo query.
-               e.g. 'has njr/rating'
-
-    tagsToSet  is a dictionary containing tag names (as keys)
-               and values to be set.   (Use None to set a tag with no value.)
-
-    Example:
-
-        db = Fluidinfo()
-        tag_by_query(db, u'has njr/rating', {'njr/rated': True})
-
-    sets an njr/rated tag to True for every object having an njr/rating.
-
-    NOTE: Unlike in much of the rest of fish.py, tags need to be full paths
-    without a leading slash.
-
-    NOTE: Tags must exist before being used.   (This will change.)
-
-    NOTE: All strings must be (and will be) unicode.
-
-
-    """
-    strHash = u'{%s}' % u', '.join(u'"%s": {"value": %s}'
-                                   % (tag, format_val(tagsToSet[tag]))
-                                   for tag in tagsToSet)
-    (v, r) = db.call(u'PUT', u'/values', strHash, {u'query': query})
-    assert_status(v, STATUS.NO_CONTENT)
-
-
-def untag_by_query(db, query, tags):
-    """
-    Deletes one or more tags on objects that match a query.
-
-    db         is an instantiated Fluidinfo instance.
-
-    query      is a unicode string representing a valid Fluidinfo query.
-               e.g. 'has njr/rating'
-
-    tags       a list tag names to delete.
-
-    Example:
-
-        db = Fluidinfo()
-        untag_by_query(db, u'has njr/rating', ['njr/rating'])
-
-    removes an njr/rating tag from every object that has one.
-
-    NOTE: Unlike in much of the rest of fish.py, tags need to be full paths
-    without a leading slash.   (This will change.)
-
-    NOTE: All strings must be (and will be) unicode.
-
-
-    """
-    if not tags:
-        return
-    kw = {u'tag': tags, u'query': query}
-    (v, r) = db.call(u'DELETE', u'/values', None, kw)
-    assert_status(v, STATUS.NO_CONTENT)
-
-
 def assert_status(v, s):
     if not v == s:
         raise BadStatusError(u'Bad status %d (expected %d)' % (v, s))
 
-
-def get_values_by_query(db, query, tags):
-    """
-    Gets the values of a set of tags satisfying a given query.
-    Returns them as a dictionary (hash) keyed on object ID.
-    The values in the dictionary are simple objects with each tag
-    value in the object's dictionary (__dict__).
-
-    db         is an instantiated Fluidinfo instance.
-
-    query      is a unicode string representing a valid Fluidinfo query.
-               e.g. 'has njr/rating'
-
-    tags       is a list (or tuple) containing the tags whose values are
-               required.
-
-    Example:
-
-        db = Fluidinfo()
-        tag_by_query(db, u'has njr/rating < 3', ('fluiddb/about',))
-
-    NOTE: Unlike in much of the rest of fish.py, tags need to be full paths
-    without a leading slash.
-
-    NOTE: All strings must be (and will be) unicode.
-
-    """
-    maxTextSize = 1024
-    (v, r) = db.call(u'GET', u'/values', None, {u'query': query,
-                                                u'tag': tags})
-    assert_status(v, STATUS.OK)
-    H = r[u'results'][u'id']
-    results = []
-    for id in H:
-        o = O()
-        o.id = id
-        for tag in tags:
-            if tag in H[id]:
-                try:
-                    if tag == u'fluiddb/about':
-                        o.about = H[id][tag][u'value']
-                    else:
-                        o.tags[tag] = H[id][tag][u'value']
-                        o.types[tag] = None
-                except KeyError:
-                    size = H[id][tag][u'size']
-                    mime = H[id][tag][u'value-type']
-                    if (mime.startswith(u'text')
-                            and size < maxTextSize):
-                        o.tags[tag] = db.get_tag_value_by_about(id,
-                                                            u'/%s' % tag)
-                    else:
-                        o.tags[tag] = (u'%s value of size %d bytes' % (mime,
-                                                                     size))
-                    o.types[tag] = mime
-        results.append(o)
-    return results      # hash of objects, keyed on ID, with attributes
-                        # corresponding to tags, inc id.
-        
-
-def get_values_by_id(db, id, tags):
-    """
-    Gets the values of a set of tags satisfying a given query.
-    Returns them as a dictionary (hash) keyed on object ID.
-    The values in the dictionary are simple objects with each tag
-    value in the object's dictionary (tags).
-
-    db         is an instantiated Fluidinfo instance.
-
-    query      is a unicode string representing a valid Fluidinfo query.
-               e.g. 'has njr/rating'
-
-    tags       is a list (or tuple) containing the tags whose values are
-               required.
-
-    Example:
-
-        db = Fluidinfo()
-        tag_by_query(db, u'has njr/rating < 3', ('fluiddb/about',))
-
-    NOTE: Unlike in much of the rest of fish.py, tags need to be full paths
-    without a leading slash.
-
-    NOTE: All strings must be (and will be) unicode.
-
-    """
-    maxTextSize = 1024
-    o = O()
-    o.id = id
-    for tag in tags:
-        status, value, mime = db.get_tag_value_by_id(id, tag, getMime=True)
-        assert_status(v, STATUS.OK)
-        o.tags[tag] = value
-        o.tags[tag] = None if mime == PRIMITIVE_CONTENT_TYPE else 0
-        if (mime.startswith(u'text') and size < maxTextSize):
-            o.tags[tag] = db.get_tag_value_by_about(id, u'/%s' % tag)
-        else:
-            o.tags[tag] = (u'%s value of size %d bytes' % (mime, size))
-    return o
-        
 
 def path_style(options):
     if options.unixstylepaths:

@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -5,24 +7,25 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>An Overview of the fish Command Line for Fluidinfo &mdash; fish v4.02 documentation</title>
+    <title>An Overview of the Fish Command Line for Fluidinfo &mdash; fish v4.10 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '4.02',
-        COLLAPSE_MODINDEX: false,
+        VERSION:     '4.10',
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="fish v4.02 documentation" href="index.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="fish v4.10 documentation" href="index.html" />
     <link rel="next" title="Shell-Fish: The Online version of Fish" href="shell-fish.html" />
-    <link rel="prev" title="The fish Command Line for Fluidinfo" href="index.html" /> 
+    <link rel="prev" title="The Fish Command Line for Fluidinfo" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -35,9 +38,9 @@
           <a href="shell-fish.html" title="Shell-Fish: The Online version of Fish"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="The fish Command Line for Fluidinfo"
+          <a href="index.html" title="The Fish Command Line for Fluidinfo"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fish v4.02 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.10 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -47,7 +50,7 @@
           <div class="body">
             
   <div class="section" id="an-overview-of-the-fish-command-line-for-fluidinfo">
-<h1>An Overview of the fish Command Line for Fluidinfo<a class="headerlink" href="#an-overview-of-the-fish-command-line-for-fluidinfo" title="Permalink to this headline">¶</a></h1>
+<h1>An Overview of the Fish Command Line for Fluidinfo<a class="headerlink" href="#an-overview-of-the-fish-command-line-for-fluidinfo" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="a-brief-overview-of-fluidinfo">
 <h2>A Brief Overview of Fluidinfo<a class="headerlink" href="#a-brief-overview-of-fluidinfo" title="Permalink to this headline">¶</a></h2>
 <p>Fluidinfo is a simple, shared, online storage system in which each
@@ -65,7 +68,7 @@ while all objects are shared.</p>
 </div>
 <div class="section" id="overview-of-the-command-line">
 <h2>Overview of the Command Line<a class="headerlink" href="#overview-of-the-command-line" title="Permalink to this headline">¶</a></h2>
-<p>The fish command line is a acts as a sort-of one-shot command shell
+<p>The Fish command line is a acts as a sort-of one-shot command shell
 for Fluidinfo.   It gives access to much of the functionality of
 the underlying <tt class="docutils literal"><span class="pre">fish.py</span></tt> library, with a main focus on tagging,
 getting tag values, finding tags, querying Fluidinfo and clearing
@@ -80,7 +83,7 @@ user has username <tt class="docutils literal"><span class="pre">alice</span></t
 but for now we&#8217;ll specify the user explicitly, since that is normal
 in Fluidinfo.)</p>
 <blockquote>
-<ol class="arabic">
+<div><ol class="arabic">
 <li><p class="first">Rate the Eiffel Tower as a 9:</p>
 <div class="highlight-python"><pre>$ fish tag -a "Eiffel Tower" rating=9</pre>
 </div>
@@ -132,18 +135,18 @@ Object 7aed1e67-a88e-439d-8a56-b2ab52c838ab:
 </div>
 </li>
 </ol>
-</blockquote>
+</div></blockquote>
 <p>Before describing these commands in detail, it will be useful
 to describe the abstraction <tt class="docutils literal"><span class="pre">fish</span></tt> uses, as it differs in key
 respects from the underlying Fluidinfo model.</p>
 </div>
 <div class="section" id="the-fish-abstraction">
-<h2>The fish Abstraction<a class="headerlink" href="#the-fish-abstraction" title="Permalink to this headline">¶</a></h2>
+<h2>The Fish Abstraction<a class="headerlink" href="#the-fish-abstraction" title="Permalink to this headline">¶</a></h2>
 <p>The Fluidinfo API is quite low level and rigid;
 <tt class="docutils literal"><span class="pre">fish</span></tt> offers a slightly higher level of abstraction.
 Here, we briefly note the differences.</p>
 <blockquote>
-<ul>
+<div><ul>
 <li><p class="first">In the Fluidinfo API, you can&#8217;t simply tag an object with
 an <tt class="docutils literal"><span class="pre">alice/rating</span></tt> tag; you first have to tell the system that you
 wish to use a <tt class="docutils literal"><span class="pre">rating</span></tt> tag by <tt class="docutils literal"><span class="pre">creating</span></tt> it; only once you
@@ -167,21 +170,21 @@ namespace before she can create the <tt class="docutils literal"><span class="pr
 So to use <tt class="docutils literal"><span class="pre">jacqui/private/rating</span></tt> for the first time, using the
 API directly, the process would be:</p>
 <blockquote>
-<ol class="arabic simple">
+<div><ol class="arabic simple">
 <li>Create the namespace <tt class="docutils literal"><span class="pre">private</span></tt> under <tt class="docutils literal"><span class="pre">jacqui</span></tt></li>
 <li>Create the tag <tt class="docutils literal"><span class="pre">rating</span></tt></li>
 <li>Tag the relevant object with <tt class="docutils literal"><span class="pre">rating</span></tt>.</li>
 </ol>
-</blockquote>
+</div></blockquote>
 </li>
 </ul>
 <blockquote>
-<p>Again, <tt class="docutils literal"><span class="pre">fish</span></tt> takes care of all that, and allows jacqui just
+<div><p>Again, <tt class="docutils literal"><span class="pre">fish</span></tt> takes care of all that, and allows jacqui just
 to say:</p>
 <div class="highlight-python"><pre>fish tag -a "Eiffel Tower" jacqui/rating=10</pre>
 </div>
 <p><tt class="docutils literal"><span class="pre">fish</span></tt> will create any tags and namespaces required on the fly.</p>
-</blockquote>
+</div></blockquote>
 <ul class="simple">
 <li>Finally, in Fluidinfo itself, the object ID (128-bit number,
 usually formatted as a hex-number in 8-4-4-4-12 digit groups)
@@ -189,26 +192,26 @@ is not actually a tag on the object.   <tt class="docutils literal"><span class=
 to use refer to it as a tag, at least for reporting purposes,
 using the name <tt class="docutils literal"><span class="pre">/id</span></tt>.</li>
 </ul>
-</blockquote>
+</div></blockquote>
 </div>
 <div class="section" id="the-anatomy-of-the-core-fish-commands">
-<h2>The Anatomy of the core fish Commands<a class="headerlink" href="#the-anatomy-of-the-core-fish-commands" title="Permalink to this headline">¶</a></h2>
-<p>The general form of the core fish commands is:</p>
+<h2>The Anatomy of the core Fish Commands<a class="headerlink" href="#the-anatomy-of-the-core-fish-commands" title="Permalink to this headline">¶</a></h2>
+<p>The general form of the core Fish commands is:</p>
 <div class="highlight-python"><pre>fish &lt;verb&gt; [flags] &lt;object selector&gt; &lt;tags/values&gt;</pre>
 </div>
 <p>The verb says what you want to do.   The main verbs currently avalaible are</p>
 <blockquote>
-<ul class="simple">
+<div><ul class="simple">
 <li><tt class="docutils literal"><span class="pre">tag</span></tt> &#8212; set tags on some objects</li>
 <li><tt class="docutils literal"><span class="pre">show</span></tt> &#8212; show tag values from some objects</li>
 <li><tt class="docutils literal"><span class="pre">untag</span></tt> &#8212; remove tags from some objects</li>
 <li><tt class="docutils literal"><span class="pre">tags</span></tt> &#8212; show what readable tags an object has</li>
 <li><tt class="docutils literal"><span class="pre">count</span></tt> &#8212; count the number of objects match some criterion.</li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p>The optional <tt class="docutils literal"><span class="pre">flags</span></tt> modify the command.   The main ones used are:</p>
 <blockquote>
-<ul class="simple">
+<div><ul class="simple">
 <li><tt class="docutils literal"><span class="pre">-v</span></tt> &#8212; verbose (gives extra information)</li>
 <li><tt class="docutils literal"><span class="pre">-s</span></tt> &#8212; to specify that the command should operate againss the sandbox
 (<tt class="docutils literal"><span class="pre">sandbox.fluidinfo.com</span></tt>) rather than the main Fluidinfo instance
@@ -221,11 +224,11 @@ default; see below)</li>
 specifies an alternate credentials file to use, normally identified
 by the username (see below).</li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p>The <tt class="docutils literal"><span class="pre">&lt;object</span> <span class="pre">selector&gt;</span></tt> is used to specify which objects you are interested
 in and usually takes on of three forms:</p>
 <blockquote>
-<ul class="simple">
+<div><ul class="simple">
 <li><tt class="docutils literal"><span class="pre">-a</span> <span class="pre">&quot;about</span> <span class="pre">tag</span> <span class="pre">value&quot;</span></tt> is used to specify an object on the basis of
 its about tag (<tt class="docutils literal"><span class="pre">fluiddb/about</span></tt>).   For example,
 <tt class="docutils literal"><span class="pre">-a</span> <span class="pre">&quot;book:nineteen</span> <span class="pre">eighty</span> <span class="pre">four</span> <span class="pre">(george</span> <span class="pre">orwell)&quot;</span></tt> specifies an important
@@ -240,7 +243,7 @@ on the basis of a query expressed in the Fluidinfo query language.
 For example <tt class="docutils literal"><span class="pre">-q</span> <span class="pre">has</span> <span class="pre">alice/rating</span></tt> specifies objects that have
 an <tt class="docutils literal"><span class="pre">alice/rating</span></tt> rag on them.</li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p>Finally, some commands need or accept a list of tags or tag-value pairs.
 Specifically, <tt class="docutils literal"><span class="pre">show</span></tt> and <tt class="docutils literal"><span class="pre">untag</span></tt> both require a list of tags to be
 shown or removed, and <tt class="docutils literal"><span class="pre">tag</span></tt> requires a set of tag-value pairs to know
@@ -268,7 +271,7 @@ All strings are always unicode, i.e. they may contain any character.</p>
 enter a commands without the <tt class="docutils literal"><span class="pre">fish</span></tt> prefix at the start of the line.
 For example:</p>
 <div class="highlight-python"><pre>$ fish
-This is fish version 3.10.
+This is fish version 0.00.
 &gt; pwd
 alice
 &gt; show -a 'book:alices adventures in wonderland (lewis carroll)' rating
@@ -278,7 +281,7 @@ alice/rating = 10
 </div>
 <p>Key things to know about the interactive shell are:</p>
 <blockquote>
-<ul>
+<div><ul>
 <li><p class="first">When the <tt class="docutils literal"><span class="pre">readline</span></tt> library is available, it will be used,
 meaning that you will be able to use either Emacs key bindings or
 the arrow keys to edit the command line, including moving up and
@@ -291,7 +294,7 @@ to <tt class="docutils literal"><span class="pre">h</span></tt>.</p>
 </li>
 <li><p class="first">Quoting and escaping follow the following rules:</p>
 <blockquote>
-<ul>
+<div><ul>
 <li><p class="first">Either single or double quotes can be used to make compound
 arguments; single quotes can be enclosed in double quotes
 and double quotes can be enclosed in single quotes, e.g.</p>
@@ -316,10 +319,10 @@ when the enclosing command is executed.   For example:</p>
 since that is the result of the quoted Fish <tt class="docutils literal"><span class="pre">about</span></tt> command.</p>
 </li>
 </ul>
-</blockquote>
+</div></blockquote>
 </li>
 </ul>
-</blockquote>
+</div></blockquote>
 </div>
 </div>
 
@@ -332,42 +335,42 @@ since that is the result of the quoted Fish <tt class="docutils literal"><span c
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/fish-doc-logo.png" alt="Logo"/>
             </a></p>
-            <h3><a href="index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="">An Overview of the fish Command Line for Fluidinfo</a><ul>
-<li><a class="reference external" href="#a-brief-overview-of-fluidinfo">A Brief Overview of Fluidinfo</a></li>
-<li><a class="reference external" href="#overview-of-the-command-line">Overview of the Command Line</a></li>
-<li><a class="reference external" href="#the-fish-abstraction">The fish Abstraction</a></li>
-<li><a class="reference external" href="#the-anatomy-of-the-core-fish-commands">The Anatomy of the core fish Commands</a></li>
-<li><a class="reference external" href="#invoking-fish-as-a-shell">Invoking Fish as a Shell</a></li>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">An Overview of the Fish Command Line for Fluidinfo</a><ul>
+<li><a class="reference internal" href="#a-brief-overview-of-fluidinfo">A Brief Overview of Fluidinfo</a></li>
+<li><a class="reference internal" href="#overview-of-the-command-line">Overview of the Command Line</a></li>
+<li><a class="reference internal" href="#the-fish-abstraction">The Fish Abstraction</a></li>
+<li><a class="reference internal" href="#the-anatomy-of-the-core-fish-commands">The Anatomy of the core Fish Commands</a></li>
+<li><a class="reference internal" href="#invoking-fish-as-a-shell">Invoking Fish as a Shell</a></li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="index.html"
-                                  title="previous chapter">The fish Command Line for Fluidinfo</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="shell-fish.html"
-                                  title="next chapter">Shell-Fish: The Online version of Fish</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="_sources/cli.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">The Fish Command Line for Fluidinfo</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="shell-fish.html"
+                        title="next chapter">Shell-Fish: The Online version of Fish</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/cli.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -382,14 +385,14 @@ since that is the result of the quoted Fish <tt class="docutils literal"><span c
           <a href="shell-fish.html" title="Shell-Fish: The Online version of Fish"
              >next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="The fish Command Line for Fluidinfo"
+          <a href="index.html" title="The Fish Command Line for Fluidinfo"
              >previous</a> |</li>
-        <li><a href="index.html">fish v4.02 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.10 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2011, Nicholas J. Radcliffe.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.2.
+        &copy; Copyright 2011, Nicholas J. Radcliffe.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>

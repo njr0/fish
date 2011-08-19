@@ -9,7 +9,7 @@ potentially with additional information.
 **FORM**
 ::
 
-    [fish] ls [flags] [<namespace>|<tag>]
+    ls [flags] [<namespace>|<tag>]
 
 **FLAGS**
 

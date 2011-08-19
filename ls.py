@@ -335,9 +335,10 @@ def to_string_grid(items, pageWidth=78, maxCols=9):
 class ExtendedFluidinfo(fishlib.Fluidinfo):
     def __init__(self, credentials=None, host=None, debug=False,
                  encoding=fishlib.DEFAULT_ENCODING, unixStylePaths=None,
-                 saveOut=False):
+                 saveOut=False, cache=None):
         fishlib.Fluidinfo.__init__(self, credentials, host, debug,
-                                   encoding, unixStylePaths, saveOut)
+                                   encoding, unixStylePaths, saveOut,
+                                   cache)
 
     def list_namespace(self, ns, returnDescription=True,
                         returnNamespaces=True, returnTags=True):
@@ -695,8 +696,8 @@ def execute_rm_command(db, objs, tags, options, credentials, unixPaths=None):
 
         if db.tag_exists(fulltag):
             if options.force or options.recurse:
-                fishlib.untag_by_query(db, u'has %s' % fulltag[1:],
-                                       [fulltag[1:]])
+                db.untag_by_query(u'has %s' % fulltag[1:],
+                                  [fulltag[1:]])
             else:
                 ids = db.query(u'has %s' % fulltag[1:])
                 if type(ids) in (int, long):

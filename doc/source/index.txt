@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-The fish Command Line for Fluidinfo
+The Fish Command Line for Fluidinfo
 ===================================
 
 **Overview**
@@ -26,6 +26,13 @@ The fish Command Line for Fluidinfo
    tags.txt
    count.txt
 
+**Search**
+
+.. toctree::
+   :maxdepth: 1
+
+   search.txt
+
 **Commands for Listing and Managing Tags and Namespaces**
 
 .. toctree::
@@ -38,7 +45,6 @@ The fish Command Line for Fluidinfo
    mkns.txt
    mkdir.txt
    pwd.txt
-   pwn.txt
 
 **Commands for Finding About Tags**
 
@@ -46,9 +52,27 @@ The fish Command Line for Fluidinfo
    :maxdepth: 1
 
    abouttag.txt
-   about.txt
    amazon.txt
    normalize.txt
+
+**Cache & Aliases**
+
+.. toctree::
+   :maxdepth: 1
+
+   showcache.txt
+   sync.txt
+   alias.txt
+   init.txt
+
+**Sequences**
+
+.. toctree::
+   :maxdepth: 1
+
+   mkseq.txt
+   seq.txt
+   listseq.txt
 
 **Miscellaneous Commands**
 
@@ -61,7 +85,6 @@ The fish Command Line for Fluidinfo
    su.txt
    whoami.txt
    quit.txt
-   exit.txt
 
    test.txt   
 

@@ -1,5 +1,5 @@
 
-An Overview of the fish Command Line for Fluidinfo
+An Overview of the Fish Command Line for Fluidinfo
 **************************************************
 
 
@@ -22,7 +22,7 @@ system and policies, while all objects are shared.
 Overview of the Command Line
 ============================
 
-The fish command line is a acts as a sort-of one-shot command shell
+The Fish command line is a acts as a sort-of one-shot command shell
 for Fluidinfo.   It gives access to much of the functionality of the
 underlying ``fish.py`` library, with a main focus on tagging, getting
 tag values, finding tags, querying Fluidinfo and clearing (removing
@@ -92,7 +92,7 @@ describe the abstraction ``fish`` uses, as it differs in key respects
 from the underlying Fluidinfo model.
 
 
-The fish Abstraction
+The Fish Abstraction
 ====================
 
 The Fluidinfo API is quite low level and rigid; ``fish`` offers a
@@ -107,7 +107,7 @@ differences.
      In ``fish``, you can just go ahead and set a tag; if it doesn't
      exist, the system will create it for you.
 
-   3. Fluidinfo supports *namespaces*; a namespace is to a tag much
+   * Fluidinfo supports *namespaces*; a namespace is to a tag much
      like a directory or folder is to a file, i.e. tags live in
      namespaces and you can have different tags with the same name in
      different namspaces, just as you can have two files with the same
@@ -144,10 +144,10 @@ differences.
      the name ``/id``.
 
 
-The Anatomy of the core fish Commands
+The Anatomy of the core Fish Commands
 =====================================
 
-The general form of the core fish commands is:
+The general form of the core Fish commands is:
 
    fish <verb> [flags] <object selector> <tags/values>
 
@@ -238,7 +238,7 @@ commands without the ``fish`` prefix at the start of the line. For
 example:
 
    $ fish
-   This is fish version 3.10.
+   This is fish version 0.00.
    > pwd
    alice
    > show -a 'book:alices adventures in wonderland (lewis carroll)' rating

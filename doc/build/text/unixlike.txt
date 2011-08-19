@@ -57,7 +57,7 @@ occur:
      Thus, to refer to ``jacqui``'s rating, use ``/jacqui/rating``
      etc. For example,
 
-        fish show -a DADGAD rating /jacqui/rating
+        $ fish show -a DADGAD rating /jacqui/rating
 
      will request the Fluidinfo tags ``alice/rating`` and
      ``jacqui/rating``.
@@ -65,7 +65,7 @@ occur:
    * The *about tag*, ``fluiddb/about`` may be referred to with the
      special abbreviation ``/about``. For example,
 
-        fish show -a DADGAD rating /jacqui/rating /about
+        $ fish show -a DADGAD rating /jacqui/rating /about
 
      (though requesting the about tag for an object specified by about
      tag is obviously a bit pointless).
@@ -79,11 +79,11 @@ occur:
      request the about tags for all objects containing DADGAD, you
      would say:
 
-        fish show -q 'fluiddb/about matches "DADGAD"' /about
+        $ fish show -q 'fluiddb/about matches "DADGAD"' /about
 
      Similarly, to request all objects ``alice`` has rated 10:
 
-        fish show -q 'alice/rating = 10' /about
+        $ fish show -q 'alice/rating = 10' /about
 
 **NOTES**
 

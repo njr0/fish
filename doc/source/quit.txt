@@ -1,0 +1,13 @@
+quit — quits fish
+*****************
+
+Causes fish to exit.   Primarily used with the interactive shell.
+
+**FORM**
+::
+
+    quit
+    exit
+
+
+

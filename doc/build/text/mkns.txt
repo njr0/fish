@@ -7,7 +7,7 @@ to set its description.
 
 **FORM**
 
-   [fish] mkns path
+   mkns path
 
 **FLAGS**
 

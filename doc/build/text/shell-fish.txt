@@ -4,8 +4,8 @@ Shell-Fish: The Online version of Fish
 
 [image]
 
-There is a version of ``fish`` available online at http://shell-
-fish.appspot.com.
+There is a version of ``fish`` available online at
+http://abouttag.appspot.com/fish or http://fish.abouttag.appspot.com.
 
 This version provides full access to the whole of ``fish`` with very
 few exceptions and changes.
@@ -20,7 +20,7 @@ Key things to know are:
      using those credentials.   (The ``su`` command will switch
      between users.)   You can also specify whether you wish to use
      full Fluidinfo-style paths or abbreviated Unix-style paths with
-     fish online.
+     Fish online.
 
    * If you don't log in, you will be able to interact with Fluidinfo
      using the ``fish``.   This user has restricted permissions,
@@ -58,6 +58,6 @@ Key things to know are:
      be more common at times when Fluidinfo is under particularly
      heavy load.
 
-   * If you use an iPhone or iPad, you can add the fish page to your
+   * If you use an iPhone or iPad, you can add the Fish page to your
      homescreen and get a "web app" version, which should show up
      looking like the one at the top of the page.

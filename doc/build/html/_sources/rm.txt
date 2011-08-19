@@ -9,7 +9,7 @@ the ``-r`` options is specified) and tags have to be unused
 **FORM**
 ::
 
-    [fish] rm [flags] [<namespace>|<tag>]
+    rm [flags] [<namespace>|<tag>]
 
 **FLAGS**
 

@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -5,24 +7,25 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pwd — prints the name of the working directory (root user namespace) &mdash; fish v4.02 documentation</title>
+    <title>pwd (or pwn) — prints the name of the working directory (root user namespace) &mdash; fish v4.10 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '4.02',
-        COLLAPSE_MODINDEX: false,
+        VERSION:     '4.10',
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="author" title="About these documents" href="about.html" />
-    <link rel="top" title="fish v4.02 documentation" href="index.html" />
-    <link rel="next" title="pwn — prints the name of the working namespace (root user directory)" href="pwn.html" />
-    <link rel="prev" title="mkdir - makes a new namespace (the Fluidinfo equivalent of a directory)" href="mkdir.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="fish v4.10 documentation" href="index.html" />
+    <link rel="next" title="abouttag — returns the canonical about tag for an object based on properties" href="abouttag.html" />
+    <link rel="prev" title="mkdir — makes a new namespace (the Fluidinfo equivalent of a directory)" href="mkdir.html" /> 
   </head>
   <body>
     <div class="related">
@@ -32,12 +35,12 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="pwn.html" title="pwn — prints the name of the working namespace (root user directory)"
+          <a href="abouttag.html" title="abouttag — returns the canonical about tag for an object based on properties"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="mkdir.html" title="mkdir - makes a new namespace (the Fluidinfo equivalent of a directory)"
+          <a href="mkdir.html" title="mkdir — makes a new namespace (the Fluidinfo equivalent of a directory)"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fish v4.02 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.10 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -46,13 +49,18 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="pwd-prints-the-name-of-the-working-directory-root-user-namespace">
-<h1>pwd — prints the name of the working directory (root user namespace)<a class="headerlink" href="#pwd-prints-the-name-of-the-working-directory-root-user-namespace" title="Permalink to this headline">¶</a></h1>
-<p>For the moment, <tt class="docutils literal"><span class="pre">pwd</span></tt> and <tt class="docutils literal"><span class="pre">pwn</span></tt> (print working directory/namespace)
-both execute <tt class="docutils literal"><span class="pre">whoami</span></tt>.
-At some point in the future, <tt class="docutils literal"><span class="pre">fish</span></tt> may support the notion of a working
-namespace and a <tt class="docutils literal"><span class="pre">cd</span></tt> command; this is only really relevant if the
-user chooses to use unix-style paths with <tt class="docutils literal"><span class="pre">fish</span></tt>.</p>
+  <div class="section" id="pwd-or-pwn-prints-the-name-of-the-working-directory-root-user-namespace">
+<h1>pwd (or pwn) — prints the name of the working directory (root user namespace)<a class="headerlink" href="#pwd-or-pwn-prints-the-name-of-the-working-directory-root-user-namespace" title="Permalink to this headline">¶</a></h1>
+<p><strong>FORM</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">pwd</span>
+<span class="n">pwn</span>
+</pre></div>
+</div>
+<p>For the moment, <tt class="docutils literal"><span class="pre">pwd</span></tt> and <tt class="docutils literal"><span class="pre">pwn</span></tt> (print working
+directory/namespace) both execute <tt class="docutils literal"><span class="pre">whoami</span></tt>.  At some point in the
+future, <tt class="docutils literal"><span class="pre">fish</span></tt> may support the notion of a working namespace and a
+<tt class="docutils literal"><span class="pre">cd</span></tt> command; this is only really relevant if the user chooses to
+use unix-style paths with <tt class="docutils literal"><span class="pre">fish</span></tt>.</p>
 </div>
 
 
@@ -64,30 +72,30 @@ user chooses to use unix-style paths with <tt class="docutils literal"><span cla
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/fish-doc-logo.png" alt="Logo"/>
             </a></p>
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="mkdir.html"
-                                  title="previous chapter">mkdir - makes a new namespace (the Fluidinfo equivalent of a directory)</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="pwn.html"
-                                  title="next chapter">pwn — prints the name of the working namespace (root user directory)</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="_sources/pwd.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="mkdir.html"
+                        title="previous chapter">mkdir — makes a new namespace (the Fluidinfo equivalent of a directory)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="abouttag.html"
+                        title="next chapter">abouttag — returns the canonical about tag for an object based on properties</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/pwd.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -99,17 +107,17 @@ user chooses to use unix-style paths with <tt class="docutils literal"><span cla
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="pwn.html" title="pwn — prints the name of the working namespace (root user directory)"
+          <a href="abouttag.html" title="abouttag — returns the canonical about tag for an object based on properties"
              >next</a> |</li>
         <li class="right" >
-          <a href="mkdir.html" title="mkdir - makes a new namespace (the Fluidinfo equivalent of a directory)"
+          <a href="mkdir.html" title="mkdir — makes a new namespace (the Fluidinfo equivalent of a directory)"
              >previous</a> |</li>
-        <li><a href="index.html">fish v4.02 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.10 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2011, Nicholas J. Radcliffe.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.2.
+        &copy; Copyright 2011, Nicholas J. Radcliffe.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>

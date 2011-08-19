@@ -6,7 +6,7 @@ Counts the number of objects matching a set of conditions
 
 **FORM**
 
-   [fish] count [flags] <object specifier>
+   count [flags] <object specifier>
 
 **EXAMPLES**
 
