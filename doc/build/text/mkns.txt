@@ -3,11 +3,13 @@ mkns — makes a new namespace
 ****************************
 
 The ``mkns`` command may be used to create a namespace, and optionally
-to set its description.
+to set its description. The command ``mkdir`` may be used as an
+alternative.
 
-**FORM**
+**FORMS**
 
    mkns path
+   mkdir path
 
 **FLAGS**
 
@@ -34,7 +36,3 @@ before use set permissions before use or specify a description.
 
 The ``mkns`` command cannot be used (at present) to change the
 description of an existing namespace.
-
-**SEE ALSO:**
-
-``mkdir`` (synonym)

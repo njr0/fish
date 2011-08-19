@@ -43,8 +43,7 @@ The Fish Command Line for Fluidinfo
    rm.txt
    touch.txt
    mkns.txt
-   mkdir.txt
-   pwd.txt
+   pwn.txt
 
 **Commands for Finding About Tags**
 

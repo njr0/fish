@@ -20,7 +20,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="fish v4.11 documentation" href="index.html" />
-    <link rel="next" title="mkdir — makes a new namespace (the Fluidinfo equivalent of a directory)" href="mkdir.html" />
+    <link rel="next" title="pwd (or pwn) — prints the name of the working directory (root user namespace)" href="pwn.html" />
     <link rel="prev" title="touch — creates a tags and optionally sets their descriptions" href="touch.html" /> 
   </head>
   <body>
@@ -31,7 +31,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="mkdir.html" title="mkdir — makes a new namespace (the Fluidinfo equivalent of a directory)"
+          <a href="pwn.html" title="pwd (or pwn) — prints the name of the working directory (root user namespace)"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="touch.html" title="touch — creates a tags and optionally sets their descriptions"
@@ -48,9 +48,11 @@
   <div class="section" id="mkns-makes-a-new-namespace">
 <h1>mkns — makes a new namespace<a class="headerlink" href="#mkns-makes-a-new-namespace" title="Permalink to this headline">¶</a></h1>
 <p>The <tt class="docutils literal"><span class="pre">mkns</span></tt> command may be used to create a namespace, and optionally
-to set its description.</p>
-<p><strong>FORM</strong></p>
-<div class="highlight-python"><pre>mkns path</pre>
+to set its description.
+The command <tt class="docutils literal"><span class="pre">mkdir</span></tt> may be used as an alternative.</p>
+<p><strong>FORMS</strong></p>
+<div class="highlight-python"><pre>mkns path
+mkdir path</pre>
 </div>
 <p><strong>FLAGS</strong></p>
 <blockquote>
@@ -78,8 +80,6 @@ command is only needed, therefore, if you wish to set permissions
 before use set permissions before use or specify a description.</p>
 <p>The <tt class="docutils literal"><span class="pre">mkns</span></tt> command cannot be used (at present) to change the
 description of an existing namespace.</p>
-<p><strong>SEE ALSO:</strong></p>
-<p><tt class="docutils literal"><span class="pre">mkdir</span></tt> (synonym)</p>
 </div>
 
 
@@ -95,8 +95,8 @@ description of an existing namespace.</p>
             <p class="topless"><a href="touch.html"
                                   title="previous chapter">touch — creates a tags and optionally sets their descriptions</a></p>
             <h4>Next topic</h4>
-            <p class="topless"><a href="mkdir.html"
-                                  title="next chapter">mkdir — makes a new namespace (the Fluidinfo equivalent of a directory)</a></p>
+            <p class="topless"><a href="pwn.html"
+                                  title="next chapter">pwd (or pwn) — prints the name of the working directory (root user namespace)</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
               <li><a href="_sources/mkns.txt"
@@ -126,7 +126,7 @@ description of an existing namespace.</p>
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="mkdir.html" title="mkdir — makes a new namespace (the Fluidinfo equivalent of a directory)"
+          <a href="pwn.html" title="pwd (or pwn) — prints the name of the working directory (root user namespace)"
              >next</a> |</li>
         <li class="right" >
           <a href="touch.html" title="touch — creates a tags and optionally sets their descriptions"

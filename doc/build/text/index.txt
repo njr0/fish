@@ -23,8 +23,6 @@ The Fish Command Line for Fluidinfo
 * rm — removes tags and namespaces
 * touch — creates a tags and optionally sets their descriptions
 * mkns — makes a new namespace
-* mkdir — makes a new namespace (the Fluidinfo equivalent of a
-  directory)
 * pwd (or pwn) — prints the name of the working directory (root user
   namespace)
 **Commands for Finding About Tags**
