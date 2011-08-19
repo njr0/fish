@@ -1,0 +1,6 @@
+.. _fishseq:
+
+seq — adds to a sequence
+************************
+
+

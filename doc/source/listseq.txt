@@ -1,0 +1,8 @@
+.. _fishlistseq:
+
+listseq — lists items in or searches a sequence
+***********************************************
+
+
+
+

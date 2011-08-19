@@ -1,0 +1,142 @@
+.. _fishmkseq:
+
+mkseq — make a new sequence
+***************************
+
+The ``mkseq`` command in Fish is used to create a new sequence.
+A Fish sequence is a numbered colection of textual items,
+that can be added to, listed and searched easily.
+
+
+**FORM**
+::
+
+    mkseq [-p] item-name
+    mkseq [-p] item-name plural-form
+    mkseq [-p] item-name plural-form tag
+
+
+**EXAMPLES**
+
+The simplest form of the command is exemplified by
+::
+  
+        $ mkseq note
+        Next note-number: 1
+
+This command creates two new aliases—``note`` and ``notes`` and
+initializes the sequence numbering.
+
+If the ``-p`` flag is used, the sequence will use the user's
+``private`` namespace; otherwise it will use tags in the user's
+top-level namespace.
+
+Once executed, the command:
+::
+
+        $ note 'This is my first note'
+        note 1: This is my first note
+        2011-08-18
+
+Creates a new note, with the next available note number (1, in this case).
+
+The command ``notes`` will list recent notes (10, by default).
+::
+
+        $ notes
+        note 1: This is my first note
+        2011-08-18
+
+Fish uses absolutely no intelligence in constructing the plural form:
+it just adds an 's'.   If you happen to be creating a sequence of
+cacti, you should probably use:
+::
+
+    $ mkseq cactus cacti
+
+to specify that you want to use ``cacti`` as the plural form to list
+sequences.
+
+You can add a number, to specify how many recent items to show,
+or a list of words, to filter the items shown.   See
+:ref:`fishlistseq` for details.
+
+
+The way Fish sequences are implemented is  as follows:
+
+       * A tag is used to store the content of the item.
+         By default this tag has the same name as the sequence,
+	 and is in the user's top-level namespace.
+	 In the example, therefore, if the user is Alice,
+	 the tag will be ``alice/note``.
+         If you want to use a different tag, use the third form of
+         the command, where the last argument is the tag you want
+	 to use.   (In this case, you need to specify the plural
+	 form as well; see below.)
+
+       * If the ``-p`` flag is used, instead of using a tag in
+         the user's top-level namespace, Fish will use a tag in
+	 the user's ``private`` namespace, which will be created
+	 if necessary.   (The flag has no effect if you specify
+	 the tag explicitly.)
+
+         **NOTE** Fish will not change or set the permissions on
+	 the ``private`` namespace; if Alice does not already
+	 have a private namespace, she should first make create
+	 it and set its permissions to be private.   This can
+	 be achieved by saying:
+	 ::
+
+	     $ mkdir private
+	     $ perms private private
+
+      * As well as the base tag, used to hold the sequence contents,
+        Fish uses several other related tags to store sequence metadata.
+	Again, assuming the base tag for the sequence is alice/note,
+	these will be
+
+	  - ``alice/note-number``
+	  - ``alice/note-date``
+
+        which are stored on the object containing the notes.
+	Since Fluidinfo does not have a date type, Fish simply
+	uses numeric values of the form 20110824.123456 to store
+	dates, ignoring all timezone considerations.   These are
+	reported only to the day, normally.
+
+	There will also be a tag:
+
+          - ``alice/note-next``
+
+        which is stored on the Fluidinfo object for the user.
+	This is used by Fish to keep track of the next number to
+	use in the sequence.
+        ::
+
+	    $ fish show -a "`fish abouttag fi-user alice`" note-next
+            Object ....
+	      /alice/note-next = 2
+
+      * Fish creates two aliases, one with the name of the sequence,
+        and another with the plural form of the name of the sequence,
+	in the present case, ``note`` and ``notes``.
+        ::
+
+	    $ fish alias note notes
+	    note:
+		alice/.fish/alias = "seq /alice/note"
+
+	    notes:
+		alice/.fish/alias = "listseq /alice/note"
+
+        The ``note`` command can then be used to add items to the sequence,
+	and the ``notes`` command will list the last few items in the sequence
+	or search the sequence.   See 
+
+**SEE ALSO**
+
+ * :ref:`fishseq`
+ * :ref:`fishlistseq`
+
+
+

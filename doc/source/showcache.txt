@@ -1,0 +1,2 @@
+showcache — shows the contents of the Fish cache
+************************************************
