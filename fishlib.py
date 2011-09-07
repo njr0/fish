@@ -6,7 +6,7 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'4.12'
+__version__ = u'4.13'
 VERSION = __version__
 
 import codecs
@@ -1151,6 +1151,12 @@ class Fluidinfo:
             else:
                 o.tags[tag] = (u'%s value of size %d bytes' % (mime, size))
         return o
+
+    def to_fi_tags(self, hash):
+        h = {}
+        for tag in hash:
+            h[self.abs_tag_path(tag)[1:]] = hash[tag]
+        return h
 
 
 def object_uri(id):

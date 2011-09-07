@@ -452,4 +452,7 @@
 2011/09/07 v4.12
 Updated documentation.   Green colour-scheme.
 
+2011/09/07 v4.13
+Added to_fi_tags to Fluidinfo in fishlib.py.
+
 """
