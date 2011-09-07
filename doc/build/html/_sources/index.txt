@@ -62,6 +62,7 @@ The Fish Command Line for Fluidinfo
    showcache.txt
    sync.txt
    alias.txt
+   unalias.txt
    init.txt
 
 **Sequences**

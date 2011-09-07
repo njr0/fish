@@ -448,4 +448,8 @@
                      and removing silly duplicate documentation.
                      Cleaned up the formatting slightly, too.
                      (Why does Sphinx but lists in blockquotes?)
+
+2011/09/07 v4.12
+Updated documentation.   Green colour-scheme.
+
 """

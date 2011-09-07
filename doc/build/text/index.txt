@@ -16,6 +16,7 @@ The Fish Command Line for Fluidinfo
 * count — counts the number of objects satisfying a query
 **Search**
 
+* search — searches about tags
 **Commands for Listing and Managing Tags and Namespaces**
 
 * ls — lists tags and namespaces and their properties
@@ -34,8 +35,16 @@ The Fish Command Line for Fluidinfo
 * normalize — performs canonical normalization for use with about tags
 **Cache & Aliases**
 
+* showcache — shows the contents of the Fish cache
+* sync — synchronizes the Fish cache with Fluidinfo
+* alias — create or show Fish aliases
+* unalias — delete an alias
+* init — initialize fish
 **Sequences**
 
+* mkseq — make a new sequence
+* seq — adds to a sequence
+* listseq — lists items in or searches a sequence
 **Miscellaneous Commands**
 
 * help — provides help overview or help with a specific fish command
