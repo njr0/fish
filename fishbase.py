@@ -82,11 +82,13 @@ class O:
 
 
 def formatted_tag_value(tag, value, terse=False, prefix=u'  '):
-    lhs = '' if terse else '%s%s = ' % (prefix, tag)
+    lhs = u'' if terse else u'%s%s = ' % (prefix, tag)
     if value == None:
         return u'%s%s' % (u'' if terse else prefix, tag)
-    elif type(value) in types.StringTypes:
+    elif type(value) == unicode:
         return u'%s"%s"' % (lhs, value)
+    elif type(value) == type(''):
+        return '%s"%s"' % (lhs.encode('UTF-8'), value)
     elif type(value) in (list, tuple):
         vals = value[:]
         vals.sort()
