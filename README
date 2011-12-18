@@ -1,25 +1,25 @@
 ** IMPORTANT CHANGE IN VERSION 2.00: SEE TAG CONVENTIONS **
 
-FDB PYTHON LIBRARY
-==================
+FISH PYTHON LIBRARY
+===================
 
-fdb is a primarily a command line tool for providing access to the
+Fish is a primarily a command line tool for providing access to the
 Fluidinfo data store (from Fluidinfo (http://fluidinfo.com/.)
 There is lots of coverage of the library (and its evolution) at
 http://blog.abouttag.com/.
 
 
-FDB COMMAND LINE ACCESS
-=======================
+FISH COMMAND LINE ACCESS
+========================
 
-fdb can also be used for command-line access to FluidDB.
+Fish can also be used for command-line access to FluidDB.
 See 'USING THE COMMAND LINE', below.
 
 
 DEPENDENCIES
 ============
 
-If you're running python 2.6, fdb should just run.   With earlier
+If you're running python 2.6, Fish should just run.   With earlier
 version of python, you need to get access to simplejson and httplib2.
 You can get simplejson from http://pypi.python.org/pypi/simplejson/
 and httplib2 from http://code.google.com/p/httplib2/.
@@ -43,7 +43,7 @@ for this is ~/.fluidDBcredentials.
 
 On windows, the lcoation of the credentials file is specified
 by the environment variable FDB_CREDENTIALS_FILE; if that is not
-set, the fdb looks for c:\fdb\credentials.txt.
+set, the Fish looks for c:\fish\credentials.txt.
 
 You can also optionally add a line, after password, saying either
 
@@ -54,7 +54,7 @@ or unix-style-paths false
 TAG CONVENTIONS
 ===============
 
-As from version 2.00, fdb uses absolute Fluidinfo-style paths all the time
+As from version 2.00, Fish uses absolute Fluidinfo-style paths all the time
 (i.e. you always specify the namespace and don't use a leading slash).
 You can explicitly mandate this also by adding the line
 
@@ -66,7 +66,7 @@ If you instead set
 
 unix-style-paths true
 
-on the third line of the credentials file, fdb uses unix-style paths,
+on the third line of the credentials file, Fish uses unix-style paths,
 meaning that paths are assumed to be relative to the user's namespace
 unless they are introduced with a leading slash.  Also, the about tag
 (fluiddb/about) may be referred to as /about.  This affects input and
@@ -83,10 +83,10 @@ TESTS
 
 The library includes a set of tests.   If you have valid credentials,
 and everything is OK, these should run successfully if you just execute
-the file fdb.py.   For example, at the time of writing this README file
-(version 2.03 of the fdb), I get this:
+the file fish.py.   For example, at the time of writing this README file
+(version 2.03 of the Fish), I get this:
 
-$ fdb test
+$ fish test
 ......................
 ----------------------------------------------------------------------
 Ran 22 tests in 46.311s
@@ -107,33 +107,33 @@ Four ways of exploring the library are:
 USING THE COMMAND LINE
 ======================
 
-Commands can be run by giving arguments to fdb.
+Commands can be run by giving arguments to Fish.
 For a list of commands, use
 
-	fdb help
+	fish help
 
 An example command is
 
-python fdb show -a DADGAD rating /fluiddb/about
+python fish show -a DADGAD rating /fluiddb/about
 
-Obviously, if you want to use fdb as a command from the shell, it will
+Obviously, if you want to use Fish as a command from the shell, it will
 probably be convenient to use an alias or create a trivial shell script
 to run it.   I use bash, with the alias
 
-alias fdb='~/python/fluiddb/fdb'
+alias fish='~/python/fluiddb/fish'
 
 which allows me to type
 
-fdb show -a DADGAD rating /fluiddb/about
+fish show -a DADGAD rating /fluiddb/about
 
-You can also put a link to fdb into some directpry (like ~/bin) on your
+You can also put a link to Fish into some directpry (like ~/bin) on your
 ``PATH``.
 
 
 DELICIOUS
 =========
 
-Also distributed with fdb itself is code for accessing delicious.com
+Also distributed with Fish itself is code for accessing delicious.com
 (http://del.icio.us/, as was), and for migrating bookmarks and other
 data to FluidDB.   This also includes functionality for creating web
 homepages from delicious based on a home tag.   See the README-DELICIOUS

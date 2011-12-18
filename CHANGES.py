@@ -452,4 +452,11 @@
 2011/09/07 v4.12
 Updated documentation.   Green colour-scheme.
 
+2011/12/18 v4.13
+Fixed a couple of bugs.
+  - Non-primitive tag values now show in a more sensible way.
+  - Restored the ability to specify objects by ID (which had been
+    inadvertantly broken).
+  - Format sets of strings slightly better (one per line), so that
+    poor humans have some chance of reading them.
 """

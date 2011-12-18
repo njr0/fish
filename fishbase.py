@@ -81,9 +81,12 @@ class O:
                 raise
 
 
-def formatted_tag_value(tag, value, terse=False, prefix=u'  '):
+def formatted_tag_value(tag, value, terse=False, prefix=u'  ', mime=None):
     lhs = u'' if terse else u'%s%s = ' % (prefix, tag)
-    if value == None:
+    if mime:
+        return (u'%s<Non-primative value of type %s (size %d)>'
+                % (lhs, unicode(mime), len(value)))
+    elif value == None:
         return u'%s%s' % (u'' if terse else prefix, tag)
     elif type(value) == unicode:
         return u'%s"%s"' % (lhs, value)
@@ -92,8 +95,8 @@ def formatted_tag_value(tag, value, terse=False, prefix=u'  '):
     elif type(value) in (list, tuple):
         vals = value[:]
         vals.sort()
-        return u'%s{%s}' % (lhs,
-                             u', '.join(u'"%s"' % unicode(v) for v in vals))
+        return u'%s{\n    %s\n  }' % (lhs,
+                             u'\n    '.join(u'"%s"' % unicode(v) for v in vals))
     else:
         return u'%s%s' % (lhs, toStr(value))
 

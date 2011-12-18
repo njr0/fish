@@ -6,7 +6,7 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'4.12'
+__version__ = u'4.13'
 VERSION = __version__
 
 import codecs
@@ -761,10 +761,10 @@ class Fluidinfo:
             return status, (value if status == STATUS.OK else None)
 
     def get_tag_value_by_id(self, id, tag, inPref=False, getMime=False):
-        return self.get_tag_value(id, tag, False, inPref)
+        return self.get_tag_value(id, tag, False, inPref, getMime=getMime)
     
     def get_tag_value_by_about(self, about, tag, inPref=False, getMime=False):
-        return self.get_tag_value(about, tag, True, inPref)
+        return self.get_tag_value(about, tag, True, inPref, getMime=getMime)
 
     def get_tag_values_by_id(self, id, tags):
         return [self.get_tag_value_by_id(id, tag) for tag in tags]

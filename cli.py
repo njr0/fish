@@ -222,15 +222,17 @@ def execute_show_command(objs, db, tags, options, action):
                     status, v = STATUS.OK, obj.specifier
             else:
                 if obj.about:
-                    status, v = db.get_tag_value_by_about(obj.about, tag,
-                                                          inPref=True)
+                    status, (v, t) = db.get_tag_value_by_about(obj.about, tag,
+                                                               inPref=True,
+                                                               getMime=True)
                 else:
-                    status, v = db.get_tag_value_by_id(obj.id, tag,
-                                                       inPref=True)
+                    status, (v, t)  = db.get_tag_value_by_id(obj.id, tag,
+                                                             inPref=True,
+                                                             getMime=True)
 
             saveForNow = True   # while getting ready to move to objects
             if status == STATUS.OK:
-                db.Print(formatted_tag_value(outtag, v, terse),
+                db.Print(formatted_tag_value(outtag, v, terse, mime=t),
                          allowSave=saveForNow)
                 obj.tags[outtag] = v
             elif status == STATUS.NOT_FOUND:
@@ -240,7 +242,7 @@ def execute_show_command(objs, db, tags, options, action):
             else:
                 db.Print(cli_bracket(u'error code %s attempting to read tag %s'
                                      % (error_code(status), outtag)),
-                                     allowSave=saveForNowe)
+                                        allowSave=saveForNowe)
 #            db.Print(obj, allowPrint=False)
 
 
@@ -257,12 +259,15 @@ def execute_tags_command(objs, db, options):
             fulltag = u'/%s' % tag
             outtag = u'/%s' % tag if db.unixStyle else tag
             if obj.about:
-                status, v = db.get_tag_value_by_about(obj.about, fulltag)
+                status, (v, t) = db.get_tag_value_by_about(obj.about, fulltag,
+                                                           getMime=True)
             else:
-                status, v = db.get_tag_value_by_about(obj.id, fulltag)
+                status, (v, t) = db.get_tag_value_by_id(obj.id, fulltag,
+                                                        getMime=True)
 
             if status == STATUS.OK:
-                db.Print(formatted_tag_value(outtag, v))
+                db.Print(formatted_tag_value(outtag, v, mime=t))
+#                a = formatted_tag_value(outtag, v, mime=t)
             elif status == STATUS.NOT_FOUND:
                 db.Print(u'  %s' % cli_bracket(u'tag %s not present' % outtag))
             else:
