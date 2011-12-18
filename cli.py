@@ -195,6 +195,7 @@ def sort_tags(tags):
                 tags = [t] + tags
         except ValueError:
             pass
+    return tags
 
 
 def execute_show_command(objs, db, tags, options, action):
@@ -207,19 +208,20 @@ def execute_show_command(objs, db, tags, options, action):
         description = describe_by_mode(obj)
         if not terse:
             db.Print(u'Object %s:' % description)
-#            sort_tags(tags)
+#            tags = sort_tags(tags)
         for tag in tags:
             fulltag = db.abs_tag_path(tag, inPref=True)
             outtag = db.abs_tag_path(tag, inPref=True, outPref=True)
             if tag == u'/id':
+                t = None
                 if obj.about:
-                    o = db.query(u'fluiddb/about = "%s"' % obj.specifier)
+                    o = db.query(u'fluiddb/about = "%s"' % obj.id)
                     if type(o) == types.IntType:  # error
                         status, v = o, None
                     else:
                         status, v = STATUS.OK, o[0]
                 else:
-                    status, v = STATUS.OK, obj.specifier
+                    status, v = STATUS.OK, obj.id
             else:
                 if obj.about:
                     status, (v, t) = db.get_tag_value_by_about(obj.about, tag,
@@ -254,7 +256,7 @@ def execute_tags_command(objs, db, options):
             tags = db.get_object_tags_by_about(obj.about)
         else:
             tags = db.get_object_tags_by_id(obj.id)
-        sort_tags(tags)
+        tags = sort_tags(tags)
         for tag in tags:
             fulltag = u'/%s' % tag
             outtag = u'/%s' % tag if db.unixStyle else tag
@@ -267,7 +269,6 @@ def execute_tags_command(objs, db, options):
 
             if status == STATUS.OK:
                 db.Print(formatted_tag_value(outtag, v, mime=t))
-#                a = formatted_tag_value(outtag, v, mime=t)
             elif status == STATUS.NOT_FOUND:
                 db.Print(u'  %s' % cli_bracket(u'tag %s not present' % outtag))
             else:

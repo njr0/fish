@@ -459,4 +459,8 @@ Fixed a couple of bugs.
     inadvertantly broken).
   - Format sets of strings slightly better (one per line), so that
     poor humans have some chance of reading them.
+
+2011/12/18 v4.14
+Made /id work.   Something broke it.   (Well, someone, to be more precise.)
+And made /about show consistently in the tags command.
 """
