@@ -467,4 +467,11 @@ And made /about show consistently in the tags command.
 2011/12/18 v4.15
 Manually pulled in otoburb's pull request changes (since too much had
 changed for an auto-merge :-().  Thanks, Otoburb, for all the
-clean-up.  Sorry for being so slow...  """
+clean-up.  Sorry for being so slow...
+
+2011/12/18 v4.16
+Documented the new commands (sequence commands, alias commands, sync, init
+and search).
+
+"""
+

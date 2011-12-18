@@ -1,3 +1,10 @@
 init — initialize fish
 **********************
 
+Initializes Fish, creating the .fish namespace under the user's top-level
+and setting its permissions to private.
+
+**FORM**
+
+  $ fish init
+

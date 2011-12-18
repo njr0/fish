@@ -1,2 +1,42 @@
+.. _fishshowcache
+
 showcache — shows the contents of the Fish cache
 ************************************************
+
+The show cache command shows the contents of Fish's cache,
+which is a local copy of aliases and other configuration information
+used to personalize Fish.
+
+**FORM**
+::
+
+    showcache
+
+The cache file is stored in ``~/.fishcache.username`` on Unix-like systems
+(including Macs) and in ``c:\\fish\\fishcache-username`` on Windows systems.
+
+**EXAMPLE**
+::
+
+   $ fish showcache
+   Cache:
+
+     fluiddb/about="plp":
+         njr/.fish/alias = "show -q "has njr/lastpage" /about"
+
+     fluiddb/about="thought":
+         njr/.fish/alias = "seq private/thought"
+
+     fluiddb/about="book":
+         njr/.fish/alias = "abouttag book"
+
+     fluiddb/about="parisrating":
+         njr/.fish/alias = "show -a "Paris" rating"
+
+     fluiddb/about="thoughts":
+         njr/.fish/alias = "listseq private/thought"
+
+
+**SEE ALSO**:
+
+``sync``, ``alias``, ``unalias``, ``seq``

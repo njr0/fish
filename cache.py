@@ -3,7 +3,7 @@ from fishbase import get_user_file
 
 ALIAS_TAG = u'.fish/alias'
 CACHE_FILE = {u'unix': u'.fishcache.%s',
-              u'windows': u'c:\\fish\\credentials-%s.txt'}
+              u'windows': u'c:\\fish\\fishcache-%s.txt'}
 
 
 class CacheError(Exception):
