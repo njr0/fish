@@ -19,7 +19,7 @@ See 'USING THE COMMAND LINE', below.
 DEPENDENCIES
 ============
 
-If you're running python 2.6, Fish should just run.   With earlier
+If you're running python 2.6 or higher, Fish should just run.   With earlier
 version of python, you need to get access to simplejson and httplib2.
 You can get simplejson from http://pypi.python.org/pypi/simplejson/
 and httplib2 from http://code.google.com/p/httplib2/.
@@ -28,7 +28,7 @@ and httplib2 from http://code.google.com/p/httplib2/.
 CREDENTIALS
 ===========
 
-For many operations, you also need an account on FluidDB,
+For many operations, you also need an account on Fluidinfo,
 and credentials (a username and password).   You can get these from
     http://fluidinfo.com/accounts/new
 The library allows you to give it your credentials in various
@@ -41,9 +41,9 @@ password
 On Unix-like operating systems (including Mac OS X), the default location
 for this is ~/.fluidDBcredentials.
 
-On windows, the lcoation of the credentials file is specified
+On windows, the location of the credentials file is specified
 by the environment variable FDB_CREDENTIALS_FILE; if that is not
-set, the Fish looks for c:\fish\credentials.txt.
+set, then Fish looks for c:\fish\credentials.txt.
 
 You can also optionally add a line, after password, saying either
 
@@ -126,7 +126,7 @@ which allows me to type
 
 fish show -a DADGAD rating /fluiddb/about
 
-You can also put a link to Fish into some directpry (like ~/bin) on your
+You can also put a link to Fish into some directory (like ~/bin) on your
 ``PATH``.
 
 
@@ -135,7 +135,7 @@ DELICIOUS
 
 Also distributed with Fish itself is code for accessing delicious.com
 (http://del.icio.us/, as was), and for migrating bookmarks and other
-data to FluidDB.   This also includes functionality for creating web
+data to Fluidinfo.   This also includes functionality for creating web
 homepages from delicious based on a home tag.   See the README-DELICIOUS
 file for details on this functionality.
 

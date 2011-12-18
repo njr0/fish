@@ -463,4 +463,8 @@ Fixed a couple of bugs.
 2011/12/18 v4.14
 Made /id work.   Something broke it.   (Well, someone, to be more precise.)
 And made /about show consistently in the tags command.
-"""
+
+2011/12/18 v4.15
+Manually pulled in otoburb's pull request changes (since too much had
+changed for an auto-merge :-().  Thanks, Otoburb, for all the
+clean-up.  Sorry for being so slow...  """
