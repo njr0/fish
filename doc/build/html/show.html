@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>show — shows the values of tags on objects &mdash; fish v4.15 documentation</title>
+    <title>show — shows the values of tags on objects &mdash; fish v4.17 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '4.15',
+        VERSION:     '4.17',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -20,7 +20,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="fish v4.15 documentation" href="index.html" />
+    <link rel="top" title="fish v4.17 documentation" href="index.html" />
     <link rel="next" title="get — gets the values (only) of tags on objects" href="get.html" />
     <link rel="prev" title="untag — removes tags from objects" href="untag.html" /> 
   </head>
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="untag.html" title="untag — removes tags from objects"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fish v4.15 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.17 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -54,7 +54,7 @@
 </div>
 <p><strong>EXAMPLES</strong></p>
 <p>When authenticated as  user <tt class="docutils literal"><span class="pre">alice</span></tt>:</p>
-<div class="highlight-python"><pre>$ fish show -a "Eiffel Tower" rating seen bert/seen
+<div class="highlight-python"><pre>$ fish show "Eiffel Tower" rating seen bert/seen
 Object with about="Eiffel Tower":
   alice/rating = 7
   alice/seen
@@ -64,7 +64,9 @@ Object with about="Eiffel Tower":
 <div class="highlight-python"><pre>show -a "Eiffel Tower" rating seen /bert/seen
 show -i 93bd1999-0998-49cc-8004-af457ce34ce4 rating seen /bert/seen
 show -q 'fluiddb/about matches "Eiffel Tower"' rating seen /bert/seen
-show -F -a "Eiffel Tower" alice/rating alice/seen bert/seen</pre>
+show -F -a "Eiffel Tower" alice/rating alice/seen bert/seen
+show "Eiffel Tower" rating seen /bert/seen
+show 93bd1999-0998-49cc-8004-af457ce34ce4 rating seen /bert/seen</pre>
 </div>
 <p>All of these commands will show the values the tags <tt class="docutils literal"><span class="pre">alice/rating</span></tt>,
 <tt class="docutils literal"><span class="pre">alice/seen</span></tt> and <tt class="docutils literal"><span class="pre">bert/seen</span></tt> from the object with about tag &#8220;Eiffel Tower&#8221;
@@ -143,7 +145,7 @@ the username.</p>
         <li class="right" >
           <a href="untag.html" title="untag — removes tags from objects"
              >previous</a> |</li>
-        <li><a href="index.html">fish v4.15 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.17 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

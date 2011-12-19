@@ -17,6 +17,8 @@ When authenticated as  user ``alice``:
    untag -i 93bd1999-0998-49cc-8004-af457ce34ce4 rating seen
    untag -F -a "Eiffel Tower" alice/rating alice/seen
    untag -q 'fluiddb/about matches "Eiffel Tower"' rating seen
+   untag "Eiffel Tower" /alice/rating seen
+   untag 93bd1999-0998-49cc-8004-af457ce34ce4 rating seen
 
 **NOTE FOR WINDOWS USERS** Working from a Windows command line, single
 quotes do not work as above.   Instead you need to use double quotes

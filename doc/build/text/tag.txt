@@ -13,9 +13,11 @@ specified.
 
 When authenticated as  user ``alice``:
 
+   tag "Eiffel Tower" rating=7 seen
    tag -a "Eiffel Tower" rating=7 seen
    tag -a "Eiffel Tower" /alice/rating=7 seen
    tag -i 93bd1999-0998-49cc-8004-af457ce34ce4 rating=7 seen
+   tag 93bd1999-0998-49cc-8004-af457ce34ce4 rating=7 seen
    tag -F -a "Eiffel Tower" alice/rating=7 alice/seen
    tag -q 'fluiddb/about matches "Eiffel Tower"' rating=7 seen
 

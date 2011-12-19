@@ -12,7 +12,7 @@ Show the list of tags (and their values) present on an objects
 
 When authenticated as  user ``alice``:
 
-   $ fish tags -a "Eiffel Tower" rating seen /bert/seen
+   $ fish tags "Eiffel Tower"
    Object with about="Eiffel Tower":
    /objects/93bd1999-0998-49cc-8004-af457ce34ce4
      alice/seen

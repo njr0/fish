@@ -34,6 +34,7 @@ from fishlib import (
     FLUIDDB_PATH,
     INTEGER_RE,
     INTEGER_RANGE_RE,
+    UUID_RE,
     json,
     TagValue,
     Namespace,
@@ -215,7 +216,7 @@ def execute_show_command(objs, db, tags, options, action):
             if tag == u'/id':
                 t = None
                 if obj.about:
-                    o = db.query(u'fluiddb/about = "%s"' % obj.id)
+                    o = db.query(u'fluiddb/about = "%s"' % obj.about)
                     if type(o) == types.IntType:  # error
                         status, v = o, None
                     else:
@@ -825,12 +826,23 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
             db.Print('Too few arguments for action %s' % action)
         elif action == 'count':
             db.Print('Total: %s' % (flags.Plural(len(objs), 'object')))
-        elif action == 'tags':
-            execute_tags_command(objs, db, options)
-        elif action in ('tag', 'untag', 'show', 'get'):
+        elif action in ('tags', 'tag', 'untag', 'show', 'get'):
             if not (options.about or options.query or options.id):
-                db.Print('You must use -q, -a or -i with %s' % action)
-            else:
+                if args:
+                    spec = args[0]
+                    if re.match(UUID_RE, spec):
+                        objs = [O(id=spec)]
+                        options.id = [spec]
+                    else:
+                        objs = [O(about=spec)]
+                        options.about = [spec]
+                    args = args[1:]
+                else:
+                    db.Print('You must use -q or specify an about tag or'
+                             ' object ID for the %s command.' % action)
+            if action == 'tags':
+                execute_tags_command(objs, db, options)
+            elif objs:
                 tags = args
                 if len(tags) == 0 and action != 'count':
                     db.nothing_to_do()

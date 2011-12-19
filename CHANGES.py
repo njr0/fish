@@ -473,5 +473,11 @@ clean-up.  Sorry for being so slow...
 Documented the new commands (sequence commands, alias commands, sync, init
 and search).
 
+2011/12/19 v4.17
+Fixed a bug that meant /id produced the wrong ID when used with -a.
+Changed show, get, tag, untag and tags so that if no -a, =i or -q
+option is used, but arguments are present, the first argument will
+be taken as either an object ID (if it looks like one) or an about tag,
+if it doesn't.
 """
 

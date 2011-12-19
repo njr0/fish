@@ -6,7 +6,7 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'4.16'
+__version__ = u'4.17'
 VERSION = __version__
 
 import codecs
@@ -110,6 +110,7 @@ INTEGER_RE = re.compile(ur'^[+\-]{0,1}[0-9]+$')
 INTEGER_RANGE_RE = re.compile(ur'^([0-9]+)\-([0-9]+)$')
 DECIMAL_RE = re.compile(ur'^[+\-]{0,1}[0-9]+[\.\,]{0,1}[0-9]*$')
 DECIMAL_RE2 = re.compile(ur'^[+\-]{0,1}[\.\,]{1}[0-9]+$')
+UUID_RE = re.compile(ur'^[0-9a-f]{8}\-[0-9a-f]{4}\-[0-9a-f]{4}\-[0-9a-f]{4}\-[0-9a-f]{12}$')
 
 IDS_MAIN = {u'DADGAD': u'1fb8e9cb-70b9-4bd0-a7e7-880247384abd'}
 IDS_SAND = {u'DADGAD': DADGAD_ID}
