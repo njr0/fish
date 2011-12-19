@@ -429,7 +429,7 @@
 
 2011/08/07 v4.07     Added unalias and init commands.
 
-2011/08/07 v4.08     Alias handlin enchaned (preserving options better)
+2011/08/07 v4.08     Alias handling enhanced (preserving options better)
 
 2011/08/10 v4.09     Filtering on sequences
 
@@ -471,7 +471,7 @@ clean-up.  Sorry for being so slow...
 
 2011/12/18 v4.16
 Documented the new commands (sequence commands, alias commands, sync, init
-and search).
+And search).
 
 2011/12/19 v4.17
 Fixed a bug that meant /id produced the wrong ID when used with -a.
@@ -479,5 +479,8 @@ Changed show, get, tag, untag and tags so that if no -a, =i or -q
 option is used, but arguments are present, the first argument will
 be taken as either an object ID (if it looks like one) or an about tag,
 if it doesn't.
+
+2011/12/19 v4.18
+Fixed a typo.
 """
 

@@ -84,7 +84,7 @@ class O:
 def formatted_tag_value(tag, value, terse=False, prefix=u'  ', mime=None):
     lhs = u'' if terse else u'%s%s = ' % (prefix, tag)
     if mime:
-        return (u'%s<Non-primative value of type %s (size %d)>'
+        return (u'%s<Non-primitive value of type %s (size %d)>'
                 % (lhs, unicode(mime), len(value)))
     elif value == None:
         return u'%s%s' % (u'' if terse else prefix, tag)

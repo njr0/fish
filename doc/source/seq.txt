@@ -23,12 +23,10 @@ The basic usage is as follows:
 **EXAMPLE**
 ::
 
-    $ mkseq remark remarks private/remark
-    Next remark number: 0
-
     $ fish mkseq remark remarks private/remark
     Next remark number: 0
-    zero:$ fish remark "Isn't this a remarkable first remark"
+
+    $ fish remark "Isn't this a remarkable first remark"
     0: Isn't this a remarkable first remark
     2011-12-18
 
