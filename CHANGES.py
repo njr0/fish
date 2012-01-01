@@ -490,5 +490,11 @@ with MIME-type guessing.   Also -M, to set the MIME type.
 Also added fish_command function to fish.py.   This allows a simple way
 to pass a fish command in programmatically, ignoring caches, either as the
 default user or as a nominated user.
-"""
 
+2012/01/01 v4.20
+Fixed a problem introduced when adding the ability to write files with -f
+that sometimes caused unicode strings not to be written properly.
+
+2012/01/01 v4.21
+Fixed the copyright notices to run to 2012.
+"""

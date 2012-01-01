@@ -4,7 +4,7 @@
 # fish.py
 #
 #
-# Copyright (c) Nicholas J. Radcliffe 2009-2011 and other authors specified
+# Copyright (c) Nicholas J. Radcliffe 2009-2012 and other authors specified
 #               in the AUTHOR
 # Licence terms in LICENCE.
 #

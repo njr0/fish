@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-# fdblib.py
+# fishlib.py
 #
-# Copyright (c) Nicholas J. Radcliffe 2009-2011 and other authors specified
+# Copyright (c) Nicholas J. Radcliffe 2009-2012 and other authors specified
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'4.19'
+__version__ = u'4.21'
 VERSION = __version__
 
 import base64
@@ -568,6 +568,8 @@ class Fluidinfo:
         if value_type is None:
             value = json.dumps(value).encode('UTF-8')
             value_type = PRIMITIVE_CONTENT_TYPE
+        elif type(value) is unicode:
+            value = value.encode('UTF-8')
         headers[u'content-type'] = value_type
         url = self._get_url(self.host, path, hash=None, kw=None)
         http = _get_http(self.timeout)
