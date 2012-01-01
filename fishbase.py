@@ -32,6 +32,21 @@ def get_user_file(file, username):
         return None
     
 
+def expandpath(file):
+    if os.name == 'posix' and file.startswith('~'):
+        if file == '~':
+            return os.path.expanduser(u'~')
+        else:
+            n = file.find('/')
+            if n >= 0:
+                return os.path.join(os.path.expanduser(file[:n]), file[n+1:])
+    return file
+
+
+class Dummy:
+    pass
+
+
 class O:
     """
         This class is used to represent objects locally.

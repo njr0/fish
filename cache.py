@@ -1,5 +1,5 @@
 import cPickle as pickle
-from fishbase import get_user_file
+import fishbase
 
 ALIAS_TAG = u'.fish/alias'
 CACHE_FILE = {u'unix': u'.fishcache.%s',
@@ -15,7 +15,7 @@ class Cache:
         self.username = username
         self.objects = {}
         if username:
-            self.cacheFile = get_user_file(CACHE_FILE, username)
+            self.cacheFile = fishbase.get_user_file(CACHE_FILE, username)
             self.read()
 
     def read(self):
@@ -24,6 +24,8 @@ class Cache:
             try:
                 self.objects = pickle.load(f)
                 f.close()
+            except ImportError:
+                raise
             except:
                 raise CacheError('Cache %s appears corrupt' % self.cacheFile)
         except IOError:  # No cache

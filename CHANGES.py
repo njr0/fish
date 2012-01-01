@@ -482,5 +482,13 @@ if it doesn't.
 
 2011/12/19 v4.18
 Fixed a typo.
+
+2011/12/30 v4.19
+Added -f option tag: allows the contents of a file to be used as a tag value,
+with MIME-type guessing.   Also -M, to set the MIME type.
+
+Also added fish_command function to fish.py.   This allows a simple way
+to pass a fish command in programmatically, ignoring caches, either as the
+default user or as a nominated user.
 """
 

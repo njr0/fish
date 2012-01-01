@@ -1,4 +1,4 @@
-.. _fishshowcache
+.. _fishshowcache:
 
 showcache — shows the contents of the Fish cache
 ************************************************

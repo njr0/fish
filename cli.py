@@ -21,6 +21,7 @@ from fishlib import (
     O,
     Credentials,
     get_typed_tag_value,
+    get_typed_tag_value_from_file,
     path_style,
     toStr,
     formatted_tag_value,
@@ -145,15 +146,17 @@ def error_code(n):
 
 
 def execute_tag_command(objs, db, tags, options, action):
-    tags = form_tag_value_pairs(tags)
+    tags = form_tag_value_pairs(tags, options)
     for obj in objs:
         description = describe_by_mode(obj)
         for tag in tags:
             if obj.about:
                 o = db.tag_object_by_about(obj.about, tag.name, tag.value,
+                                           value_type = tag.mime,
                                            inPref=True)
             else:
                 o = db.tag_object_by_id(obj.id, tag.name, tag.value,
+                                        value_type = tag.mime,
                                         inPref=True)
             if o == 0:
                 if options.verbose:
@@ -557,7 +560,8 @@ def describe_by_id(id):
     return id
 
 
-def form_tag_value_pairs(tags):
+def form_tag_value_pairs(tags, options=None):
+    fromFile = options and options.force    # overload -f
     pairs = []
     for tag in tags:
         eqPos = tag.find('=')
@@ -565,7 +569,10 @@ def form_tag_value_pairs(tags):
             pairs.append(TagValue(tag, None))
         else:
             t = tag[:eqPos]
-            v = get_typed_tag_value(tag[eqPos + 1:])
+            if fromFile:
+                v = get_typed_tag_value_from_file(tag[eqPos + 1:], options)
+            else:
+                v = get_typed_tag_value(tag[eqPos + 1:])
             pairs.append(TagValue(t, v))
     return pairs
 
@@ -659,7 +666,7 @@ def parse_args(args=None):
             help='recursive (for rm).')
     general.add_option('-f', '--force', action='store_true',
                        default=False,
-            help='force (override pettifogging objections).')
+            help='force (override pettifogging objections) or read from file.')
     general.add_option('-l', '--long', action='store_true',
                        default=False,
             help='long listing (for ls).')
@@ -685,6 +692,9 @@ def parse_args(args=None):
     general.add_option('-m', '--description', action='store_true',
                        default=False,
             help='set description ("metadata") for tag/namespace.')
+    general.add_option('-M', '--mime', action='append',
+                       default=[],
+            help='Specify MIME-type for value from file')
     general.add_option('-2', '--hightestverbosity', action='store_true',
                        default=False,
             help='don\'t list namespace; just name of namespace.')
@@ -784,7 +794,6 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
     command_list.sort()
 
     # Expand aliases
-#    oldoptions = options
     alias = db.cache.get_alias(action)
     if alias:
         words = cline.CScanSplit(alias, ' \t', quotes='"\'').words

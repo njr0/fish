@@ -129,6 +129,16 @@ def line_go(line, user=None, pwd=None, unixPaths=None, docbase=None,
     return expander.e_go(lineArgs, saveOut=saveOut)
 
 
+def fish_command(line, username=None):
+    """Executes a fish command without reading the cache.
+       If no user is give, default credentials are used;
+       if a username is given that user's credentials file is read.
+    """
+    cred = Credentials(username)
+    cache = Cache(None)
+    return line_go(line, cred.username, cred.password, cache=cache)
+
+
 def go(rawargs=None, user=None, pwd=None, unixPaths=None, docbase=None,
        saveOut=False, cache=None):
     action, args, options, parser = parse_args(rawargs)
@@ -166,7 +176,7 @@ def go(rawargs=None, user=None, pwd=None, unixPaths=None, docbase=None,
 
 def repl_or_go():
     action, args, options, parser = parse_args(sys.argv)
-    if len(args) == 0:
+    if len(args) == 0 and not options.version:
         REPL('This is fish version %s.' % VERSION)
     else:
         return go()

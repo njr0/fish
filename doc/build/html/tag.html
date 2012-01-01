@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>tag — adds tags to objects &mdash; fish v4.17 documentation</title>
+    <title>tag — adds tags to objects &mdash; fish v4.19 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '4.17',
+        VERSION:     '4.19',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -20,7 +20,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="fish v4.17 documentation" href="index.html" />
+    <link rel="top" title="fish v4.19 documentation" href="index.html" />
     <link rel="next" title="untag — removes tags from objects" href="untag.html" />
     <link rel="prev" title="Shell-Fish: The Online version of Fish" href="shell-fish.html" /> 
   </head>
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="shell-fish.html" title="Shell-Fish: The Online version of Fish"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fish v4.17 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.19 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -89,9 +89,101 @@ $ fish tag -a "Eiffel Tower" /bert/rating=7
 Failed to tag object with about="Eiffel Tower" with bert/rating
 Error code 401 (UNAUTHORIZED)</pre>
 </div>
+<div class="section" id="writing-files-to-fluidinfo">
+<h2>Writing Files to Fluidinfo<a class="headerlink" href="#writing-files-to-fluidinfo" title="Permalink to this headline">¶</a></h2>
+<p>There is experimental new functionality to allow files to be written
+to Fluidinfo using Fish&#8217;s <tt class="docutils literal"><span class="pre">tag</span></tt> command.</p>
+<p>At it simplest, the idea is to use the <tt class="docutils literal"><span class="pre">-f</span></tt> flag; when this is done,
+parameter values are taken to be file names.   So, for example,
+suppose the Fluidinfo user <tt class="docutils literal"><span class="pre">njr</span></tt> has a file in the <tt class="docutils literal"><span class="pre">/tmp</span></tt>
+directory called <tt class="docutils literal"><span class="pre">spinner.gif</span></tt> and wants to upload this as the
+tag <tt class="docutils literal"><span class="pre">njr/image/red-spinner.gif</span></tt> on the object with the
+<em>about</em> tag <tt class="docutils literal"><span class="pre">abouttag</span></tt>.   Assume that we are on a Unix-like system
+and that the current working directory is <tt class="docutils literal"><span class="pre">/tmp</span></tt>.   Then any of the
+following will work:</p>
+<div class="highlight-python"><pre>$ fish tag -f abouttag image/red-spinner.gif=spinner.gif
+$ fish tag -f abouttag image/red-spinner.gif=./spinner.gif
+$ fish tag -f abouttag image/red-spinner.gif=/tmp/spinner.gif
+$ fish tag -f -M image/gif abouttag image/red-spinner.gif=/tmp/spinner.gif</pre>
+</div>
+<p>This file has been written and can be viewed at:</p>
+<blockquote>
+<a class="reference external" href="http://fluiddb.fluidinfo.com/about/abouttag/njr/image/red-spinner.gif">http://fluiddb.fluidinfo.com/about/abouttag/njr/image/red-spinner.gif</a></blockquote>
+<p>Notice that the correct MIME type is served.</p>
+<p>Points to note:</p>
+<blockquote>
+<ul class="simple">
+<li>The <tt class="docutils literal"><span class="pre">-f</span></tt> flag indicates that all tag values in the command are filenames.</li>
+<li>The filename has to be included even if it is indentical to the tag name
+(though this may change at a later date) and there is no recursive option
+for writing directories as tag bundles at the moment.</li>
+<li>By default, MIME types for certain common files are inferred from the
+file extension as detailed below.</li>
+<li>If you want to specify the MIME type explicitly, use the -M flag
+to do this. This will apply to all tags set in the command.</li>
+<li>Text files are assumed to be encoded as UTF-8.</li>
+<li>On unix-like systems, tildes will be expanded, so <tt class="docutils literal"><span class="pre">~</span></tt> and <tt class="docutils literal"><span class="pre">~njr</span></tt>
+etc. may be used.</li>
+</ul>
+</blockquote>
+<p>The file extensions for which MIME types are inferred fall into two groups.
+First are the textual MIME types (non-necessarily types that begin
+<tt class="docutils literal"><span class="pre">text/</span></tt>, but ones whose contents are textual).   There are:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">TEXTUAL_MIMES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;txt&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="s">&#39;csv&#39;</span><span class="p">:</span> <span class="s">&#39;text/plain&#39;</span><span class="p">,</span>
+    <span class="s">&#39;html&#39;</span><span class="p">:</span> <span class="s">&#39;text/html&#39;</span><span class="p">,</span>
+    <span class="s">&#39;xml&#39;</span><span class="p">:</span> <span class="s">&#39;text/xml&#39;</span><span class="p">,</span>
+    <span class="s">&#39;htm&#39;</span><span class="p">:</span> <span class="s">&#39;text/html&#39;</span><span class="p">,</span>
+    <span class="s">&#39;css&#39;</span><span class="p">:</span> <span class="s">&#39;text/css&#39;</span><span class="p">,</span>
+    <span class="s">&#39;js&#39;</span><span class="p">:</span> <span class="s">&#39;text/javascript&#39;</span><span class="p">,</span>
+    <span class="s">&#39;vcf&#39;</span><span class="p">:</span> <span class="s">&#39;text/vcard&#39;</span><span class="p">,</span>
+    <span class="s">&#39;plain&#39;</span><span class="p">:</span> <span class="s">&#39;text/plain&#39;</span><span class="p">,</span>
+    <span class="s">&#39;vsg&#39;</span><span class="p">:</span> <span class="s">&#39;image/svg+xml&#39;</span><span class="p">,</span>
+    <span class="s">&#39;ps&#39;</span><span class="p">:</span> <span class="s">&#39;application/postscript&#39;</span><span class="p">,</span>
+    <span class="s">&#39;eps&#39;</span><span class="p">:</span> <span class="s">&#39;application/postscript&#39;</span><span class="p">,</span>
+    <span class="s">&#39;rss&#39;</span><span class="p">:</span> <span class="s">&#39;application/rss+xml&#39;</span><span class="p">,</span>
+    <span class="s">&#39;atom&#39;</span><span class="p">:</span> <span class="s">&#39;application/atom+xml&#39;</span><span class="p">,</span>
+    <span class="s">&#39;xhtml&#39;</span><span class="p">:</span> <span class="s">&#39;application/xhtml+xml&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This shows the MIME type that will be used for each extension.  Files
+with these extensions are read as <em>non</em>-binary (<tt class="docutils literal"><span class="pre">open(&quot;foo.text&quot;)</span></tt>)
+and interpreted as &#8216;UTF-8&#8217;.</p>
+<p>Notice that <tt class="docutils literal"><span class="pre">.txt</span></tt> files are not given a MIME type, meaning that they
+are written as primitive (unicode) strings to Fluidinfo.</p>
+<p>The extensions for which non-textual types are inferred are listed below.
+These files are read as binary files (<tt class="docutils literal"><span class="pre">open(&quot;foo.text&quot;,</span> <span class="pre">'rb')</span></tt>)</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">BINARY_MIMES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;png&#39;</span><span class="p">:</span> <span class="s">&#39;image/png&#39;</span><span class="p">,</span>
+    <span class="s">&#39;jpeg&#39;</span><span class="p">:</span> <span class="s">&#39;image/jpeg&#39;</span><span class="p">,</span>
+    <span class="s">&#39;jpg&#39;</span><span class="p">:</span> <span class="s">&#39;image/jpg&#39;</span><span class="p">,</span>
+    <span class="s">&#39;gif&#39;</span><span class="p">:</span> <span class="s">&#39;image/gif&#39;</span><span class="p">,</span>
+    <span class="s">&#39;tif&#39;</span><span class="p">:</span> <span class="s">&#39;image/tiff&#39;</span><span class="p">,</span>
+    <span class="s">&#39;tiff&#39;</span><span class="p">:</span> <span class="s">&#39;image/tiff&#39;</span><span class="p">,</span>
+    <span class="s">&#39;ico&#39;</span><span class="p">:</span> <span class="s">&#39;image/vnd.microsoft.icon&#39;</span><span class="p">,</span>
+    <span class="s">&#39;pdf&#39;</span><span class="p">:</span> <span class="s">&#39;application/pdf&#39;</span><span class="p">,</span>
+    <span class="s">&#39;zip&#39;</span><span class="p">:</span> <span class="s">&#39;application/zip&#39;</span><span class="p">,</span>
+    <span class="s">&#39;gz&#39;</span><span class="p">:</span> <span class="s">&#39;application/x-gzip&#39;</span><span class="p">,</span>
+    <span class="s">&#39;json&#39;</span><span class="p">:</span> <span class="s">&#39;application/json&#39;</span><span class="p">,</span>
+    <span class="s">&#39;mp3&#39;</span><span class="p">:</span> <span class="s">&#39;audio/mpeg&#39;</span><span class="p">,</span>
+    <span class="s">&#39;mp4&#39;</span><span class="p">:</span> <span class="s">&#39;audio/mp4&#39;</span><span class="p">,</span>
+    <span class="s">&#39;ogg&#39;</span><span class="p">:</span> <span class="s">&#39;audio/ogg&#39;</span><span class="p">,</span>
+    <span class="s">&#39;wav&#39;</span><span class="p">:</span> <span class="s">&#39;audio/vnd.wave&#39;</span><span class="p">,</span>
+    <span class="s">&#39;tar&#39;</span><span class="p">:</span> <span class="s">&#39;application/x-tar&#39;</span><span class="p">,</span>
+    <span class="s">&#39;rar&#39;</span><span class="p">:</span> <span class="s">&#39;application/x-rar-compressed&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Use the <tt class="docutils literal"><span class="pre">-M</span></tt> flag to set the MIME type where this mapping is not correct
+or where the MIME type is not listed above.</p>
+<p>This feature is experimental and may change in various ways as experience
+with it is gained.</p>
 <p><strong>NOTES</strong></p>
 <p>The user must have permission to write the tag.
 By default, the user can write any tag under her namespace.</p>
+</div>
 </div>
 
 
@@ -103,6 +195,14 @@ By default, the user can write any tag under her namespace.</p>
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/fish-doc-logo.png" alt="Logo"/>
             </a></p>
+            <h3><a href="index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="">tag — adds tags to objects</a><ul>
+<li><a class="reference external" href="#writing-files-to-fluidinfo">Writing Files to Fluidinfo</a></li>
+</ul>
+</li>
+</ul>
+
             <h4>Previous topic</h4>
             <p class="topless"><a href="shell-fish.html"
                                   title="previous chapter">Shell-Fish: The Online version of Fish</a></p>
@@ -143,7 +243,7 @@ By default, the user can write any tag under her namespace.</p>
         <li class="right" >
           <a href="shell-fish.html" title="Shell-Fish: The Online version of Fish"
              >previous</a> |</li>
-        <li><a href="index.html">fish v4.17 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.19 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
