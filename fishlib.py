@@ -6,7 +6,7 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'4.21'
+__version__ = u'4.22'
 VERSION = __version__
 
 import base64
@@ -151,7 +151,7 @@ TEXTUAL_MIMES = {
     'js': 'text/javascript',
     'vcf': 'text/vcard',
     'plain': 'text/plain',
-    'vsg': 'image/svg+xml',
+    'svg': 'image/svg+xml',
     'ps': 'application/postscript',
     'eps': 'application/postscript',
     'rss': 'application/rss+xml',

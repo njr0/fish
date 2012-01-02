@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>tag — adds tags to objects &mdash; fish v4.21 documentation</title>
+    <title>tag — adds tags to objects &mdash; fish v4.22 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '4.21',
+        VERSION:     '4.22',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -20,7 +20,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="fish v4.21 documentation" href="index.html" />
+    <link rel="top" title="fish v4.22 documentation" href="index.html" />
     <link rel="next" title="untag — removes tags from objects" href="untag.html" />
     <link rel="prev" title="Shell-Fish: The Online version of Fish" href="shell-fish.html" /> 
   </head>
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="shell-fish.html" title="Shell-Fish: The Online version of Fish"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fish v4.21 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.22 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -93,12 +93,12 @@ Error code 401 (UNAUTHORIZED)</pre>
 <h2>Writing Files to Fluidinfo<a class="headerlink" href="#writing-files-to-fluidinfo" title="Permalink to this headline">¶</a></h2>
 <p>There is experimental new functionality to allow files to be written
 to Fluidinfo using Fish&#8217;s <tt class="docutils literal"><span class="pre">tag</span></tt> command.</p>
-<p>At it simplest, the idea is to use the <tt class="docutils literal"><span class="pre">-f</span></tt> flag; when this is done,
-parameter values are taken to be file names.   So, for example,
+<p>This functionality is invoked by the <tt class="docutils literal"><span class="pre">-f</span></tt> flag; when this is used,
+parameter values are taken to be file names.   For example,
 suppose the Fluidinfo user <tt class="docutils literal"><span class="pre">njr</span></tt> has a file in the <tt class="docutils literal"><span class="pre">/tmp</span></tt>
 directory called <tt class="docutils literal"><span class="pre">spinner.gif</span></tt> and wants to upload this as the
-tag <tt class="docutils literal"><span class="pre">njr/image/red-spinner.gif</span></tt> on the object with the
-<em>about</em> tag <tt class="docutils literal"><span class="pre">abouttag</span></tt>.   Assume that we are on a Unix-like system
+tag <tt class="docutils literal"><span class="pre">njr/image/red-spinner.gif</span></tt> on the object whose
+<em>about</em> tag is <tt class="docutils literal"><span class="pre">abouttag</span></tt>.   Assume that we are on a Unix-like system
 and that the current working directory is <tt class="docutils literal"><span class="pre">/tmp</span></tt>.   Then any of the
 following will work:</p>
 <div class="highlight-python"><pre>$ fish tag -f abouttag image/red-spinner.gif=spinner.gif
@@ -106,29 +106,32 @@ $ fish tag -f abouttag image/red-spinner.gif=./spinner.gif
 $ fish tag -f abouttag image/red-spinner.gif=/tmp/spinner.gif
 $ fish tag -f -M image/gif abouttag image/red-spinner.gif=/tmp/spinner.gif</pre>
 </div>
-<p>This file has been written and can be viewed at:</p>
+<p>This <tt class="docutils literal"><span class="pre">red-spinner.gif</span></tt> file has actually been written to this location,
+using a command similar to those above, and can be viewed at:</p>
 <blockquote>
 <a class="reference external" href="http://fluiddb.fluidinfo.com/about/abouttag/njr/image/red-spinner.gif">http://fluiddb.fluidinfo.com/about/abouttag/njr/image/red-spinner.gif</a></blockquote>
-<p>Notice that the correct MIME type is served.</p>
+<p>Notice that the correct MIME type is served, so the browser can show
+the image.</p>
 <p>Points to note:</p>
 <blockquote>
 <ul class="simple">
-<li>The <tt class="docutils literal"><span class="pre">-f</span></tt> flag indicates that all tag values in the command are filenames.</li>
+<li>The <tt class="docutils literal"><span class="pre">-f</span></tt> flag indicates that all tag values in the command are filenames,
+i.e. you can&#8217;t mix file-based values and literals in a single command.</li>
 <li>The filename has to be included even if it is indentical to the tag name
 (though this may change at a later date) and there is no recursive option
 for writing directories as tag bundles at the moment.</li>
 <li>By default, MIME types for certain common files are inferred from the
-file extension as detailed below.</li>
-<li>If you want to specify the MIME type explicitly, use the -M flag
-to do this. This will apply to all tags set in the command.</li>
+file extensions as detailed below.</li>
+<li>If you want to specify the MIME type explicitly, use the <tt class="docutils literal"><span class="pre">-M</span></tt> flag
+to do this. This will apply to <em>all</em> tags set in the command.</li>
 <li>Text files are assumed to be encoded as UTF-8.</li>
 <li>On unix-like systems, tildes will be expanded, so <tt class="docutils literal"><span class="pre">~</span></tt> and <tt class="docutils literal"><span class="pre">~njr</span></tt>
 etc. may be used.</li>
 </ul>
 </blockquote>
 <p>The file extensions for which MIME types are inferred fall into two groups.
-First are the textual MIME types (non-necessarily types that begin
-<tt class="docutils literal"><span class="pre">text/</span></tt>, but ones whose contents are textual).   There are:</p>
+First are the textual MIME types (not necessarily types that begin
+<tt class="docutils literal"><span class="pre">text/</span></tt>, but ones whose contents are textual).   These are:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">TEXTUAL_MIMES</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s">&#39;txt&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
     <span class="s">&#39;csv&#39;</span><span class="p">:</span> <span class="s">&#39;text/plain&#39;</span><span class="p">,</span>
@@ -139,7 +142,7 @@ First are the textual MIME types (non-necessarily types that begin
     <span class="s">&#39;js&#39;</span><span class="p">:</span> <span class="s">&#39;text/javascript&#39;</span><span class="p">,</span>
     <span class="s">&#39;vcf&#39;</span><span class="p">:</span> <span class="s">&#39;text/vcard&#39;</span><span class="p">,</span>
     <span class="s">&#39;plain&#39;</span><span class="p">:</span> <span class="s">&#39;text/plain&#39;</span><span class="p">,</span>
-    <span class="s">&#39;vsg&#39;</span><span class="p">:</span> <span class="s">&#39;image/svg+xml&#39;</span><span class="p">,</span>
+    <span class="s">&#39;svg&#39;</span><span class="p">:</span> <span class="s">&#39;image/svg+xml&#39;</span><span class="p">,</span>
     <span class="s">&#39;ps&#39;</span><span class="p">:</span> <span class="s">&#39;application/postscript&#39;</span><span class="p">,</span>
     <span class="s">&#39;eps&#39;</span><span class="p">:</span> <span class="s">&#39;application/postscript&#39;</span><span class="p">,</span>
     <span class="s">&#39;rss&#39;</span><span class="p">:</span> <span class="s">&#39;application/rss+xml&#39;</span><span class="p">,</span>
@@ -148,9 +151,8 @@ First are the textual MIME types (non-necessarily types that begin
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>This shows the MIME type that will be used for each extension.  Files
-with these extensions are read as <em>non</em>-binary (<tt class="docutils literal"><span class="pre">open(&quot;foo.text&quot;)</span></tt>)
-and interpreted as &#8216;UTF-8&#8217;.</p>
+<p>Files with these extensions are read as <em>non</em>-binary
+(<tt class="docutils literal"><span class="pre">open(&quot;foo.text&quot;)</span></tt>) and interpreted as &#8216;UTF-8&#8217;.</p>
 <p>Notice that <tt class="docutils literal"><span class="pre">.txt</span></tt> files are not given a MIME type, meaning that they
 are written as primitive (unicode) strings to Fluidinfo.</p>
 <p>The extensions for which non-textual types are inferred are listed below.
@@ -243,7 +245,7 @@ By default, the user can write any tag under her namespace.</p>
         <li class="right" >
           <a href="shell-fish.html" title="Shell-Fish: The Online version of Fish"
              >previous</a> |</li>
-        <li><a href="index.html">fish v4.21 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.22 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

@@ -497,4 +497,7 @@ that sometimes caused unicode strings not to be written properly.
 
 2012/01/01 v4.21
 Fixed the copyright notices to run to 2012.
+
+2012/01/01 v4.22
+Fixed typo: vsg --> svg
 """
