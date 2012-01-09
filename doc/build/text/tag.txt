@@ -52,6 +52,57 @@ when it fails.
    Error code 401 (UNAUTHORIZED)
 
 
+Value Types
+===========
+
+Fish uses duck typing, i.e. it infers the type from the value you
+give. The following pair of commands illustrates most of the cases:
+
+   $ fish tag Paris name n1=1 n2=-1 f=7.2 b1=True b2=false s1=text s2="more text"
+   $ fish show Paris name n1 n2 f b1 b2 s1 s2
+   Object with about="Paris":
+     /njr/name
+     /njr/n1 = 1
+     /njr/n2 = -1
+     /njr/f = 7.2
+     /njr/b1 = True
+     /njr/b2 = False
+     /njr/s1 = "text"
+     /njr/s2 = "more text"
+
+As you can see
+
+   * A tag with no value is written as a valueless tag (or NULL, if
+     you prefer)
+
+   * Things that look like numbers are taken as numbers
+
+   * True and False, regardless of capitalization, are taken as
+     booleans
+
+   * Almost anything else is taken as a string.   Quotes are not
+     needed for strings other than to embed whitespace.
+
+Fish also supports values that are lists of strings. The preferred
+form for these is as a list of strings enclosed in square brackets,
+but braces may also be used, mostly for backwards compatibility. The
+items should be separated by commas or whitespace. (In the past,
+Fluidinfo's compound values were sets, rather than lists of strings,
+so the braces were more appropriate then.) So you can say things like:
+
+   $ fish tag Paris airports='[Orly,"Charles de Gaulle"]'
+   $ fish tag Paris 'airports=[Orly, "Charles de Gaulle"]'
+
+and the result will be:
+
+   $ fish show Paris airports
+   Object with about="Paris":
+   /njr/airports = [
+     "Orly",
+     "Charles de Gaulle"
+   ]
+
+
 Writing Files to Fluidinfo
 ==========================
 
@@ -104,6 +155,11 @@ Points to note:
 
    * On unix-like systems, tildes will be expanded, so ``~`` and
      ``~njr`` etc. may be used.
+
+   * If there are any tags for which no file is specified when using
+     ``-f``, input will be read from stdin and used as the value for
+     all such tags, with MIME type set to text/plain (or whatever is
+     specified with ``-M``).
 
 The file extensions for which MIME types are inferred fall into two
 groups. First are the textual MIME types (not necessarily types that

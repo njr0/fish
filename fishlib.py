@@ -6,7 +6,7 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'4.22'
+__version__ = u'4.23'
 VERSION = __version__
 
 import base64
@@ -22,7 +22,7 @@ from httplib2 import Http
 import cline
 from cache import Cache
 from fishbase import (get_credentials_file, O, formatted_tag_value,
-                      expandpath, Dummy)
+                      expandpath, Dummy, TEXTUAL_MIMES)
 
 if sys.version_info < (2, 6):
     try:
@@ -139,25 +139,6 @@ SHORT_WORDS = ['a', 'the', 'on', 'in', 'to', 'with', 'of', 'at', 'by',
 COMMON_WORDS = ['artist', 'album', 'track']
 
 STOP_WORDS = SHORT_WORDS + COMMON_WORDS
-
-
-TEXTUAL_MIMES = {
-    'txt': None,
-    'csv': 'text/plain',
-    'html': 'text/html',
-    'xml': 'text/xml',
-    'htm': 'text/html',
-    'css': 'text/css',
-    'js': 'text/javascript',
-    'vcf': 'text/vcard',
-    'plain': 'text/plain',
-    'svg': 'image/svg+xml',
-    'ps': 'application/postscript',
-    'eps': 'application/postscript',
-    'rss': 'application/rss+xml',
-    'atom': 'application/atom+xml',
-    'xhtml': 'application/xhtml+xml',
-}
 
 BINARY_MIMES = {
     'png': 'image/png',
@@ -575,7 +556,7 @@ class Fluidinfo:
         http = _get_http(self.timeout)
         if self.debug:
             self.Print(u'\nTag URL: %s' % url)
-            if value_type:
+            if value_type != 'application/vnd.fluiddb.value+json':
                 self.Print(u'Value of type: %s' % value_type)
             else:
                 self.Print(u'Value: %s' % value)
@@ -1263,7 +1244,8 @@ def get_typed_tag_value(v):
         return r
     elif len(v) > 1 and v[0] == v[-1] and v[0] in (u'"\''):
         return v[1:-1]
-    elif len(v) > 1 and v[0] == u'{' and v[-1] == '}':
+    elif len(v) > 1 and ((v[0] == u'[' and v[-1] == ']') or 
+                         (v[0] == u'{' and v[-1] == '}')):
          return cline.CScanSplit(v[1:-1], ' \t,', quotes='"\'').words
     else:
         return toStr(v)

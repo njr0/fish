@@ -500,4 +500,16 @@ Fixed the copyright notices to run to 2012.
 
 2012/01/01 v4.22
 Fixed typo: vsg --> svg
+
+2012/01/01 v4.23
+Changed compound value handling to reflect the API change in release 1.14.
+Now either square or brackets or braces can be used to specify a compound
+value, which is a list.   Compound values are shown in square brackets
+by show, get etc.
+
+Changed formatted_tag_value so that it shows textual MIME types.
+
+Changed tagging so that -f causes tags with no specified file to be
+read from stdin and written as text/plain.
+
 """

@@ -15,7 +15,7 @@ import types
 import traceback
 from optparse import OptionParser, OptionGroup
 from itertools import chain, imap
-from fishbase import get_credentials_file
+from fishbase import get_credentials_file, Dummy
 from fishlib import (
     Fluidinfo,
     O,
@@ -152,11 +152,11 @@ def execute_tag_command(objs, db, tags, options, action):
         for tag in tags:
             if obj.about:
                 o = db.tag_object_by_about(obj.about, tag.name, tag.value,
-                                           value_type = tag.mime,
+                                           value_type=tag.mime,
                                            inPref=True)
             else:
                 o = db.tag_object_by_id(obj.id, tag.name, tag.value,
-                                        value_type = tag.mime,
+                                        value_type=tag.mime,
                                         inPref=True)
             if o == 0:
                 if options.verbose:
@@ -563,10 +563,16 @@ def describe_by_id(id):
 def form_tag_value_pairs(tags, options=None):
     fromFile = options and options.force    # overload -f
     pairs = []
+    value = None
     for tag in tags:
         eqPos = tag.find('=')
         if eqPos == -1:
-            pairs.append(TagValue(tag, None))
+            if fromFile:
+                if value is None:
+                    value = Dummy()
+                    value.value = sys.stdin.read()
+                    value.mime = options.mime or 'text/plain'
+            pairs.append(TagValue(tag, value))
         else:
             t = tag[:eqPos]
             if fromFile:

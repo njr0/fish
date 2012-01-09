@@ -7,6 +7,24 @@ UNIX_USER_CREDENTIALS_FILE = u'.fluidDBcredentials.%s'
 CRED_FILE_VAR = 'FISH_CREDENTIALS_FILE'
 WIN_CRED_FILE = 'c:\\fish\\credentials.txt'
 
+TEXTUAL_MIMES = {
+    'txt': None,
+    'csv': 'text/plain',
+    'html': 'text/html',
+    'xml': 'text/xml',
+    'htm': 'text/html',
+    'css': 'text/css',
+    'js': 'text/javascript',
+    'vcf': 'text/vcard',
+    'plain': 'text/plain',
+    'svg': 'image/svg+xml',
+    'ps': 'application/postscript',
+    'eps': 'application/postscript',
+    'rss': 'application/rss+xml',
+    'atom': 'application/atom+xml',
+    'xhtml': 'application/xhtml+xml',
+}
+
 toStr = unicode
 
 def get_credentials_file(username=None):
@@ -98,7 +116,7 @@ class O:
 
 def formatted_tag_value(tag, value, terse=False, prefix=u'  ', mime=None):
     lhs = u'' if terse else u'%s%s = ' % (prefix, tag)
-    if mime:
+    if mime and not mime in TEXTUAL_MIMES.values():
         return (u'%s<Non-primitive value of type %s (size %d)>'
                 % (lhs, unicode(mime), len(value)))
     elif value == None:
@@ -111,11 +129,11 @@ def formatted_tag_value(tag, value, terse=False, prefix=u'  ', mime=None):
         vals = value[:]
         vals.sort()
         if len(vals) < 2:
-            return u'%s{%s}' % (lhs, (u'"%s"' % unicode(vals[0])
+            return u'%s[%s]' % (lhs, (u'"%s"' % unicode(vals[0])
                                       if len(vals) == 1 else u''))
         else:
-            return u'%s{\n    %s\n  }' % (lhs,
-                           u'\n    '.join(u'"%s"' % unicode(v) for v in vals))
+            return u'%s[\n    %s\n  ]' % (lhs,
+                           u',\n    '.join(u'"%s"' % unicode(v) for v in vals))
     else:
         return u'%s%s' % (lhs, toStr(value))
 
