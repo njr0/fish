@@ -127,7 +127,6 @@ def formatted_tag_value(tag, value, terse=False, prefix=u'  ', mime=None):
         return '%s"%s"' % (lhs.encode('UTF-8'), value)
     elif type(value) in (list, tuple):
         vals = value[:]
-        vals.sort()
         if len(vals) < 2:
             return u'%s[%s]' % (lhs, (u'"%s"' % unicode(vals[0])
                                       if len(vals) == 1 else u''))

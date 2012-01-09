@@ -512,4 +512,8 @@ Changed formatted_tag_value so that it shows textual MIME types.
 Changed tagging so that -f causes tags with no specified file to be
 read from stdin and written as text/plain.
 
+2012/01/01 v4.24
+Removed sort from formatted_tag_value for compound values, which are now
+lists rather than sets.
+
 """

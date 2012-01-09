@@ -6,7 +6,7 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'4.23'
+__version__ = u'4.24'
 VERSION = __version__
 
 import base64
