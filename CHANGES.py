@@ -516,4 +516,7 @@ read from stdin and written as text/plain.
 Removed sort from formatted_tag_value for compound values, which are now
 lists rather than sets.
 
+2012/01/01 v25
+Added -@ option, for tagging anonymous objects.
+
 """

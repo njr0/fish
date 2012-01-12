@@ -57,6 +57,16 @@ warning when it fails.
   Failed to tag object with about="Eiffel Tower" with bert/rating
   Error code 401 (UNAUTHORIZED)
 
+The ``tag`` command can also be used to tag a new, anonymous object,
+by using the form:
+::
+
+   $ fish tag -@ private/note="Super-secret note on an anonymous object"
+   Tagged object 47c577ff-21f7-462c-94ea-105d326d204d with private/note = "Super-secret note on an anonymous object"
+
+In this case, the command does report what it has done, so that you
+learn the ID of the object it has tagged.
+
 
 Value Types
 -----------
@@ -220,6 +230,23 @@ or where the MIME type is not listed above.
 
 This feature is experimental and may change in various ways as experience
 with it is gained.
+
+The ``-f`` flag can be combined with ``-@``.   For example, to type
+a multi-line note at the terminal, and attach it to a new, anonymous object,
+you might use the command:
+::
+
+  $ fish tag -@f private/note
+  This is a very secret,
+  multi-line note.
+  ^D
+
+  Tagged object 4159e858-891d-4400-8f4b-ba180e868fb7 with private/note = "This is a very secret,
+  multi-line note.
+  "
+
+
+
 
 
 **NOTES**

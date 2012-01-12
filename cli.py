@@ -159,7 +159,7 @@ def execute_tag_command(objs, db, tags, options, action):
                                         value_type=tag.mime,
                                         inPref=True)
             if o == 0:
-                if options.verbose:
+                if options.verbose or options.anon:
                     db.Print(u'Tagged object %s with %s'
                              % (description,
                                 formatted_tag_value(tag.name, tag.value,
@@ -168,6 +168,7 @@ def execute_tag_command(objs, db, tags, options, action):
                 db.warning(u'Failed to tag object %s with %s'
                         % (description, tag.name))
                 db.warning(u'Error code %s' % error_code(o))
+
     return o  # 0 if OK
 
 
@@ -645,6 +646,8 @@ def parse_args(args=None):
             help='used to specify objects by about tag')
     general.add_option('-i', '--id', action='append', default=[],
             help='used to specify objects by ID')
+    general.add_option('-@', '--anon', action='store_true', default=False,
+            help='use a (new) anonymous object fot tagging')
     general.add_option('-q', '--query', action='append', default=[],
             help='used to specify objects with a Fluidinfo query')
     general.add_option('-v', '--verbose', action='store_true', default=False,
@@ -814,6 +817,12 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
                                                              quiet=quiet),
         options.query))
     ids = chain(options.id, ids_from_queries)
+    if options.anon:
+        o = db.create_object()
+        if type(o) == int:
+           raise CommandError(u'Error Status: %d' % o) 
+        else:
+            ids = [o.id]
     objs = [O(about=a) for a in options.about] + [O(id=id) for id in ids]
 
     if action == 'version' or options.version:
@@ -837,12 +846,13 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
         elif action not in command_list:
             db.Print('Unrecognized command %s' % action)        
         elif (action.lower() not in ARGLESS_COMMANDS
-              and not args):
+              and not args and not options.anon):
             db.Print('Too few arguments for action %s' % action)
         elif action == 'count':
             db.Print('Total: %s' % (flags.Plural(len(objs), 'object')))
         elif action in ('tags', 'tag', 'untag', 'show', 'get'):
-            if not (options.about or options.query or options.id):
+            if not (options.about or options.query or options.id
+                    or options.anon):
                 if args:
                     spec = args[0]
                     if re.match(UUID_RE, spec):
@@ -860,7 +870,7 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
             elif objs:
                 tags = args
                 if len(tags) == 0 and action != 'count':
-                    db.nothing_to_do()
+                    db.nothing_to_do('No tags specified')
                 actions = {
                     'tag': execute_tag_command,
                     'untag': execute_untag_command,

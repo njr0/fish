@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>tag — adds tags to objects &mdash; fish v4.24 documentation</title>
+    <title>tag — adds tags to objects &mdash; fish v4.25 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '4.24',
+        VERSION:     '4.25',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -20,7 +20,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="fish v4.24 documentation" href="index.html" />
+    <link rel="top" title="fish v4.25 documentation" href="index.html" />
     <link rel="next" title="untag — removes tags from objects" href="untag.html" />
     <link rel="prev" title="Shell-Fish: The Online version of Fish" href="shell-fish.html" /> 
   </head>
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="shell-fish.html" title="Shell-Fish: The Online version of Fish"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fish v4.24 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.25 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -89,6 +89,13 @@ $ fish tag -a "Eiffel Tower" /bert/rating=7
 Failed to tag object with about="Eiffel Tower" with bert/rating
 Error code 401 (UNAUTHORIZED)</pre>
 </div>
+<p>The <tt class="docutils literal"><span class="pre">tag</span></tt> command can also be used to tag a new, anonymous object,
+by using the form:</p>
+<div class="highlight-python"><pre>$ fish tag -@ private/note="Super-secret note on an anonymous object"
+Tagged object 47c577ff-21f7-462c-94ea-105d326d204d with private/note = "Super-secret note on an anonymous object"</pre>
+</div>
+<p>In this case, the command does report what it has done, so that you
+learn the ID of the object it has tagged.</p>
 <div class="section" id="value-types">
 <h2>Value Types<a class="headerlink" href="#value-types" title="Permalink to this headline">¶</a></h2>
 <p>Fish uses duck typing, i.e. it infers the type from the value you give.
@@ -230,6 +237,18 @@ These files are read as binary files (<tt class="docutils literal"><span class="
 or where the MIME type is not listed above.</p>
 <p>This feature is experimental and may change in various ways as experience
 with it is gained.</p>
+<p>The <tt class="docutils literal"><span class="pre">-f</span></tt> flag can be combined with <tt class="docutils literal"><span class="pre">-&#64;</span></tt>.   For example, to type
+a multi-line note at the terminal, and attach it to a new, anonymous object,
+you might use the command:</p>
+<div class="highlight-python"><pre>$ fish tag -@f private/note
+This is a very secret,
+multi-line note.
+^D
+
+Tagged object 4159e858-891d-4400-8f4b-ba180e868fb7 with private/note = "This is a very secret,
+multi-line note.
+"</pre>
+</div>
 <p><strong>NOTES</strong></p>
 <p>The user must have permission to write the tag.
 By default, the user can write any tag under her namespace.</p>
@@ -294,7 +313,7 @@ By default, the user can write any tag under her namespace.</p>
         <li class="right" >
           <a href="shell-fish.html" title="Shell-Fish: The Online version of Fish"
              >previous</a> |</li>
-        <li><a href="index.html">fish v4.24 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.25 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

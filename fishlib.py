@@ -6,7 +6,7 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'4.24'
+__version__ = u'4.25'
 VERSION = __version__
 
 import base64
@@ -444,9 +444,9 @@ class Fluidinfo:
     def warning(self, msg):
         self.Print(u'%s\n' % msg)
 
-    def nothing_to_do():
-        self.Print(self, u'Nothing to do.')
-        raise Exception, msg
+    def nothing_to_do(self, msg):
+        self.Print(u'Nothing to do.')
+        raise Exception(msg)
 
     def _get_url(self, host, path, hash, kw):
         """returns URL as unicode
