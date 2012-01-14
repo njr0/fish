@@ -6,7 +6,7 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'4.25'
+__version__ = u'4.26'
 VERSION = __version__
 
 import base64
@@ -382,6 +382,14 @@ def format_param(v):
     return quote_u_8(v) if type(v) == unicode else str(v)
 
 
+def unicode_sanitize_hash(kw):
+    k2 = {}
+    for k in kw:
+        k2[k] = (kw[k].decode('UTF-8')
+                 if type(kw[k]) == types.StringType else kw[k])
+    return k2
+
+
 class Fluidinfo:
     """
     Connection to Fluidinfo that remembers credentials and provides
@@ -400,7 +408,7 @@ class Fluidinfo:
 
     def __init__(self, credentials=None, host=None, debug=DEFAULT_DEBUG,
                  encoding=DEFAULT_ENCODING, unixStylePaths=None,
-                 saveOutput=False, cache=None):
+                 saveOutput=False, cache=None, webapp=False):
         if credentials == None:
             credentials = Credentials()
         elif type(credentials) in types.StringTypes:
@@ -492,7 +500,7 @@ class Fluidinfo:
             k2[k] = (kw[k].decode('UTF-8')
                      if type(kw[k]) == types.StringType else kw[k])
         kw = k2
-        url = self._get_url(self.host, path, hash, kw)
+        url = self._get_url(self.host, path, hash, unicode_sanitize_hash(kw))
 
         if self.debug:
             self.Print(u'\nmethod: %r\nurl: %r\nbody: %s\nheaders:' %
@@ -505,8 +513,8 @@ class Fluidinfo:
             response, content, result, status = self.request(url, method,
                                                          body8, headers)
         except:
-            raise Exception(url)
-
+            raise Exception(u'URL Fetch failure (URL len %d): %s'
+                            % (len(url), url))
             
         return status, result
 
@@ -1134,7 +1142,7 @@ class Fluidinfo:
         """
         maxTextSize = 1024
         (v, r) = self.call(u'GET', u'/values', None, {u'query': query,
-                                                    u'tag': tags})
+                                                      u'tag': tags})
         assert_status(v, STATUS.OK)
         H = r[u'results'][u'id']
         results = []
@@ -1203,6 +1211,12 @@ class Fluidinfo:
             else:
                 o.tags[tag] = (u'%s value of size %d bytes' % (mime, size))
         return o
+
+    def to_fi_tags(self, hash):
+        h = {}
+        for tag in hash:
+            h[self.abs_tag_path(tag)[1:]] = hash[tag]
+        return h
 
     def put_values(self, objects, tagMap=None):
         pass

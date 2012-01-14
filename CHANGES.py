@@ -516,7 +516,19 @@ read from stdin and written as text/plain.
 Removed sort from formatted_tag_value for compound values, which are now
 lists rather than sets.
 
-2012/01/01 v25
+2012/01/01 v4.25
 Added -@ option, for tagging anonymous objects.
 
+2012/01/14 v4.26
+Merged in changes from different machine.
+
+Added to_fi_tags to Fluidinfo in fishlib.py.
+Noticed that the test testValuesAPISetGet fails under my python 2.7
+installation, which is a 64-bit copy.   Will investigate.
+
+Added values.py to git.
+
+Added webapp option to Fluidinfo to allow the web app to indicate it is
+in use.   For now, the only effect of this is to cause the tag command
+to complain (exceptionally...) if the -f option is used.
 """

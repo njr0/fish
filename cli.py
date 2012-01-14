@@ -146,6 +146,8 @@ def error_code(n):
 
 
 def execute_tag_command(objs, db, tags, options, action):
+    if options.force and db.webapp:
+        raise CommandError(u'No file system available for the web.')
     tags = form_tag_value_pairs(tags, options)
     for obj in objs:
         description = describe_by_mode(obj)
