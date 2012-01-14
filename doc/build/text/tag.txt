@@ -13,9 +13,11 @@ specified.
 
 When authenticated as  user ``alice``:
 
+   tag "Eiffel Tower" rating=7 seen
    tag -a "Eiffel Tower" rating=7 seen
    tag -a "Eiffel Tower" /alice/rating=7 seen
    tag -i 93bd1999-0998-49cc-8004-af457ce34ce4 rating=7 seen
+   tag 93bd1999-0998-49cc-8004-af457ce34ce4 rating=7 seen
    tag -F -a "Eiffel Tower" alice/rating=7 alice/seen
    tag -q 'fluiddb/about matches "Eiffel Tower"' rating=7 seen
 
@@ -48,6 +50,196 @@ when it fails.
    $ fish tag -a "Eiffel Tower" /bert/rating=7
    Failed to tag object with about="Eiffel Tower" with bert/rating
    Error code 401 (UNAUTHORIZED)
+
+The ``tag`` command can also be used to tag a new, anonymous object,
+by using the form:
+
+   $ fish tag -@ private/note="Super-secret note on an anonymous object"
+   Tagged object 47c577ff-21f7-462c-94ea-105d326d204d with private/note = "Super-secret note on an anonymous object"
+
+In this case, the command does report what it has done, so that you
+learn the ID of the object it has tagged.
+
+
+Value Types
+===========
+
+Fish uses duck typing, i.e. it infers the type from the value you
+give. The following pair of commands illustrates most of the cases:
+
+   $ fish tag Paris name n1=1 n2=-1 f=7.2 b1=True b2=false s1=text s2="more text"
+   $ fish show Paris name n1 n2 f b1 b2 s1 s2
+   Object with about="Paris":
+     /njr/name
+     /njr/n1 = 1
+     /njr/n2 = -1
+     /njr/f = 7.2
+     /njr/b1 = True
+     /njr/b2 = False
+     /njr/s1 = "text"
+     /njr/s2 = "more text"
+
+As you can see
+
+   * A tag with no value is written as a valueless tag (or NULL, if
+     you prefer)
+
+   * Things that look like numbers are taken as numbers
+
+   * True and False, regardless of capitalization, are taken as
+     booleans
+
+   * Almost anything else is taken as a string.   Quotes are not
+     needed for strings other than to embed whitespace.
+
+Fish also supports values that are lists of strings. The preferred
+form for these is as a list of strings enclosed in square brackets,
+but braces may also be used, mostly for backwards compatibility. The
+items should be separated by commas or whitespace. (In the past,
+Fluidinfo's compound values were sets, rather than lists of strings,
+so the braces were more appropriate then.) So you can say things like:
+
+   $ fish tag Paris airports='[Orly,"Charles de Gaulle"]'
+   $ fish tag Paris 'airports=[Orly, "Charles de Gaulle"]'
+
+and the result will be:
+
+   $ fish show Paris airports
+   Object with about="Paris":
+   /njr/airports = [
+     "Orly",
+     "Charles de Gaulle"
+   ]
+
+
+Writing Files to Fluidinfo
+==========================
+
+There is experimental new functionality to allow files to be written
+to Fluidinfo using Fish's ``tag`` command.
+
+This functionality is invoked by the ``-f`` flag; when this is used,
+parameter values are taken to be file names.   For example, suppose
+the Fluidinfo user ``njr`` has a file in the ``/tmp`` directory called
+``spinner.gif`` and wants to upload this as the tag
+``njr/image/red-spinner.gif`` on the object whose *about* tag is
+``abouttag``.   Assume that we are on a Unix-like system and that the
+current working directory is ``/tmp``.   Then any of the following
+will work:
+
+   $ fish tag -f abouttag image/red-spinner.gif=spinner.gif
+   $ fish tag -f abouttag image/red-spinner.gif=./spinner.gif
+   $ fish tag -f abouttag image/red-spinner.gif=/tmp/spinner.gif
+   $ fish tag -f -M image/gif abouttag image/red-spinner.gif=/tmp/spinner.gif
+
+This ``red-spinner.gif`` file has actually been written to this
+location, using a command similar to those above, and can be viewed
+at:
+
+   http://fluiddb.fluidinfo.com/about/abouttag/njr/image/red-
+   spinner.gif
+
+Notice that the correct MIME type is served, so the browser can show
+the image.
+
+Points to note:
+
+   * The ``-f`` flag indicates that all tag values in the command are
+     filenames, i.e. you can't mix file-based values and literals in a
+     single command.
+
+   * The filename has to be included even if it is indentical to the
+     tag name (though this may change at a later date) and there is no
+     recursive option for writing directories as tag bundles at the
+     moment.
+
+   * By default, MIME types for certain common files are inferred from
+     the file extensions as detailed below.
+
+   * If you want to specify the MIME type explicitly, use the ``-M``
+     flag to do this. This will apply to *all* tags set in the
+     command.
+
+   * Text files are assumed to be encoded as UTF-8.
+
+   * On unix-like systems, tildes will be expanded, so ``~`` and
+     ``~njr`` etc. may be used.
+
+   * If there are any tags for which no file is specified when using
+     ``-f``, input will be read from stdin and used as the value for
+     all such tags, with MIME type set to text/plain (or whatever is
+     specified with ``-M``).
+
+The file extensions for which MIME types are inferred fall into two
+groups. First are the textual MIME types (not necessarily types that
+begin ``text/``, but ones whose contents are textual).   These are:
+
+   TEXTUAL_MIMES = {
+       'txt': None,
+       'csv': 'text/plain',
+       'html': 'text/html',
+       'xml': 'text/xml',
+       'htm': 'text/html',
+       'css': 'text/css',
+       'js': 'text/javascript',
+       'vcf': 'text/vcard',
+       'plain': 'text/plain',
+       'svg': 'image/svg+xml',
+       'ps': 'application/postscript',
+       'eps': 'application/postscript',
+       'rss': 'application/rss+xml',
+       'atom': 'application/atom+xml',
+       'xhtml': 'application/xhtml+xml',
+   }
+
+Files with these extensions are read as *non*-binary
+(``open("foo.text")``) and interpreted as 'UTF-8'.
+
+Notice that ``.txt`` files are not given a MIME type, meaning that
+they are written as primitive (unicode) strings to Fluidinfo.
+
+The extensions for which non-textual types are inferred are listed
+below. These files are read as binary files (``open("foo.text",
+'rb')``)
+
+   BINARY_MIMES = {
+       'png': 'image/png',
+       'jpeg': 'image/jpeg',
+       'jpg': 'image/jpg',
+       'gif': 'image/gif',
+       'tif': 'image/tiff',
+       'tiff': 'image/tiff',
+       'ico': 'image/vnd.microsoft.icon',
+       'pdf': 'application/pdf',
+       'zip': 'application/zip',
+       'gz': 'application/x-gzip',
+       'json': 'application/json',
+       'mp3': 'audio/mpeg',
+       'mp4': 'audio/mp4',
+       'ogg': 'audio/ogg',
+       'wav': 'audio/vnd.wave',
+       'tar': 'application/x-tar',
+       'rar': 'application/x-rar-compressed',
+   }
+
+Use the ``-M`` flag to set the MIME type where this mapping is not
+correct or where the MIME type is not listed above.
+
+This feature is experimental and may change in various ways as
+experience with it is gained.
+
+The ``-f`` flag can be combined with ``-@``.   For example, to type a
+multi-line note at the terminal, and attach it to a new, anonymous
+object, you might use the command:
+
+   $ fish tag -@f private/note
+   This is a very secret,
+   multi-line note.
+   ^D
+
+   Tagged object 4159e858-891d-4400-8f4b-ba180e868fb7 with private/note = "This is a very secret,
+   multi-line note.
+   "
 
 **NOTES**
 

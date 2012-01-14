@@ -3,6 +3,89 @@
 listseq — lists items in or searches a sequence
 ***********************************************
 
+Lists the items in a sequence, or searches a sequence for matching
+items.
 
+Note, this command is normally used through an alias, which is usually
+the plural form of the items in the sequence.
 
+**FORM**
+::
+
+  listseq tag
+  listseq tag n
+  listseq tag search terms
+
+With just a tag, this shows the items in the sequence.
+
+With a number, it shows the last n items in the sequence.
+
+If any other parameters are given, these are taken as search terms; all
+must be present to match.
+
+**EXAMPLE**
+
+Assume that a sequence has been created like this:
+::
+
+    $ mkseq remark remarks private/remark
+    Next remark number: 0
+
+    $ fish mkseq remark remarks private/remark
+    Next remark number: 0
+    zero:$ fish remark "Isn't this a remarkable first remark"
+    0: Isn't this a remarkable first remark
+    2011-12-18
+
+    $ fish remark "...and this only slightly less remarkable"
+    1: ...and this only slightly less remarkable
+    2011-12-18
+
+    $ fish remark "Too REMARKABLE"
+    2: Too REMARKABLE
+    2011-12-18
+
+Then ``remarks`` is an alias
+::
+
+    $ fish alias remarks
+    remarks:
+      njr/.fish/alias = "listseq /njr/private/remark"
+
+so we can say
+::
+
+    $ fish remarks
+    0: Isn't this a remarkable first remark
+    2011-12-18
+
+    1: ...and this only slightly less remarkable
+    2011-12-18
+
+    2: Too REMARKABLE
+    2011-12-18
+
+or equivalently
+::
+
+    $ fish listseq private/remark
+
+which produces the same output.
+
+We can limit the output to remarks containing ``remarkable``:
+::
+
+   $ fish remarks remarkable
+   0: Isn't this a remarkable first remark
+   2011-12-18
+
+   1: ...and this only slightly less remarkable
+   2011-12-18
+
+Or to the most recent remark:
+::
+
+   $ fish remarks 1 
+   2: Too REMARKABLE
+   2011-12-18
 

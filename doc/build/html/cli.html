@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>An Overview of the Fish Command Line for Fluidinfo &mdash; fish v4.11 documentation</title>
+    <title>An Overview of the Fish Command Line for Fluidinfo &mdash; fish v4.25 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '4.11',
+        VERSION:     '4.25',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -20,7 +20,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="fish v4.11 documentation" href="index.html" />
+    <link rel="top" title="fish v4.25 documentation" href="index.html" />
     <link rel="next" title="Shell-Fish: The Online version of Fish" href="shell-fish.html" />
     <link rel="prev" title="The Fish Command Line for Fluidinfo" href="index.html" /> 
   </head>
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="index.html" title="The Fish Command Line for Fluidinfo"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fish v4.11 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.25 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -65,7 +65,7 @@ while all objects are shared.</p>
 </div>
 <div class="section" id="overview-of-the-command-line">
 <h2>Overview of the Command Line<a class="headerlink" href="#overview-of-the-command-line" title="Permalink to this headline">¶</a></h2>
-<p>The Fish command line is a acts as a sort-of one-shot command shell
+<p>The Fish command line normally acts as a sort-of one-shot command shell
 for Fluidinfo.   It gives access to much of the functionality of
 the underlying <tt class="docutils literal"><span class="pre">fish.py</span></tt> library, with a main focus on tagging,
 getting tag values, finding tags, querying Fluidinfo and clearing
@@ -75,18 +75,15 @@ altering their permissions.</p>
 <p>Assuming you have installed <tt class="docutils literal"><span class="pre">fish.py</span></tt>, set up a credentials file,
 and created an alias <tt class="docutils literal"><span class="pre">fish</span></tt> to run it, basic use is exemplified
 as follows.   In the examples that follow, I assume that the Fluidinfo
-user has username <tt class="docutils literal"><span class="pre">alice</span></tt>.   All tags belonging to alice start <tt class="docutils literal"><span class="pre">alice/</span></tt>.
-(<tt class="docutils literal"><span class="pre">fish</span></tt> actually has a configuration option to allow this to be omitted,
-but for now we&#8217;ll specify the user explicitly, since that is normal
-in Fluidinfo.)</p>
+user has username <tt class="docutils literal"><span class="pre">alice</span></tt>.   All tags belonging to alice start <tt class="docutils literal"><span class="pre">alice/</span></tt>.</p>
 <blockquote>
 <ol class="arabic">
 <li><p class="first">Rate the Eiffel Tower as a 9:</p>
-<div class="highlight-python"><pre>$ fish tag -a "Eiffel Tower" rating=9</pre>
+<div class="highlight-python"><pre>$ fish tag "Eiffel Tower" rating=9</pre>
 </div>
 </li>
 <li><p class="first">Show the my rating and ntoll&#8217;s rating of the &#8220;Eiffel Tower&#8221;.</p>
-<div class="highlight-python"><pre>$ fish show -a "Eiffel Tower"  /about  rating  /ntoll/rating
+<div class="highlight-python"><pre>$ fish show "Eiffel Tower"  /about  rating  /ntoll/rating
 Object with about="Eiffel Tower":
 /objects/93bd1999-0998-49cc-8004-af457ce34ce4
 alice/rating = 9
@@ -95,7 +92,7 @@ ntoll/rating = "I prefer the one in Blackpool"</pre>
 </div>
 </li>
 <li><p class="first">Show all the tags on the &#8220;Eiffel Tower&#8221; (now referenced by ID):</p>
-<div class="highlight-python"><pre>$ fish tags -i 93bd1999-0998-49cc-8004-af457ce34ce4
+<div class="highlight-python"><pre>$ fish tags 93bd1999-0998-49cc-8004-af457ce34ce4
 Object with id=93bd1999-0998-49cc-8004-af457ce34ce4:
 alice/rating = 9
 ntoll/rating = "I prefer the  the one in Blackpool"
@@ -137,60 +134,6 @@ Object 7aed1e67-a88e-439d-8a56-b2ab52c838ab:
 to describe the abstraction <tt class="docutils literal"><span class="pre">fish</span></tt> uses, as it differs in key
 respects from the underlying Fluidinfo model.</p>
 </div>
-<div class="section" id="the-fish-abstraction">
-<h2>The Fish Abstraction<a class="headerlink" href="#the-fish-abstraction" title="Permalink to this headline">¶</a></h2>
-<p>The Fluidinfo API is quite low level and rigid;
-<tt class="docutils literal"><span class="pre">fish</span></tt> offers a slightly higher level of abstraction.
-Here, we briefly note the differences.</p>
-<blockquote>
-<ul>
-<li><p class="first">In the Fluidinfo API, you can&#8217;t simply tag an object with
-an <tt class="docutils literal"><span class="pre">alice/rating</span></tt> tag; you first have to tell the system that you
-wish to use a <tt class="docutils literal"><span class="pre">rating</span></tt> tag by <tt class="docutils literal"><span class="pre">creating</span></tt> it; only once you
-have done this can you use it.</p>
-<p>In <tt class="docutils literal"><span class="pre">fish</span></tt>, you can just go ahead and set a tag; if it doesn&#8217;t
-exist, the system will create it for you.</p>
-</li>
-<li><p class="first">Fluidinfo supports <em>namespaces</em>; a namespace is to a tag much
-like a directory or folder is to a file, i.e. tags live in
-namespaces and you can have different tags with the same name in
-different namspaces, just as you can have two files with the same
-name in different folders.   User Jacqui (username <tt class="docutils literal"><span class="pre">jacqui</span></tt>)
-has a namespace
-<tt class="docutils literal"><span class="pre">jacqui</span></tt>, and she can create tags (&#8220;top-level tags&#8221;) in that
-namespace.   Jacqui may, however, wish to group tags into sets
-using namespaces.   For example, she may wish to have some private
-tags that all live in a namespace called <tt class="docutils literal"><span class="pre">private</span></tt>.   So she might
-have a private rating tag called <tt class="docutils literal"><span class="pre">jacqui/private/rating</span></tt>.
-As with tags, Fluidinfo first requires jacqui to create the <tt class="docutils literal"><span class="pre">private</span></tt>
-namespace before she can create the <tt class="docutils literal"><span class="pre">jacqui/private/rating</span></tt> tag.
-So to use <tt class="docutils literal"><span class="pre">jacqui/private/rating</span></tt> for the first time, using the
-API directly, the process would be:</p>
-<blockquote>
-<ol class="arabic simple">
-<li>Create the namespace <tt class="docutils literal"><span class="pre">private</span></tt> under <tt class="docutils literal"><span class="pre">jacqui</span></tt></li>
-<li>Create the tag <tt class="docutils literal"><span class="pre">rating</span></tt></li>
-<li>Tag the relevant object with <tt class="docutils literal"><span class="pre">rating</span></tt>.</li>
-</ol>
-</blockquote>
-</li>
-</ul>
-<blockquote>
-<p>Again, <tt class="docutils literal"><span class="pre">fish</span></tt> takes care of all that, and allows jacqui just
-to say:</p>
-<div class="highlight-python"><pre>fish tag -a "Eiffel Tower" jacqui/rating=10</pre>
-</div>
-<p><tt class="docutils literal"><span class="pre">fish</span></tt> will create any tags and namespaces required on the fly.</p>
-</blockquote>
-<ul class="simple">
-<li>Finally, in Fluidinfo itself, the object ID (128-bit number,
-usually formatted as a hex-number in 8-4-4-4-12 digit groups)
-is not actually a tag on the object.   <tt class="docutils literal"><span class="pre">fish</span></tt> allows the user
-to use refer to it as a tag, at least for reporting purposes,
-using the name <tt class="docutils literal"><span class="pre">/id</span></tt>.</li>
-</ul>
-</blockquote>
-</div>
 <div class="section" id="the-anatomy-of-the-core-fish-commands">
 <h2>The Anatomy of the core Fish Commands<a class="headerlink" href="#the-anatomy-of-the-core-fish-commands" title="Permalink to this headline">¶</a></h2>
 <p>The general form of the core Fish commands is:</p>
@@ -223,22 +166,68 @@ by the username (see below).</li>
 </ul>
 </blockquote>
 <p>The <tt class="docutils literal"><span class="pre">&lt;object</span> <span class="pre">selector&gt;</span></tt> is used to specify which objects you are interested
-in and usually takes on of three forms:</p>
+in and can take any of five different forms:</p>
 <blockquote>
-<ul class="simple">
-<li><tt class="docutils literal"><span class="pre">-a</span> <span class="pre">&quot;about</span> <span class="pre">tag</span> <span class="pre">value&quot;</span></tt> is used to specify an object on the basis of
-its about tag (<tt class="docutils literal"><span class="pre">fluiddb/about</span></tt>).   For example,
+<ol class="arabic">
+<li><p class="first">&#8220;almost anything you like that doesn&#8217;t start with <tt class="docutils literal"><span class="pre">-</span></tt>&#8220;.
+By far the most easiest and most common way to specify an object
+is simply by making the first argument to the command its <em>about</em> tag.</p>
+<p>More specifically,
+if you don&#8217;t use any of the selector flags <tt class="docutils literal"><span class="pre">-a</span></tt>, <tt class="docutils literal"><span class="pre">-i</span></tt>, <tt class="docutils literal"><span class="pre">-q</span></tt>
+or <tt class="docutils literal"><span class="pre">-&#64;</span></tt>, Fish will take the first argument after the command
+and treat it as either an <em>about</em> tag value or an ID.
+Its criteria for choosing are very simple: if the form of that
+value is</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">hhhhhhhh</span><span class="o">-</span><span class="n">hhhh</span><span class="o">-</span><span class="n">hhhh</span><span class="o">-</span><span class="n">hhhh</span><span class="o">-</span><span class="n">hhhhhhhhhhhh</span>
+</pre></div>
+</div>
+<p>where each <tt class="docutils literal"><span class="pre">h</span></tt> is a hex digit <tt class="docutils literal"><span class="pre">0–f</span></tt> (in lower case), it will
+be assumed to be an object ID; otherwise it will be taken to be
+an <em>about</em> tag.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">-a</span> <span class="pre">&quot;about</span> <span class="pre">tag</span> <span class="pre">value&quot;</span></tt> is used to specify an object specifically</p>
+</li>
+</ol>
+<blockquote>
+<p>on the basis of
+its <em>about</em> tag (<tt class="docutils literal"><span class="pre">fluiddb/about</span></tt>).   For example,
 <tt class="docutils literal"><span class="pre">-a</span> <span class="pre">&quot;book:nineteen</span> <span class="pre">eighty</span> <span class="pre">four</span> <span class="pre">(george</span> <span class="pre">orwell)&quot;</span></tt> specifies an important
-book by George Orwell.</li>
-<li><tt class="docutils literal"><span class="pre">-i</span> <span class="pre">ID</span></tt> is used to specify an object on the basis of its
+book by George Orwell.</p>
+<p>The main reason to do this would be if you wanted to tag an
+object with an about tag that has the exact form of an Object ID.
+This is a truly terrible idea, and I strongly recommend against it.
+If you do it, you will end up tagging and object with an <em>about</em> tag
+that has the form of an object ID, but whose actual ID will (with
+probability 1.0000000) be different.   In the future, it is likely
+that object IDs and <em>about</em> tags will be merged into a single
+identifier, at which point data written on such objects will be at risk.</p>
+</blockquote>
+<ul>
+<li><p class="first"><tt class="docutils literal"><span class="pre">-i</span> <span class="pre">ID</span></tt> is used to specify an object on the basis of its
 ID (expressed as a hex string, appropriately formatted).
 For example, <tt class="docutils literal"><span class="pre">-i</span> <span class="pre">93bd1999-0998-49cc-8004-af457ce34ce4</span></tt>
 specifies the object with this ID, which happens to be the
-on with the about tag <tt class="docutils literal"><span class="pre">Eiffel</span> <span class="pre">Tower</span></tt>.</li>
-<li><tt class="docutils literal"><span class="pre">-q</span> <span class="pre">&quot;fluidinfo</span> <span class="pre">query&quot;</span></tt> is used to specify a set of objects
+on with the about tag <tt class="docutils literal"><span class="pre">Eiffel</span> <span class="pre">Tower</span></tt>.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">-q</span> <span class="pre">&quot;fluidinfo</span> <span class="pre">query&quot;</span></tt> is used to specify a set of objects
 on the basis of a query expressed in the Fluidinfo query language.
 For example <tt class="docutils literal"><span class="pre">-q</span> <span class="pre">has</span> <span class="pre">alice/rating</span></tt> specifies objects that have
-an <tt class="docutils literal"><span class="pre">alice/rating</span></tt> rag on them.</li>
+an <tt class="docutils literal"><span class="pre">alice/rating</span></tt> rag on them.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">-&#64;</span></tt> is used to specify a single new object having no <em>about</em> tag.
+For example, if Jacqui says:</p>
+<div class="highlight-python"><pre>$ fish tag -@ private/note="Sometimes a girl needs a little privacy"</pre>
+</div>
+<p>then Fish will respond with a message something like the following:</p>
+<div class="highlight-python"><pre>Tagged object ebd22382-87f9-46f5-a6da-e330671dd8b7 with private/note = "Sometimes a girl needs a little privacy"</pre>
+</div>
+<p>Here, <tt class="docutils literal"><span class="pre">ebd22382-87f9-46f5-a6da-e330671dd8b7</span></tt> is the ID of a new object
+that Fluidinfo will create.   It has no <em>about</em> tag and never will have.
+If you use only private tags (ones that others can&#8217;t read), you can
+have a very high degree of confidence that no one else will ever find
+your object.   So this is a good place to store data if you are
+very confident you will never want to share it with anyone else.</p>
+</li>
 </ul>
 </blockquote>
 <p>Finally, some commands need or accept a list of tags or tag-value pairs.
@@ -271,7 +260,7 @@ For example:</p>
 This is fish version 0.00.
 &gt; pwd
 alice
-&gt; show -a 'book:alices adventures in wonderland (lewis carroll)' rating
+&gt; show 'book:alices adventures in wonderland (lewis carroll)' rating
 Object with about="book:alices adventures in wonderland (lewis carroll)":
 alice/rating = 10
 &gt; quit</pre>
@@ -295,14 +284,14 @@ to <tt class="docutils literal"><span class="pre">h</span></tt>.</p>
 <li><p class="first">Either single or double quotes can be used to make compound
 arguments; single quotes can be enclosed in double quotes
 and double quotes can be enclosed in single quotes, e.g.</p>
-<div class="highlight-python"><pre>tag -a "Occam's Razor" comment="I'm a believer"
-tag -a 'The "double" quote' comment='Is "doubleplusgood"'</pre>
+<div class="highlight-python"><pre>tag "Occam's Razor" comment="I'm a believer"
+tag 'The "double" quote' comment='Is "doubleplusgood"'</pre>
 </div>
 </li>
 <li><p class="first">The escape character is blackslash (<tt class="docutils literal"><span class="pre">\</span></tt>), which can be
 used to escape quotes or backslashes.   For example,
 this command:</p>
-<div class="highlight-python"><pre>tag -a "The \"backslash\" (\\) character" comment="is used for escaping"</pre>
+<div class="highlight-python"><pre>tag "The \"backslash\" (\\) character" comment="is used for escaping"</pre>
 </div>
 <p>tags the object with about tag <tt class="docutils literal"><span class="pre">The</span> <span class="pre">&quot;backslash&quot;</span> <span class="pre">(\)</span> <span class="pre">character</span></tt>.</p>
 </li>
@@ -310,7 +299,7 @@ this command:</p>
 whereby the phrase enclosed in backticks is evaluated as a Fish
 command and the output of that command replaces the quoted phrase
 when the enclosing command is executed.   For example:</p>
-<div class="highlight-python"><pre>tag -a "`about book 'Animal Farm' 'George Orwell'`" rating=10</pre>
+<div class="highlight-python"><pre>tag "`about book 'Animal Farm' 'George Orwell'`" rating=10</pre>
 </div>
 <p>tags the object with about tag <tt class="docutils literal"><span class="pre">book:animal</span> <span class="pre">farm</span> <span class="pre">(george</span> <span class="pre">orwell)</span></tt>,
 since that is the result of the quoted Fish <tt class="docutils literal"><span class="pre">about</span></tt> command.</p>
@@ -337,7 +326,6 @@ since that is the result of the quoted Fish <tt class="docutils literal"><span c
 <li><a class="reference external" href="">An Overview of the Fish Command Line for Fluidinfo</a><ul>
 <li><a class="reference external" href="#a-brief-overview-of-fluidinfo">A Brief Overview of Fluidinfo</a></li>
 <li><a class="reference external" href="#overview-of-the-command-line">Overview of the Command Line</a></li>
-<li><a class="reference external" href="#the-fish-abstraction">The Fish Abstraction</a></li>
 <li><a class="reference external" href="#the-anatomy-of-the-core-fish-commands">The Anatomy of the core Fish Commands</a></li>
 <li><a class="reference external" href="#invoking-fish-as-a-shell">Invoking Fish as a Shell</a></li>
 </ul>
@@ -384,11 +372,11 @@ since that is the result of the quoted Fish <tt class="docutils literal"><span c
         <li class="right" >
           <a href="index.html" title="The Fish Command Line for Fluidinfo"
              >previous</a> |</li>
-        <li><a href="index.html">fish v4.11 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.25 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2011, Nicholas J. Radcliffe.
+      &copy; Copyright 2011-2012, Nicholas J. Radcliffe.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.2.
     </div>
   </body>

@@ -1,6 +1,29 @@
 sync — synchronizes the Fish cache with Fluidinfo
 *************************************************
 
+The Fish cache is a local copy of aliases and related configuration
+information to avoid having to read this from Fish before interpreting
+every command.   The cache is normally refreshed whenever an interactive
+Fish session is started (by typing ``fish`` with no parameters), but can
+also be forced to update with the sync command.
+
+Although the command is called ``sync``, in reality the cache is simply
+overwritten with data from Fluidinfo, which is considered to be the master
+copy.   (Changes to aliases are automatically written to Fluidinfo, so no
+true synchronization should be necessary.)
+
+**FORM**
+::
+
+  fish sync
+
+
+**SEE ALSO**
+
+``showcache``
+
+
+
 
 
 

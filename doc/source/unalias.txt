@@ -1,4 +1,13 @@
 unalias — delete an alias
 *************************
 
+Unalias is used to remove one or more aliases.
 
+**FORM**
+::
+
+  unalias alias-name [other aliases]
+
+**SEE ALSO**
+
+``alias``

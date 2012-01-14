@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 #
-# fdblib.py
+# fishlib.py
 #
-# Copyright (c) Nicholas J. Radcliffe 2009-2011 and other authors specified
+# Copyright (c) Nicholas J. Radcliffe 2009-2012 and other authors specified
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'4.13'
+__version__ = u'4.25'
 VERSION = __version__
 
+import base64
 import codecs
 import cPickle as pickle
 import os
@@ -20,7 +21,8 @@ from functools import wraps
 from httplib2 import Http
 import cline
 from cache import Cache
-from fishbase import get_credentials_file, O, formatted_tag_value
+from fishbase import (get_credentials_file, O, formatted_tag_value,
+                      expandpath, Dummy, TEXTUAL_MIMES)
 
 if sys.version_info < (2, 6):
     try:
@@ -39,7 +41,6 @@ FISHUSER = 'FISHUSER'
 toStr = unicode if UNICODE else str
 DEFAULT_DEBUG = False
 
-
 class ProblemReadingCredentialsFileError(Exception):
     pass
 
@@ -49,6 +50,10 @@ class BadCredentialsError(Exception):
 
 
 class CredentialsFileNotFoundError(Exception):
+    pass
+
+
+class FileNotFoundError(Exception):
     pass
 
 
@@ -88,6 +93,14 @@ class NonUnicodeStringError(Exception):
     pass
 
 
+class MIMEError(Exception):
+    pass
+
+
+class UnicodeError(Exception):
+    pass
+
+
 class STATUS:
     OK = 200
     CREATED = 201
@@ -110,6 +123,7 @@ INTEGER_RE = re.compile(ur'^[+\-]{0,1}[0-9]+$')
 INTEGER_RANGE_RE = re.compile(ur'^([0-9]+)\-([0-9]+)$')
 DECIMAL_RE = re.compile(ur'^[+\-]{0,1}[0-9]+[\.\,]{0,1}[0-9]*$')
 DECIMAL_RE2 = re.compile(ur'^[+\-]{0,1}[\.\,]{1}[0-9]+$')
+UUID_RE = re.compile(ur'^[0-9a-f]{8}\-[0-9a-f]{4}\-[0-9a-f]{4}\-[0-9a-f]{4}\-[0-9a-f]{12}$')
 
 IDS_MAIN = {u'DADGAD': u'1fb8e9cb-70b9-4bd0-a7e7-880247384abd'}
 IDS_SAND = {u'DADGAD': DADGAD_ID}
@@ -125,6 +139,27 @@ SHORT_WORDS = ['a', 'the', 'on', 'in', 'to', 'with', 'of', 'at', 'by',
 COMMON_WORDS = ['artist', 'album', 'track']
 
 STOP_WORDS = SHORT_WORDS + COMMON_WORDS
+
+BINARY_MIMES = {
+    'png': 'image/png',
+    'jpeg': 'image/jpeg',
+    'jpg': 'image/jpg',
+    'gif': 'image/gif',
+    'tif': 'image/tiff',
+    'tiff': 'image/tiff',
+    'ico': 'image/vnd.microsoft.icon',
+    'pdf': 'application/pdf',
+    'zip': 'application/zip',
+    'gz': 'application/x-gzip',
+    'json': 'application/json',
+    'mp3': 'audio/mpeg',
+    'mp4': 'audio/mp4',
+    'ogg': 'audio/ogg',
+    'wav': 'audio/vnd.wave',
+    'tar': 'application/x-tar',
+    'rar': 'application/x-rar-compressed',
+}
+
 
 class SaveOut:
     def __init__(self):
@@ -177,11 +212,22 @@ class ConcreteTag:
 class TagValue:
     def __init__(self, name, value=None):
         self.name = name
-        self.value = value
+        if hasattr(value, 'mime'):
+            self.mime = value.mime
+            self.value = value.value
+        else:
+            self.value = value
+            self.mime = None
+        
+
 
     def __unicode__(self):
-        return (u'Tag "%s", value "%s" of type %s'
-                     % (self.name, toStr(self.value), toStr(type(self.value))))
+        if hasattr(self.mime):
+            return (u'Tag "%s", value of MIME type %s'
+                    % (self.name, unicode(self.mime)))
+        else:
+            return (u'Tag "%s", value "%s" of type %s'
+                    % (self.name, toStr(self.value), toStr(type(self.value))))
 
 
 class Namespace:
@@ -357,6 +403,8 @@ class Fluidinfo:
                  saveOutput=False, cache=None):
         if credentials == None:
             credentials = Credentials()
+        elif type(credentials) in types.StringTypes:
+            credentials = Credentials(credentials)
         self.cache = cache or Cache(credentials.username)
         self.credentials = credentials
         if unixStylePaths == None:
@@ -396,9 +444,9 @@ class Fluidinfo:
     def warning(self, msg):
         self.Print(u'%s\n' % msg)
 
-    def nothing_to_do():
-        self.Print(self, u'Nothing to do.')
-        raise Exception, msg
+    def nothing_to_do(self, msg):
+        self.Print(u'Nothing to do.')
+        raise Exception(msg)
 
     def _get_url(self, host, path, hash, kw):
         """returns URL as unicode
@@ -499,17 +547,21 @@ class Fluidinfo:
     def _set_tag_value(self, path, value, value_type=None):
         headers = self.headers.copy()
         if value_type is None:
-            value = json.dumps(value)
+            value = json.dumps(value).encode('UTF-8')
             value_type = PRIMITIVE_CONTENT_TYPE
+        elif type(value) is unicode:
+            value = value.encode('UTF-8')
         headers[u'content-type'] = value_type
         url = self._get_url(self.host, path, hash=None, kw=None)
         http = _get_http(self.timeout)
         if self.debug:
             self.Print(u'\nTag URL: %s' % url)
-            self.Print(u'Value: %s' % value)
+            if value_type != 'application/vnd.fluiddb.value+json':
+                self.Print(u'Value of type: %s' % value_type)
+            else:
+                self.Print(u'Value: %s' % value)
         response, content, result, status = self.request(url, u'PUT',
-                                                value.encode('UTF-8'),
-                                                headers)
+                                                value, headers)
         return status, content
 
     def create_object(self, about=None):
@@ -761,10 +813,10 @@ class Fluidinfo:
             return status, (value if status == STATUS.OK else None)
 
     def get_tag_value_by_id(self, id, tag, inPref=False, getMime=False):
-        return self.get_tag_value(id, tag, False, inPref)
+        return self.get_tag_value(id, tag, False, inPref, getMime=getMime)
     
     def get_tag_value_by_about(self, about, tag, inPref=False, getMime=False):
-        return self.get_tag_value(about, tag, True, inPref)
+        return self.get_tag_value(about, tag, True, inPref, getMime=getMime)
 
     def get_tag_values_by_id(self, id, tags):
         return [self.get_tag_value_by_id(id, tag) for tag in tags]
@@ -1152,11 +1204,8 @@ class Fluidinfo:
                 o.tags[tag] = (u'%s value of size %d bytes' % (mime, size))
         return o
 
-    def to_fi_tags(self, hash):
-        h = {}
-        for tag in hash:
-            h[self.abs_tag_path(tag)[1:]] = hash[tag]
-        return h
+    def put_values(self, objects, tagMap=None):
+        pass
 
 
 def object_uri(id):
@@ -1195,10 +1244,43 @@ def get_typed_tag_value(v):
         return r
     elif len(v) > 1 and v[0] == v[-1] and v[0] in (u'"\''):
         return v[1:-1]
-    elif len(v) > 1 and v[0] == u'{' and v[-1] == '}':
+    elif len(v) > 1 and ((v[0] == u'[' and v[-1] == ']') or 
+                         (v[0] == u'{' and v[-1] == '}')):
          return cline.CScanSplit(v[1:-1], ' \t,', quotes='"\'').words
     else:
         return toStr(v)
+
+
+def get_typed_tag_value_from_file(path, options):
+    path = expandpath(path)
+    mime = options.mime[0] if options.mime else None
+    if os.path.exists(path):
+        v = Dummy()
+        stem, ext = os.path.splitext(path)
+        ext = ext[1:].lower()
+        if (mime and mime in TEXTUAL_MIMES.values()) or ext in TEXTUAL_MIMES:
+            with open(path) as f:
+                v.value = f.read()
+                try:
+                    v.value = v.value.decode('UTF-8')
+                except UnicodeDecodeError:      # clearly wasn't UTF-8
+                    raise UnicodeError('Content doesn\'t seem to be UTF-8')
+                v.mime = mime or TEXTUAL_MIMES[ext]
+        elif mime or ext in BINARY_MIMES:
+            with open(path, 'rb') as f:
+                v.value = f.read()
+                v.mime = mime or BINARY_MIMES[ext]
+        else:
+            if ext:
+                raise MIMEError('Extension .%s unknown and no MIME type'
+                                ' given (with -M)' % ext)
+            else:
+                raise MIMEError('You need to specify a MIME type with -M for'
+                                'files with no Extension.')
+        return v
+    else:
+        raise FileNotFoundError('Could not find or read %s.' % path)
+
 
 
 def choose_host():

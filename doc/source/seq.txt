@@ -3,4 +3,71 @@
 seq — adds to a sequence
 ************************
 
+Adds the next item to a sequence.
+
+**FORM**
+::
+
+    seq sequence-name "Item to add to the sequence"
+
+where ``sequence-name`` is the name of a sequence previously created
+with the ``mk-seq`` command.
+
+Fish sequences are simply numbered sequences of strings that are added
+to conveniently using Fish commands.   Although they can be deleted
+and edited by the user (using Fish or any other tools), the are primarily
+designed to be added to and rarely or never amended.
+
+The basic usage is as follows:
+
+**EXAMPLE**
+::
+
+    $ fish mkseq remark remarks private/remark
+    Next remark number: 0
+
+    $ fish remark "Isn't this a remarkable first remark"
+    0: Isn't this a remarkable first remark
+    2011-12-18
+
+    $ fish remark "...and this only slightly less remarkable"
+    1: ...and this only slightly less remarkable
+    2011-12-18
+
+    $ fish remarks
+    0: Isn't this a remarkable first remark
+    2011-12-18
+
+    1: ...and this only slightly less remarkable
+    2011-12-18
+
+The first command creates a sequence, consisting of a Fish alias 'remark'
+for adding a new remark, 'remarks' for listing and searching remarks
+and a set of tags for keeping track of remarks.   The tag used
+will be ``private/remark`` in this case.
+
+The first item in the sequence is stored on the object with about tag
+``0`` and subsequent ones obects with *about* tags 1, 2, ...
+
+Thus if we look at the object with *about* tag 1, we see:
+::
+
+   $ fish show -a 1 private/remark private/remark-date private/remark-number
+   Object with about="1":
+     /njr/private/remark = "...and this only slightly less remarkable"
+     /njr/private/remark-date = 20111218.2035
+     /njr/private/remark-number = 1
+
+As you can see, the date is stored as a real value, with the integer
+part representing the date and the fractional part representing the time
+(to the nearest minute) at which the item in sequence was added.
+
+The next item in the sequence is stored on the object *about* the user:
+::
+
+   $ fish show -q 'has njr0/private/remark-next' /about /njr0/private/remark-next
+   1 object matched
+   Object 6f4a87e5-98d7-40d6-8e7c-2931dad8ede3:
+     /fluiddb/about = "Object for the user named njr0"
+     /njr0/private/remark-next = 3
 

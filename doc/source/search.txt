@@ -1,4 +1,66 @@
 search — searches about tags
 ****************************
 
+Searches *about* tags in fish for the terms given.
+All must be present.
 
+**FORM**
+
+   search [-p page] [-N pagesize] term [next-term [next-term]]
+
+**EXAMPLE**
+::
+
+   $ fish search melody gardot
+   33 matches for search "fluiddb/about matches "melody" and fluiddb/about matches "gardot"":
+   1: artist:melody gardot
+   2: melody gardot
+   3: track:one day (melody gardot)
+   4: track:cry wolf (melody gardot)
+   5: track:quiet fire (melody gardot)
+   6: track:summertime (melody gardot)
+   7: track:les etoiles (melody gardot)
+   8: track:les étoiles (melody gardot)
+   9: track:wicked ride (melody gardot)
+   10: album:some lessons (melody gardot)
+   11: track:sweet memory (melody gardot)
+   12: track:down my avenue (melody gardot)
+   13: album:worrisome heart (melody gardot)
+   14: track:get out of town (melody gardot)
+   15: track:the rain (live) (melody gardot)
+   16: track:worrisome heart (melody gardot)
+   17: track:lover undercover (melody gardot)
+   18: track:our love is easy (melody gardot)
+   19: album:bye bye blackbird (melody gardot)
+   20: track:bye bye blackbird (melody gardot)
+   21: track:who will comfort me (melody gardot)
+   22: track:don't you worry baby (melody gardot)
+   23: live from soho (melody gardot ep)
+   24: album:my one and only thrill (melody gardot)
+   25: track:baby i'm a fool (live) (melody gardot)
+   26: track:my one and only thrill (melody gardot)
+   27: track:ain't no sunshine (live) (melody gardot)
+   28: track:love me like a river does (melody gardot)
+   29: track:baby i'm a fool (chill out mix) (melody gardot)
+   30: track:love me like a river does (live) (melody gardot)
+   31: track:deep within the corners of my mind (melody gardot)
+   32: track:my one and only thrill (chill out mix) (melody gardot)
+   33: track:if the stars were mine (orchestral version) (melody gardot)
+
+By default, the up to 100 results are shown.   The number of results per
+page and the page can be chosen:
+::
+
+   $ fish search -p 2 -N 10 melody gardot
+   Results 11 - 20 of 33 matches for search "fluiddb/about matches "melody" and fluiddb/about matches "gardot""
+   11: track:sweet memory (melody gardot)
+   12: track:down my avenue (melody gardot)
+   13: album:worrisome heart (melody gardot)
+   14: track:get out of town (melody gardot)
+   15: track:the rain (live) (melody gardot)
+   16: track:worrisome heart (melody gardot)
+   17: track:lover undercover (melody gardot)
+   18: track:our love is easy (melody gardot)
+   19: album:bye bye blackbird (melody gardot)
+   20: track:bye bye blackbird (melody gardot)
+   

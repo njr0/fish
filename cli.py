@@ -2,7 +2,7 @@
 #
 # cli.py
 #
-# Copyright (c) Nicholas J. Radcliffe 2009-2011 and other authors specified
+# Copyright (c) Nicholas J. Radcliffe 2009-2012 and other authors specified
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
@@ -15,12 +15,13 @@ import types
 import traceback
 from optparse import OptionParser, OptionGroup
 from itertools import chain, imap
-from fishbase import get_credentials_file
+from fishbase import get_credentials_file, Dummy
 from fishlib import (
     Fluidinfo,
     O,
     Credentials,
     get_typed_tag_value,
+    get_typed_tag_value_from_file,
     path_style,
     toStr,
     formatted_tag_value,
@@ -34,6 +35,7 @@ from fishlib import (
     FLUIDDB_PATH,
     INTEGER_RE,
     INTEGER_RANGE_RE,
+    UUID_RE,
     json,
     TagValue,
     Namespace,
@@ -144,18 +146,20 @@ def error_code(n):
 
 
 def execute_tag_command(objs, db, tags, options, action):
-    tags = form_tag_value_pairs(tags)
+    tags = form_tag_value_pairs(tags, options)
     for obj in objs:
         description = describe_by_mode(obj)
         for tag in tags:
             if obj.about:
                 o = db.tag_object_by_about(obj.about, tag.name, tag.value,
+                                           value_type=tag.mime,
                                            inPref=True)
             else:
                 o = db.tag_object_by_id(obj.id, tag.name, tag.value,
+                                        value_type=tag.mime,
                                         inPref=True)
             if o == 0:
-                if options.verbose:
+                if options.verbose or options.anon:
                     db.Print(u'Tagged object %s with %s'
                              % (description,
                                 formatted_tag_value(tag.name, tag.value,
@@ -164,6 +168,7 @@ def execute_tag_command(objs, db, tags, options, action):
                 db.warning(u'Failed to tag object %s with %s'
                         % (description, tag.name))
                 db.warning(u'Error code %s' % error_code(o))
+
     return o  # 0 if OK
 
 
@@ -195,6 +200,7 @@ def sort_tags(tags):
                 tags = [t] + tags
         except ValueError:
             pass
+    return tags
 
 
 def execute_show_command(objs, db, tags, options, action):
@@ -207,30 +213,33 @@ def execute_show_command(objs, db, tags, options, action):
         description = describe_by_mode(obj)
         if not terse:
             db.Print(u'Object %s:' % description)
-#            sort_tags(tags)
+#            tags = sort_tags(tags)
         for tag in tags:
             fulltag = db.abs_tag_path(tag, inPref=True)
             outtag = db.abs_tag_path(tag, inPref=True, outPref=True)
             if tag == u'/id':
+                t = None
                 if obj.about:
-                    o = db.query(u'fluiddb/about = "%s"' % obj.specifier)
+                    o = db.query(u'fluiddb/about = "%s"' % obj.about)
                     if type(o) == types.IntType:  # error
                         status, v = o, None
                     else:
                         status, v = STATUS.OK, o[0]
                 else:
-                    status, v = STATUS.OK, obj.specifier
+                    status, v = STATUS.OK, obj.id
             else:
                 if obj.about:
-                    status, v = db.get_tag_value_by_about(obj.about, tag,
-                                                          inPref=True)
+                    status, (v, t) = db.get_tag_value_by_about(obj.about, tag,
+                                                               inPref=True,
+                                                               getMime=True)
                 else:
-                    status, v = db.get_tag_value_by_id(obj.id, tag,
-                                                       inPref=True)
+                    status, (v, t)  = db.get_tag_value_by_id(obj.id, tag,
+                                                             inPref=True,
+                                                             getMime=True)
 
             saveForNow = True   # while getting ready to move to objects
             if status == STATUS.OK:
-                db.Print(formatted_tag_value(outtag, v, terse),
+                db.Print(formatted_tag_value(outtag, v, terse, mime=t),
                          allowSave=saveForNow)
                 obj.tags[outtag] = v
             elif status == STATUS.NOT_FOUND:
@@ -240,7 +249,7 @@ def execute_show_command(objs, db, tags, options, action):
             else:
                 db.Print(cli_bracket(u'error code %s attempting to read tag %s'
                                      % (error_code(status), outtag)),
-                                     allowSave=saveForNowe)
+                                        allowSave=saveForNowe)
 #            db.Print(obj, allowPrint=False)
 
 
@@ -252,17 +261,19 @@ def execute_tags_command(objs, db, options):
             tags = db.get_object_tags_by_about(obj.about)
         else:
             tags = db.get_object_tags_by_id(obj.id)
-        sort_tags(tags)
+        tags = sort_tags(tags)
         for tag in tags:
             fulltag = u'/%s' % tag
             outtag = u'/%s' % tag if db.unixStyle else tag
             if obj.about:
-                status, v = db.get_tag_value_by_about(obj.about, fulltag)
+                status, (v, t) = db.get_tag_value_by_about(obj.about, fulltag,
+                                                           getMime=True)
             else:
-                status, v = db.get_tag_value_by_about(obj.id, fulltag)
+                status, (v, t) = db.get_tag_value_by_id(obj.id, fulltag,
+                                                        getMime=True)
 
             if status == STATUS.OK:
-                db.Print(formatted_tag_value(outtag, v))
+                db.Print(formatted_tag_value(outtag, v, mime=t))
             elif status == STATUS.NOT_FOUND:
                 db.Print(u'  %s' % cli_bracket(u'tag %s not present' % outtag))
             else:
@@ -550,15 +561,25 @@ def describe_by_id(id):
     return id
 
 
-def form_tag_value_pairs(tags):
+def form_tag_value_pairs(tags, options=None):
+    fromFile = options and options.force    # overload -f
     pairs = []
+    value = None
     for tag in tags:
         eqPos = tag.find('=')
         if eqPos == -1:
-            pairs.append(TagValue(tag, None))
+            if fromFile:
+                if value is None:
+                    value = Dummy()
+                    value.value = sys.stdin.read()
+                    value.mime = options.mime or 'text/plain'
+            pairs.append(TagValue(tag, value))
         else:
             t = tag[:eqPos]
-            v = get_typed_tag_value(tag[eqPos + 1:])
+            if fromFile:
+                v = get_typed_tag_value_from_file(tag[eqPos + 1:], options)
+            else:
+                v = get_typed_tag_value(tag[eqPos + 1:])
             pairs.append(TagValue(t, v))
     return pairs
 
@@ -625,6 +646,8 @@ def parse_args(args=None):
             help='used to specify objects by about tag')
     general.add_option('-i', '--id', action='append', default=[],
             help='used to specify objects by ID')
+    general.add_option('-@', '--anon', action='store_true', default=False,
+            help='use a (new) anonymous object fot tagging')
     general.add_option('-q', '--query', action='append', default=[],
             help='used to specify objects with a Fluidinfo query')
     general.add_option('-v', '--verbose', action='store_true', default=False,
@@ -652,7 +675,7 @@ def parse_args(args=None):
             help='recursive (for rm).')
     general.add_option('-f', '--force', action='store_true',
                        default=False,
-            help='force (override pettifogging objections).')
+            help='force (override pettifogging objections) or read from file.')
     general.add_option('-l', '--long', action='store_true',
                        default=False,
             help='long listing (for ls).')
@@ -678,6 +701,9 @@ def parse_args(args=None):
     general.add_option('-m', '--description', action='store_true',
                        default=False,
             help='set description ("metadata") for tag/namespace.')
+    general.add_option('-M', '--mime', action='append',
+                       default=[],
+            help='Specify MIME-type for value from file')
     general.add_option('-2', '--hightestverbosity', action='store_true',
                        default=False,
             help='don\'t list namespace; just name of namespace.')
@@ -777,7 +803,6 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
     command_list.sort()
 
     # Expand aliases
-#    oldoptions = options
     alias = db.cache.get_alias(action)
     if alias:
         words = cline.CScanSplit(alias, ' \t', quotes='"\'').words
@@ -792,6 +817,12 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
                                                              quiet=quiet),
         options.query))
     ids = chain(options.id, ids_from_queries)
+    if options.anon:
+        o = db.create_object()
+        if type(o) == int:
+           raise CommandError(u'Error Status: %d' % o) 
+        else:
+            ids = [o.id]
     objs = [O(about=a) for a in options.about] + [O(id=id) for id in ids]
 
     if action == 'version' or options.version:
@@ -815,19 +846,31 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
         elif action not in command_list:
             db.Print('Unrecognized command %s' % action)        
         elif (action.lower() not in ARGLESS_COMMANDS
-              and not args):
+              and not args and not options.anon):
             db.Print('Too few arguments for action %s' % action)
         elif action == 'count':
             db.Print('Total: %s' % (flags.Plural(len(objs), 'object')))
-        elif action == 'tags':
-            execute_tags_command(objs, db, options)
-        elif action in ('tag', 'untag', 'show', 'get'):
-            if not (options.about or options.query or options.id):
-                db.Print('You must use -q, -a or -i with %s' % action)
-            else:
+        elif action in ('tags', 'tag', 'untag', 'show', 'get'):
+            if not (options.about or options.query or options.id
+                    or options.anon):
+                if args:
+                    spec = args[0]
+                    if re.match(UUID_RE, spec):
+                        objs = [O(id=spec)]
+                        options.id = [spec]
+                    else:
+                        objs = [O(about=spec)]
+                        options.about = [spec]
+                    args = args[1:]
+                else:
+                    db.Print('You must use -q or specify an about tag or'
+                             ' object ID for the %s command.' % action)
+            if action == 'tags':
+                execute_tags_command(objs, db, options)
+            elif objs:
                 tags = args
                 if len(tags) == 0 and action != 'count':
-                    db.nothing_to_do()
+                    db.nothing_to_do('No tags specified')
                 actions = {
                     'tag': execute_tag_command,
                     'untag': execute_untag_command,

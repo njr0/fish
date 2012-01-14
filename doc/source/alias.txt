@@ -1,3 +1,42 @@
 alias — create or show Fish aliases
 ***********************************
 
+Alias is used to create Fish aliases, i.e. new commands for fish.
+The aliases are stored both in Fluidinfo and in the local file
+system in a cache.   The cache is refreshed by using Fish's ``sync``
+command or by starting Fish interactively.   This allows aliases
+to be shared across machines.
+
+**FORM**
+::
+
+   alias
+   alias alias-name
+   alias alias-name fish-commands
+
+With no parameters, alias lists all aliases in use.
+
+With a single parameter, ``alias`` lists the expansion for the alias
+given, if it exists.
+
+With two or more parameters, the alias is defined (or redefined).
+
+Any parameters passed to the alias are simply added to the expanded command.
+So, for example, if we say
+::
+
+   fish alias paris 'show -a "Paris"'
+
+then this creates an alias ``paris`` that can be used as follows:
+::
+
+   $ fish paris rating
+   Object with about="Paris":
+     /njr/rating = 10
+
+**SEE ALSO**
+
+``unalias``, ``sync``, ``listcache``
+
+
+

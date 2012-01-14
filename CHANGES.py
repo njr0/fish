@@ -429,7 +429,7 @@
 
 2011/08/07 v4.07     Added unalias and init commands.
 
-2011/08/07 v4.08     Alias handlin enchaned (preserving options better)
+2011/08/07 v4.08     Alias handling enhanced (preserving options better)
 
 2011/08/10 v4.09     Filtering on sequences
 
@@ -452,7 +452,71 @@
 2011/09/07 v4.12
 Updated documentation.   Green colour-scheme.
 
-2011/09/07 v4.13
-Added to_fi_tags to Fluidinfo in fishlib.py.
+2011/12/18 v4.13
+Fixed a couple of bugs.
+  - Non-primitive tag values now show in a more sensible way.
+  - Restored the ability to specify objects by ID (which had been
+    inadvertantly broken).
+  - Format sets of strings slightly better (one per line), so that
+    poor humans have some chance of reading them.
+
+2011/12/18 v4.14
+Made /id work.   Something broke it.   (Well, someone, to be more precise.)
+And made /about show consistently in the tags command.
+
+2011/12/18 v4.15
+Manually pulled in otoburb's pull request changes (since too much had
+changed for an auto-merge :-().  Thanks, Otoburb, for all the
+clean-up.  Sorry for being so slow...
+
+2011/12/18 v4.16
+Documented the new commands (sequence commands, alias commands, sync, init
+And search).
+
+2011/12/19 v4.17
+Fixed a bug that meant /id produced the wrong ID when used with -a.
+Changed show, get, tag, untag and tags so that if no -a, =i or -q
+option is used, but arguments are present, the first argument will
+be taken as either an object ID (if it looks like one) or an about tag,
+if it doesn't.
+
+2011/12/19 v4.18
+Fixed a typo.
+
+2011/12/30 v4.19
+Added -f option tag: allows the contents of a file to be used as a tag value,
+with MIME-type guessing.   Also -M, to set the MIME type.
+
+Also added fish_command function to fish.py.   This allows a simple way
+to pass a fish command in programmatically, ignoring caches, either as the
+default user or as a nominated user.
+
+2012/01/01 v4.20
+Fixed a problem introduced when adding the ability to write files with -f
+that sometimes caused unicode strings not to be written properly.
+
+2012/01/01 v4.21
+Fixed the copyright notices to run to 2012.
+
+2012/01/01 v4.22
+Fixed typo: vsg --> svg
+
+2012/01/01 v4.23
+Changed compound value handling to reflect the API change in release 1.14.
+Now either square or brackets or braces can be used to specify a compound
+value, which is a list.   Compound values are shown in square brackets
+by show, get etc.
+
+Changed formatted_tag_value so that it shows textual MIME types.
+
+Changed tagging so that -f causes tags with no specified file to be
+read from stdin and written as text/plain.
+
+2012/01/01 v4.24
+Removed sort from formatted_tag_value for compound values, which are now
+lists rather than sets.
+
+2012/01/01 v25
+Added -@ option, for tagging anonymous objects.
 
 """

@@ -22,28 +22,26 @@ system and policies, while all objects are shared.
 Overview of the Command Line
 ============================
 
-The Fish command line is a acts as a sort-of one-shot command shell
-for Fluidinfo.   It gives access to much of the functionality of the
-underlying ``fish.py`` library, with a main focus on tagging, getting
-tag values, finding tags, querying Fluidinfo and clearing (removing
-tags). It also has some facilities for listing tags and viewing and
-altering their permissions.
+The Fish command line normally acts as a sort-of one-shot command
+shell for Fluidinfo.   It gives access to much of the functionality of
+the underlying ``fish.py`` library, with a main focus on tagging,
+getting tag values, finding tags, querying Fluidinfo and clearing
+(removing tags). It also has some facilities for listing tags and
+viewing and altering their permissions.
 
 Assuming you have installed ``fish.py``, set up a credentials file,
 and created an alias ``fish`` to run it, basic use is exemplified as
 follows.   In the examples that follow, I assume that the Fluidinfo
 user has username ``alice``.   All tags belonging to alice start
-``alice/``. (``fish`` actually has a configuration option to allow
-this to be omitted, but for now we'll specify the user explicitly,
-since that is normal in Fluidinfo.)
+``alice/``.
 
    1. Rate the Eiffel Tower as a 9:
 
-         $ fish tag -a "Eiffel Tower" rating=9
+         $ fish tag "Eiffel Tower" rating=9
 
    2. Show the my rating and ntoll's rating of the "Eiffel Tower".
 
-         $ fish show -a "Eiffel Tower"  /about  rating  /ntoll/rating
+         $ fish show "Eiffel Tower"  /about  rating  /ntoll/rating
          Object with about="Eiffel Tower":
          /objects/93bd1999-0998-49cc-8004-af457ce34ce4
          alice/rating = 9
@@ -52,7 +50,7 @@ since that is normal in Fluidinfo.)
 
    3. Show all the tags on the "Eiffel Tower" (now referenced by ID):
 
-         $ fish tags -i 93bd1999-0998-49cc-8004-af457ce34ce4
+         $ fish tags 93bd1999-0998-49cc-8004-af457ce34ce4
          Object with id=93bd1999-0998-49cc-8004-af457ce34ce4:
          alice/rating = 9
          ntoll/rating = "I prefer the  the one in Blackpool"
@@ -90,58 +88,6 @@ since that is normal in Fluidinfo.)
 Before describing these commands in detail, it will be useful to
 describe the abstraction ``fish`` uses, as it differs in key respects
 from the underlying Fluidinfo model.
-
-
-The Fish Abstraction
-====================
-
-The Fluidinfo API is quite low level and rigid; ``fish`` offers a
-slightly higher level of abstraction. Here, we briefly note the
-differences.
-
-   * In the Fluidinfo API, you can't simply tag an object with an
-     ``alice/rating`` tag; you first have to tell the system that you
-     wish to use a ``rating`` tag by ``creating`` it; only once you
-     have done this can you use it.
-
-     In ``fish``, you can just go ahead and set a tag; if it doesn't
-     exist, the system will create it for you.
-
-   3. Fluidinfo supports *namespaces*; a namespace is to a tag much
-     like a directory or folder is to a file, i.e. tags live in
-     namespaces and you can have different tags with the same name in
-     different namspaces, just as you can have two files with the same
-     name in different folders.   User Jacqui (username ``jacqui``)
-     has a namespace ``jacqui``, and she can create tags ("top-level
-     tags") in that namespace.   Jacqui may, however, wish to group
-     tags into sets using namespaces.   For example, she may wish to
-     have some private tags that all live in a namespace called
-     ``private``.   So she might have a private rating tag called
-     ``jacqui/private/rating``. As with tags, Fluidinfo first requires
-     jacqui to create the ``private`` namespace before she can create
-     the ``jacqui/private/rating`` tag. So to use
-     ``jacqui/private/rating`` for the first time, using the API
-     directly, the process would be:
-
-        1. Create the namespace ``private`` under ``jacqui``
-
-        2. Create the tag ``rating``
-
-        3. Tag the relevant object with ``rating``.
-
-      Again, ``fish`` takes care of all that, and allows jacqui just
-      to say:
-
-         fish tag -a "Eiffel Tower" jacqui/rating=10
-
-      ``fish`` will create any tags and namespaces required on the
-      fly.
-
-   * Finally, in Fluidinfo itself, the object ID (128-bit number,
-     usually formatted as a hex-number in 8-4-4-4-12 digit groups) is
-     not actually a tag on the object.   ``fish`` allows the user to
-     use refer to it as a tag, at least for reporting purposes, using
-     the name ``/id``.
 
 
 The Anatomy of the core Fish Commands
@@ -184,12 +130,41 @@ The optional ``flags`` modify the command.   The main ones used are:
      identified by the username (see below).
 
 The ``<object selector>`` is used to specify which objects you are
-interested in and usually takes on of three forms:
+interested in and can take any of five different forms:
 
-   * ``-a "about tag value"`` is used to specify an object on the
-     basis of its about tag (``fluiddb/about``).   For example, ``-a
-     "book:nineteen eighty four (george orwell)"`` specifies an
-     important book by George Orwell.
+   1. "almost anything you like that doesn't start with ``-``". By far
+      the most easiest and most common way to specify an object is
+      simply by making the first argument to the command its *about*
+      tag.
+
+      More specifically, if you don't use any of the selector flags
+      ``-a``, ``-i``, ``-q`` or ``-@``, Fish will take the first
+      argument after the command and treat it as either an *about* tag
+      value or an ID. Its criteria for choosing are very simple: if
+      the form of that value is
+
+         hhhhhhhh-hhhh-hhhh-hhhh-hhhhhhhhhhhh
+
+      where each ``h`` is a hex digit ``0–f`` (in lower case), it will
+      be assumed to be an object ID; otherwise it will be taken to be
+      an *about* tag.
+
+   2. ``-a "about tag value"`` is used to specify an object
+      specifically
+
+      on the basis of its *about* tag (``fluiddb/about``).   For
+      example, ``-a "book:nineteen eighty four (george orwell)"``
+      specifies an important book by George Orwell.
+
+      The main reason to do this would be if you wanted to tag an
+      object with an about tag that has the exact form of an Object
+      ID. This is a truly terrible idea, and I strongly recommend
+      against it. If you do it, you will end up tagging and object
+      with an *about* tag that has the form of an object ID, but whose
+      actual ID will (with probability 1.0000000) be different.   In
+      the future, it is likely that object IDs and *about* tags will
+      be merged into a single identifier, at which point data written
+      on such objects will be at risk.
 
    * ``-i ID`` is used to specify an object on the basis of its ID
      (expressed as a hex string, appropriately formatted). For
@@ -201,6 +176,24 @@ interested in and usually takes on of three forms:
      the basis of a query expressed in the Fluidinfo query language.
      For example ``-q has alice/rating`` specifies objects that have
      an ``alice/rating`` rag on them.
+
+   * ``-@`` is used to specify a single new object having no *about*
+     tag. For example, if Jacqui says:
+
+        $ fish tag -@ private/note="Sometimes a girl needs a little privacy"
+
+     then Fish will respond with a message something like the
+     following:
+
+        Tagged object ebd22382-87f9-46f5-a6da-e330671dd8b7 with private/note = "Sometimes a girl needs a little privacy"
+
+     Here, ``ebd22382-87f9-46f5-a6da-e330671dd8b7`` is the ID of a new
+     object that Fluidinfo will create.   It has no *about* tag and
+     never will have. If you use only private tags (ones that others
+     can't read), you can have a very high degree of confidence that
+     no one else will ever find your object.   So this is a good place
+     to store data if you are very confident you will never want to
+     share it with anyone else.
 
 Finally, some commands need or accept a list of tags or tag-value
 pairs. Specifically, ``show`` and ``untag`` both require a list of
@@ -241,7 +234,7 @@ example:
    This is fish version 0.00.
    > pwd
    alice
-   > show -a 'book:alices adventures in wonderland (lewis carroll)' rating
+   > show 'book:alices adventures in wonderland (lewis carroll)' rating
    Object with about="book:alices adventures in wonderland (lewis carroll)":
    alice/rating = 10
    > quit
@@ -263,14 +256,14 @@ Key things to know about the interactive shell are:
           arguments; single quotes can be enclosed in double quotes
           and double quotes can be enclosed in single quotes, e.g.
 
-             tag -a "Occam's Razor" comment="I'm a believer"
-             tag -a 'The "double" quote' comment='Is "doubleplusgood"'
+             tag "Occam's Razor" comment="I'm a believer"
+             tag 'The "double" quote' comment='Is "doubleplusgood"'
 
         * The escape character is blackslash (``\``), which can be
           used to escape quotes or backslashes.   For example, this
           command:
 
-             tag -a "The \"backslash\" (\\) character" comment="is used for escaping"
+             tag "The \"backslash\" (\\) character" comment="is used for escaping"
 
           tags the object with about tag ``The "backslash" (\)
           character``.
@@ -281,7 +274,7 @@ Key things to know about the interactive shell are:
           replaces the quoted phrase when the enclosing command is
           executed.   For example:
 
-             tag -a "`about book 'Animal Farm' 'George Orwell'`" rating=10
+             tag "`about book 'Animal Farm' 'George Orwell'`" rating=10
 
           tags the object with about tag ``book:animal farm (george
           orwell)``, since that is the result of the quoted Fish

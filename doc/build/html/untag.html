@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>untag — removes tags from objects &mdash; fish v4.11 documentation</title>
+    <title>untag — removes tags from objects &mdash; fish v4.25 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '4.11',
+        VERSION:     '4.25',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -20,7 +20,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="fish v4.11 documentation" href="index.html" />
+    <link rel="top" title="fish v4.25 documentation" href="index.html" />
     <link rel="next" title="show — shows the values of tags on objects" href="show.html" />
     <link rel="prev" title="tag — adds tags to objects" href="tag.html" /> 
   </head>
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="tag.html" title="tag — adds tags to objects"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fish v4.11 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.25 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -58,7 +58,9 @@
 untag -a "Eiffel Tower" /alice/rating seen
 untag -i 93bd1999-0998-49cc-8004-af457ce34ce4 rating seen
 untag -F -a "Eiffel Tower" alice/rating alice/seen
-untag -q 'fluiddb/about matches "Eiffel Tower"' rating seen</pre>
+untag -q 'fluiddb/about matches "Eiffel Tower"' rating seen
+untag "Eiffel Tower" /alice/rating seen
+untag 93bd1999-0998-49cc-8004-af457ce34ce4 rating seen</pre>
 </div>
 <p><strong>NOTE FOR WINDOWS USERS</strong>
 Working from a Windows command line, single quotes
@@ -138,11 +140,11 @@ the permissions system.</p>
         <li class="right" >
           <a href="tag.html" title="tag — adds tags to objects"
              >previous</a> |</li>
-        <li><a href="index.html">fish v4.11 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish v4.25 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2011, Nicholas J. Radcliffe.
+      &copy; Copyright 2011-2012, Nicholas J. Radcliffe.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.2.
     </div>
   </body>

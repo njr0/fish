@@ -14,7 +14,7 @@ and reports them in a short form,
 When authenticated as  user ``alice``:
 ::
 
-    $ fish get -a "Eiffel Tower" rating seen /bert/seen
+    $ fish get "Eiffel Tower" rating seen /bert/seen
       7
       alice/seen
       (tag bert/seen not present)
@@ -26,6 +26,8 @@ Alternative specifications:
     get -i 93bd1999-0998-49cc-8004-af457ce34ce4 rating seen /bert/seen
     get -q 'fluiddb/about matches "Eiffel Tower"' rating seen /bert/seen
     get -F -a "Eiffel Tower" alice/rating alice/seen bert/seen
+    get "Eiffel Tower" rating seen /bert/seen
+    get 93bd1999-0998-49cc-8004-af457ce34ce4 rating seen /bert/seen
 
 All of these commands will show the values the tags ``alice/rating``,
 ``alice/seen`` and ``bert/seen`` from the object with about tag "Eiffel Tower"
