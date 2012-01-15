@@ -536,4 +536,12 @@ to complain (exceptionally...) if the -f option is used.
 Removed 'with' statements to make run against Python 2.5.
 Fixed some unicode issues.
 Made the abouttag import test more robust.
+
+2012/01/15 v4.28
+Added webapp argument to ExtendedFluidinfo and pass to its superclass
+to avoid a crash.
+
+2012/01/15 v4.29
+Actually made the change that was supposed to be in 4.28.
+
 """

@@ -335,10 +335,10 @@ def to_string_grid(items, pageWidth=78, maxCols=9):
 class ExtendedFluidinfo(fishlib.Fluidinfo):
     def __init__(self, credentials=None, host=None, debug=False,
                  encoding=fishlib.DEFAULT_ENCODING, unixStylePaths=None,
-                 saveOut=False, cache=None):
+                 saveOut=False, cache=None, webapp=False):
         fishlib.Fluidinfo.__init__(self, credentials, host, debug,
                                    encoding, unixStylePaths, saveOut,
-                                   cache)
+                                   cache, webapp)
 
     def list_namespace(self, ns, returnDescription=True,
                         returnNamespaces=True, returnTags=True):

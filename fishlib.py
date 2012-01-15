@@ -6,7 +6,7 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'4.26'
+__version__ = u'4.29'
 VERSION = __version__
 
 import base64
@@ -426,6 +426,7 @@ class Fluidinfo:
         self.debug = debug
         self.encoding = encoding
         self.saveOutput = saveOutput
+        self.webapp = webapp
         assert saveOutput in (True, False, u'python', u'json')
         self.buffer = []
         self.timeout = choose_http_timeout()

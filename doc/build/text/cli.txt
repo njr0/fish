@@ -150,11 +150,10 @@ interested in and can take any of five different forms:
       an *about* tag.
 
    2. ``-a "about tag value"`` is used to specify an object
-      specifically
-
-      on the basis of its *about* tag (``fluiddb/about``).   For
-      example, ``-a "book:nineteen eighty four (george orwell)"``
-      specifies an important book by George Orwell.
+      specifically on the basis of its *about* tag
+      (``fluiddb/about``).   For example, ``-a "book:nineteen eighty
+      four (george orwell)"`` specifies an important book by George
+      Orwell.
 
       The main reason to do this would be if you wanted to tag an
       object with an about tag that has the exact form of an Object
