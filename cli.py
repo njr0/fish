@@ -46,8 +46,8 @@ import flags
 import cline
 try:
     import abouttag.amazon
-    import abouttag.generic
     import abouttag.nacolike
+    import abouttag.generic
 except ImportError:
     pass
 
@@ -318,6 +318,7 @@ def execute_su_command(db, args):
 def check_abouttag_available():
     try:
         abouttag.amazon
+        abouttag.generic
     except:
         raise CommandError(AT_ERROR)
 

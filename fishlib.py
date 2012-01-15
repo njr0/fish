@@ -1273,17 +1273,20 @@ def get_typed_tag_value_from_file(path, options):
         stem, ext = os.path.splitext(path)
         ext = ext[1:].lower()
         if (mime and mime in TEXTUAL_MIMES.values()) or ext in TEXTUAL_MIMES:
-            with open(path) as f:
-                v.value = f.read()
-                try:
-                    v.value = v.value.decode('UTF-8')
-                except UnicodeDecodeError:      # clearly wasn't UTF-8
-                    raise UnicodeError('Content doesn\'t seem to be UTF-8')
-                v.mime = mime or TEXTUAL_MIMES[ext]
+            f = open(path)
+            v.value = f.read()
+            f.close()
+            try:
+                v.value = v.value.decode('UTF-8')
+            except UnicodeDecodeError:      # clearly wasn't UTF-8
+                raise UnicodeError('Content doesn\'t seem to be UTF-8')
+            v.mime = mime or TEXTUAL_MIMES[ext]
         elif mime or ext in BINARY_MIMES:
-            with open(path, 'rb') as f:
-                v.value = f.read()
-                v.mime = mime or BINARY_MIMES[ext]
+            f = open(path, 'rb')
+            v.value = f.read()
+            f.close()
+            v.mime = mime or BINARY_MIMES[ext]
+            
         else:
             if ext:
                 raise MIMEError('Extension .%s unknown and no MIME type'

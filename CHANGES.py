@@ -531,4 +531,9 @@ Added values.py to git.
 Added webapp option to Fluidinfo to allow the web app to indicate it is
 in use.   For now, the only effect of this is to cause the tag command
 to complain (exceptionally...) if the -f option is used.
+
+2012/01/15 v4.27
+Removed 'with' statements to make run against Python 2.5.
+Fixed some unicode issues.
+Made the abouttag import test more robust.
 """
