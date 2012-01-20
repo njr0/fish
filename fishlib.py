@@ -6,7 +6,7 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'4.29'
+__version__ = u'4.30'
 VERSION = __version__
 
 import base64
@@ -18,7 +18,8 @@ import sys
 import types
 import urllib
 from functools import wraps
-from httplib2 import Http
+#from httplib2 import Http
+import requests
 import cline
 from cache import Cache
 from fishbase import (get_credentials_file, O, formatted_tag_value,
@@ -98,6 +99,10 @@ class MIMEError(Exception):
 
 
 class UnicodeError(Exception):
+    pass
+
+
+class GeneralError(Exception):
     pass
 
 
@@ -432,13 +437,9 @@ class Fluidinfo:
         self.timeout = choose_http_timeout()
         if not host.startswith(u'http'):
             self.host = u'http://%s' % host
-        # the following based on fluiddb.py
-        userpass = u'%s:%s' % (credentials.username, credentials.password)
-        encoded = unicode(userpass.encode('UTF-8').encode('base64').strip())
-        auth = u'Basic %s' % encoded
         self.headers = {
-            u'Authorization': auth
         }
+        self.auth = (credentials.username, credentials.password)
 
     def Print(self, s, allowSave=True, allowPrint=True):
         if self.saveOutput:
@@ -520,9 +521,22 @@ class Fluidinfo:
         return status, result
 
     def request(self, url, method, body8, headers):
-        http = _get_http(self.timeout)
-        response, content = http.request(url, method, body8, headers)
-        status = response.status
+#        http = _get_http(self.timeout)
+#        response, content = http.request(url, method, body8, headers)
+        if method == 'GET':
+            r = requests.get(url, auth=self.auth, headers=headers)
+        elif method == 'PUT':
+            r = requests.put(url, body8, auth=self.auth, headers=headers)
+        elif method == 'POST':
+            r = requests.post(url, body8, auth=self.auth, headers=headers)
+        elif method == 'DELETE':
+            r = requests.delete(url, auth=self.auth, headers=headers)
+        else:
+            raise GeneralError('Unknown method')
+        response = r.headers
+        content = r.content
+        status = r.status_code
+
         if response[u'content-type'].startswith(u'application/json'):
             result = json.loads(content)
         else:
@@ -562,7 +576,6 @@ class Fluidinfo:
             value = value.encode('UTF-8')
         headers[u'content-type'] = value_type
         url = self._get_url(self.host, path, hash=None, kw=None)
-        http = _get_http(self.timeout)
         if self.debug:
             self.Print(u'\nTag URL: %s' % url)
             if value_type != 'application/vnd.fluiddb.value+json':
@@ -570,7 +583,7 @@ class Fluidinfo:
             else:
                 self.Print(u'Value: %s' % value)
         response, content, result, status = self.request(url, u'PUT',
-                                                value, headers)
+                                                         value, headers)
         return status, content
 
     def create_object(self, about=None):

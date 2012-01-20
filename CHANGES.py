@@ -544,4 +544,6 @@ to avoid a crash.
 2012/01/15 v4.29
 Actually made the change that was supposed to be in 4.28.
 
+2012/01/18 v4.30
+Changed from httplib2 to requests.
 """
