@@ -36,9 +36,9 @@
 
 import sys
 import cli
-from fish import fishbase
-from fish import fishlib
-from fish import cline
+import fishbase
+import fishlib
+import cline
 try:
     import readline
 except ImportError:

@@ -114,20 +114,7 @@ For a list of commands, use
 
 An example command is
 
-python fish show -a DADGAD rating /fluiddb/about
-
-Obviously, if you want to use Fish as a command from the shell, it will
-probably be convenient to use an alias or create a trivial shell script
-to run it.   I use bash, with the alias
-
-alias fish='~/python/fluiddb/fish'
-
-which allows me to type
-
 fish show -a DADGAD rating /fluiddb/about
-
-You can also put a link to Fish into some directory (like ~/bin) on your
-``PATH``.
 
 
 DELICIOUS

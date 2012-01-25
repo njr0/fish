@@ -1,9 +1,9 @@
 import math
 import sys
 import types
-from fish import fishlib
-from fish import cli
-from fish import flags
+import fishlib
+import cli
+import flags
 
 if sys.version_info < (2, 6):
     try:

@@ -136,4 +136,4 @@ doctest:
 	      "results in $(BUILDDIR)/doctest/output.txt."
 
 push:
-	python ../pushdoc.py
+	python ../../miscfish/pushdoc.py

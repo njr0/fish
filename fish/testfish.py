@@ -10,9 +10,9 @@ import sys
 import types
 import unittest
 import urllib
-from fish import fishbase
-from fish import fishlib
-from fish import cli
+import fishbase
+import fishlib
+import cli
 
 class TestFluidinfo(unittest.TestCase):
 

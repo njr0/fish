@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Installation and Configuration &mdash; fish 4.31 documentation</title>
+    <title>Installation and Configuration &mdash; fish 4.33 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '4.31',
+        VERSION:     '4.33',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="fish 4.31 documentation" href="index.html" />
+    <link rel="top" title="fish 4.33 documentation" href="index.html" />
     <link rel="prev" title="Using Unix-Like Paths" href="unixlike.html" /> 
   </head>
   <body>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="unixlike.html" title="Using Unix-Like Paths"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fish 4.31 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish 4.33 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -56,31 +56,24 @@ unix-style paths by default.   See under Credentials for details.</p>
 <h2>Download<a class="headerlink" href="#download" title="Permalink to this headline">¶</a></h2>
 <p>Fish is available from Github at <a class="reference external" href="https://github.com/njr0/fish">https://github.com/njr0/fish</a> (use the
 download button).   The main program is <tt class="docutils literal"><span class="pre">fish.py</span></tt> in the top
-level folder and the <tt class="docutils literal"><span class="pre">fish</span></tt> script, which simply executes <tt class="docutils literal"><span class="pre">fish.py</span></tt>.</p>
+level folder and the <tt class="docutils literal"><span class="pre">fish</span></tt> script, in scripts.</p>
+<p>Install using setup.py with</p>
+<p>python setup.py install</p>
+<p>as root (or with sudo) if necessary.</p>
 </div>
 <div class="section" id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
-<p>If you&#8217;re running python 2.6, <tt class="docutils literal"><span class="pre">fish.py</span></tt> should just run.   With earlier
-version of python, you need to get access to <tt class="docutils literal"><span class="pre">simplejson</span></tt> and <tt class="docutils literal"><span class="pre">httplib2</span></tt>.
-You can get simplejson from <a class="reference external" href="http://pypi.python.org/pypi/simplejson/">http://pypi.python.org/pypi/simplejson/</a>
-and httplib2 from <a class="reference external" href="http://code.google.com/p/httplib2/">http://code.google.com/p/httplib2/</a>.</p>
+<p>If you&#8217;re running python 2.6, <tt class="docutils literal"><span class="pre">fish</span></tt> should just run.  However, I
+strongly recommend installing version 0.9.2 of Kenneth Reitz&#8217;s
+requests package, which will make it run better.  Requests is
+available from PyPI.  With earlier version of python, you need to get
+access to <tt class="docutils literal"><span class="pre">simplejson</span></tt> and <tt class="docutils literal"><span class="pre">httplib2</span></tt>.  You can get simplejson
+from <a class="reference external" href="http://pypi.python.org/pypi/simplejson/">http://pypi.python.org/pypi/simplejson/</a> and httplib2 from
+<a class="reference external" href="http://code.google.com/p/httplib2/">http://code.google.com/p/httplib2/</a>.</p>
 <p>If you wish to use Amazon command (for finding about tags for books and music
 items from Amazon product pages) you will also need the abouttag
 library to be available on your python path.
 This is available from <a class="reference external" href="http://github.com/njr0/abouttag">http://github.com/njr0/abouttag</a>.</p>
-</div>
-<div class="section" id="making-the-fish-command-available">
-<h2>Making the Fish command available<a class="headerlink" href="#making-the-fish-command-available" title="Permalink to this headline">¶</a></h2>
-<p>The file <tt class="docutils literal"><span class="pre">fish</span></tt> included in the download is executable provided that
-a suitable python is installed.    You can make it available more
-conveniently by using a shell alias or adding a symbolic link to it
-somewhere on your <tt class="docutils literal"><span class="pre">PATH</span></tt>.   For example:</p>
-<div class="highlight-python"><pre>alias fish='/path/to/fish'</pre>
-</div>
-<p>or, if <tt class="docutils literal"><span class="pre">~/bin</span></tt> is on your <tt class="docutils literal"><span class="pre">PATH</span></tt>:</p>
-<div class="highlight-python"><pre>cd ~/bin
-ln -s /path/to/fish</pre>
-</div>
 </div>
 <div class="section" id="the-fish-python-library-and-command-line">
 <h2>The Fish Python Library and Command Line<a class="headerlink" href="#the-fish-python-library-and-command-line" title="Permalink to this headline">¶</a></h2>
@@ -112,6 +105,8 @@ set, the Fish looks for <tt class="docutils literal"><span class="pre">c:\fish\c
 <p>unix-style-paths true
 or unix-style-paths false</p>
 <p>(see next section).   If this is not set, unix-style paths will be used.</p>
+<p>After you have set them up, it&#8217;s a good idea to type</p>
+<p>fish init</p>
 <p>If you want to use multiple Fluidinfo accounts, store extra sets of
 credentials in files with an extra extention corresponding to the user name.
 For example, if you want to use accounts <tt class="docutils literal"><span class="pre">alice</span></tt> and <tt class="docutils literal"><span class="pre">bob</span></tt> store
@@ -151,7 +146,7 @@ paths.</p>
 <p>The library includes a set of tests.   If you have valid credentials,
 and everything is OK, these should run successfully if you just execute
 the file <tt class="docutils literal"><span class="pre">testfish.py</span></tt> or say</p>
-<div class="highlight-python"><pre>python fish.py test</pre>
+<div class="highlight-python"><pre>fish test</pre>
 </div>
 <p>See <a class="reference internal" href="test.html#fishtest"><em>test — runs fish&#8217;s test suite</em></a>.</p>
 </div>
@@ -160,7 +155,7 @@ the file <tt class="docutils literal"><span class="pre">testfish.py</span></tt> 
 <p>Four ways of exploring the library are:</p>
 <blockquote>
 <div><ol class="arabic simple">
-<li>look at the tests (the ones in the class <tt class="docutils literal"><span class="pre">TestFluidDB</span></tt>)</li>
+<li>look at the tests (the ones in the class <tt class="docutils literal"><span class="pre">TestFluidinfo</span></tt>)</li>
 <li>look at the blog (<a class="reference external" href="http://abouttag.blogspot.com">http://abouttag.blogspot.com</a>)</li>
 <li>read the function documentation in the source.</li>
 <li>look at and run <tt class="docutils literal"><span class="pre">example.py</span></tt>, which should print DADGAD and 10.</li>
@@ -197,7 +192,6 @@ file for details on this functionality.</p>
 <li><a class="reference internal" href="#">Installation and Configuration</a><ul>
 <li><a class="reference internal" href="#download">Download</a></li>
 <li><a class="reference internal" href="#dependencies">Dependencies</a></li>
-<li><a class="reference internal" href="#making-the-fish-command-available">Making the Fish command available</a></li>
 <li><a class="reference internal" href="#the-fish-python-library-and-command-line">The Fish Python Library and Command Line</a></li>
 <li><a class="reference internal" href="#credentials">Credentials</a></li>
 <li><a class="reference internal" href="#tag-conventions">Tag Conventions</a></li>
@@ -243,7 +237,7 @@ file for details on this functionality.</p>
         <li class="right" >
           <a href="unixlike.html" title="Using Unix-Like Paths"
              >previous</a> |</li>
-        <li><a href="index.html">fish 4.31 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish 4.33 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

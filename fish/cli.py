@@ -16,8 +16,8 @@ import traceback
 import unittest
 from optparse import OptionParser, OptionGroup
 from itertools import chain, imap
-from fish import fishbase
-from fish.fishlib import (
+import fishbase
+from fishlib import (
     Fluidinfo,
     O,
     Credentials,
@@ -41,11 +41,11 @@ from fish.fishlib import (
     TagValue,
     Namespace,
 )
-from fish import testfish
-from fish import cache
-from fish import ls
-from fish import flags
-from fish import cline
+import testfish
+import cache
+import ls
+import flags
+import cline
 try:
     import abouttag.amazon
     import abouttag.nacolike

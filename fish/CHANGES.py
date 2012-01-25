@@ -581,5 +581,11 @@ httplib2.
 Turned this into something more like a proper python package
 with a setup.py, moved the fish script into scripts etc.
 Plan to add to PyPI.
+
+2012/01/24 v4.33
+Updated installation section of documentation and README.
+Localised imports.
+Was getting all ready to push fish to pypi, but there's already a fish there.
+
 """
 

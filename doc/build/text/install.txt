@@ -12,15 +12,23 @@ Download
 
 Fish is available from Github at https://github.com/njr0/fish (use the
 download button).   The main program is "fish.py" in the top level
-folder and the "fish" script, which simply executes "fish.py".
+folder and the "fish" script, in scripts.
+
+Install using setup.py with
+
+python setup.py install
+
+as root (or with sudo) if necessary.
 
 
 Dependencies
 ============
 
-If you're running python 2.6, "fish.py" should just run.   With
-earlier version of python, you need to get access to "simplejson" and
-"httplib2". You can get simplejson from
+If you're running python 2.6, "fish" should just run.  However, I
+strongly recommend installing version 0.9.2 of Kenneth Reitz's
+requests package, which will make it run better.  Requests is
+available from PyPI.  With earlier version of python, you need to get
+access to "simplejson" and "httplib2".  You can get simplejson from
 http://pypi.python.org/pypi/simplejson/ and httplib2 from
 http://code.google.com/p/httplib2/.
 
@@ -28,22 +36,6 @@ If you wish to use Amazon command (for finding about tags for books
 and music items from Amazon product pages) you will also need the
 abouttag library to be available on your python path. This is
 available from http://github.com/njr0/abouttag.
-
-
-Making the Fish command available
-=================================
-
-The file "fish" included in the download is executable provided that a
-suitable python is installed.    You can make it available more
-conveniently by using a shell alias or adding a symbolic link to it
-somewhere on your "PATH".   For example:
-
-   alias fish='/path/to/fish'
-
-or, if "~/bin" is on your "PATH":
-
-   cd ~/bin
-   ln -s /path/to/fish
 
 
 The Fish Python Library and Command Line
@@ -86,6 +78,10 @@ unix-style-paths true or unix-style-paths false
 
 (see next section).   If this is not set, unix-style paths will be
 used.
+
+After you have set them up, it's a good idea to type
+
+fish init
 
 If you want to use multiple Fluidinfo accounts, store extra sets of
 credentials in files with an extra extention corresponding to the user
@@ -132,7 +128,7 @@ The library includes a set of tests.   If you have valid credentials,
 and everything is OK, these should run successfully if you just
 execute the file "testfish.py" or say
 
-   python fish.py test
+   fish test
 
 See *test — runs fish's test suite*.
 
@@ -142,7 +138,7 @@ Using the Library
 
 Four ways of exploring the library are:
 
-   1. look at the tests (the ones in the class "TestFluidDB")
+   1. look at the tests (the ones in the class "TestFluidinfo")
 
    2. look at the blog (http://abouttag.blogspot.com)
 

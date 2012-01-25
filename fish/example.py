@@ -4,7 +4,7 @@
 # Copyright (c) Nicholas J. Radcliffe 2009-2012.
 # Licence terms in LICENCE.
 #
-from fish import fishlib
+import fishlib
 
 db = fishlib.Fluidinfo()    # assumes credentials are in the standard place
 db.get_tag_value_by_about('DADGAD', '/fluiddb/about')

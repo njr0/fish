@@ -7,7 +7,7 @@
 # See LICENSE for license.
 #
 import types, sys
-from fish import fish
+import fish
 #import fdbdummy as fdb
 from delicious import *
 try:
