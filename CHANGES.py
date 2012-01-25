@@ -546,4 +546,34 @@ Actually made the change that was supposed to be in 4.28.
 
 2012/01/18 v4.30
 Changed from httplib2 to requests.
+
+2012/01/18 v4.31
+Fixed a problem whereby sync would fail if there was not .fish/alias
+tag defined.   It now defines it in this case.
+(This also caused a problem on starting fish interactively,
+since that does a sync.)
+
+Moved some code from fish.py to cli.py to facilitate the above change.
+
+Fixed a problem whereby Fluidinfo.tag_by_query would fail under
+python2.7 if there were non-ascii characters in tag names or values.
+This was because I was lazily constructing a json-like string by hand
+instead of using json.dumps.   Oddly, this worked fine in python 2.5, 2.6.
+
+Cleaned up the import structure a bit.
+
+In principle, I would much rather use the requests library rather than
+httplib2 in all circumstances, but there are two problems:
+
+  1. It is not universally available (e.g., as far as I can tell, it's
+     not available on Google App Engine
+
+  2. Either there's something wrong with 1.0.0 and above or Fish is
+     using it wrongly because requests is having a problem iterating
+     over the headers Fish is sending it.
+
+For the moment, therefore, I have made it so that tries to import
+requests and checks that it is a version under 1.0.0.   If the
+library is not present, or is at 1.0.0 or above, Fish falls back to
+httplib2.
 """

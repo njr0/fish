@@ -93,6 +93,7 @@ pygments_style = 'sphinx'
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 html_theme = 'default'
+#html_theme = 'haiku'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -106,6 +107,14 @@ html_theme_options = {
     'linkcolor' : '#004000',
     'sidebarlinkcolor' : '#E8B040',
 }
+
+#html_theme = 'basic'
+#html_theme_options = {
+#    'nosidebar': True
+#}
+
+
+
 
 # Add any paths that contain custom themes here, relative to this directory.
 #html_theme_path = []
@@ -225,3 +234,47 @@ man_pages = [
     ('index', 'fish', u'fish Documentation',
      [u'Nicholas J. Radcliffe'], 1)
 ]
+
+
+# -- Options for Epub output ---------------------------------------------------
+
+# Bibliographic Dublin Core info.
+epub_title = u'Fish'
+epub_author = u'Nicholas J. Radcliffe'
+epub_publisher = u'Nicholas J. Radcliffe'
+epub_copyright = u'2010-2012, Nicholas J. Radcliffe'
+
+# The language of the text. It defaults to the language option
+# or en if the language is not set.
+#epub_language = ''
+
+# The scheme of the identifier. Typical schemes are ISBN or URL.
+#epub_scheme = ''
+
+# The unique identifier of the text. This can be a ISBN number
+# or the project homepage.
+#epub_identifier = ''
+
+# A unique identification for the text.
+#epub_uid = ''
+
+# A tuple containing the cover image and cover page html template filenames.
+#epub_cover = ()
+
+# HTML files that should be inserted before the pages created by sphinx.
+# The format is a list of tuples containing the path and title.
+#epub_pre_files = []
+
+# HTML files shat should be inserted after the pages created by sphinx.
+# The format is a list of tuples containing the path and title.
+#epub_post_files = []
+
+# A list of files that should not be packed into the epub file.
+#epub_exclude_files = []
+
+# The depth of the table of contents in toc.ncx.
+#epub_tocdepth = 3
+
+# Allow duplicate toc entries.
+#epub_tocdup = True
+

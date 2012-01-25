@@ -9,31 +9,30 @@ A Brief Overview of Fluidinfo
 Fluidinfo is a simple, shared, online storage system in which each
 there are a set of objects, each of which can optionally be *about*
 something, and information is stored by tagging objects. Tags belong
-to users, and have names.   Tags may store information simply by being
-present or absent, or they may have values. Thus I  can indicate that
-I have read a book by attaching a tag called ``have-read`` to the
-object corresponding to that book, or I can rate it by attaching a
-``rating`` tag with a numeric value to the object.   Tag owners can
-set permissions on their tags to control who can see them and who can
-alter/use them. So tags are owned and are subject to a permissions
-system and policies, while all objects are shared.
+to users, and have names. Tags may store information simply by being
+present or absent, or they may have values. Thus I can indicate that I
+have read a book by attaching a tag called "have-read" to the object
+corresponding to that book, or I can rate it by attaching a "rating"
+tag with a numeric value to the object. Tag owners can set permissions
+on their tags to control who can see them and who can alter/use them.
+So tags are owned and are subject to a permissions system and
+policies, while all objects are shared.
 
 
 Overview of the Command Line
 ============================
 
 The Fish command line normally acts as a sort-of one-shot command
-shell for Fluidinfo.   It gives access to much of the functionality of
-the underlying ``fish.py`` library, with a main focus on tagging,
+shell for Fluidinfo. It gives access to much of the functionality of
+the underlying "fishlib.py" library, with a main focus on tagging,
 getting tag values, finding tags, querying Fluidinfo and clearing
 (removing tags). It also has some facilities for listing tags and
 viewing and altering their permissions.
 
-Assuming you have installed ``fish.py``, set up a credentials file,
-and created an alias ``fish`` to run it, basic use is exemplified as
-follows.   In the examples that follow, I assume that the Fluidinfo
-user has username ``alice``.   All tags belonging to alice start
-``alice/``.
+Assuming you have installed "fish.py", set up a credentials file, and
+created an alias "fish" to run it, basic use is exemplified as
+follows. In the examples that follow, I assume that the Fluidinfo user
+has username "alice". All tags belonging to alice start "alice/".
 
    1. Rate the Eiffel Tower as a 9:
 
@@ -58,8 +57,8 @@ user has username ``alice``.   All tags belonging to alice start
          alice/indexed/about
          fluiddb/about = "Eiffel Tower"
 
-   4. Add a ``dislike`` tag to each object that I have rated 1 or 0
-      and then show their about tags.
+   4. Add a "dislike" tag to each object that I have rated 1 or 0 and
+      then show their about tags.
 
          $ fish tag -q 'alice/rating < 2' dislike
          $ fish show -q 'has alice/dislike' /about rating dislike
@@ -86,7 +85,7 @@ user has username ``alice``.   All tags belonging to alice start
            alice/dislike = True
 
 Before describing these commands in detail, it will be useful to
-describe the abstraction ``fish`` uses, as it differs in key respects
+describe the abstraction "fish" uses, as it differs in key respects
 from the underlying Fluidinfo model.
 
 
@@ -97,87 +96,86 @@ The general form of the core Fish commands is:
 
    fish <verb> [flags] <object selector> <tags/values>
 
-The verb says what you want to do.   The main verbs currently
-avalaible are
+The verb says what you want to do. The main verbs currently available
+are
 
-   * ``tag`` --- set tags on some objects
+   * "tag" --- set tags on some objects
 
-   * ``show`` --- show tag values from some objects
+   * "show" --- show tag values from some objects
 
-   * ``untag`` --- remove tags from some objects
+   * "untag" --- remove tags from some objects
 
-   * ``tags`` --- show what readable tags an object has
+   * "tags" --- show what readable tags an object has
 
-   * ``count`` --- count the number of objects match some criterion.
+   * "count" --- count the number of objects match some criterion.
 
-The optional ``flags`` modify the command.   The main ones used are:
+The optional "flags" modify the command. The main ones used are:
 
-   * ``-v`` --- verbose (gives extra information)
+   * "-v" --- verbose (gives extra information)
 
-   * ``-s`` --- to specify that the command should operate againss the
-     sandbox (``sandbox.fluidinfo.com``) rather than the main
-     Fluidinfo instance (``fluiddb.fluidinfo.com``); this is mostly
-     used for testing.
+   * "-s" --- to specify that the command should operate against the
+     sandbox ("sandbox.fluidinfo.com") rather than the main Fluidinfo
+     instance ("fluiddb.fluidinfo.com"); this is mostly used for
+     testing.
 
-   * ``-U`` --- use unix-style paths (overriding configuration and
+   * "-U" --- use unix-style paths (overriding configuration and
      default; see below)
 
-   * ``-F`` --- use Fluidinfo-style paths (overriding configuration
-     and default; see below)
+   * "-F" --- use Fluidinfo-style paths (overriding configuration and
+     default; see below)
 
-   * ``-u userspec`` --- if you have multiple Fluidinfo accounts, this
+   * "-u userspec" --- if you have multiple Fluidinfo accounts, this
      specifies an alternate credentials file to use, normally
      identified by the username (see below).
 
-The ``<object selector>`` is used to specify which objects you are
+The "<object selector>" is used to specify which objects you are
 interested in and can take any of five different forms:
 
-   1. "almost anything you like that doesn't start with ``-``". By far
+   1. "almost anything you like that doesn't start with "-"". By far
       the most easiest and most common way to specify an object is
       simply by making the first argument to the command its *about*
       tag.
 
       More specifically, if you don't use any of the selector flags
-      ``-a``, ``-i``, ``-q`` or ``-@``, Fish will take the first
-      argument after the command and treat it as either an *about* tag
-      value or an ID. Its criteria for choosing are very simple: if
-      the form of that value is
+      "-a", "-i", "-q``or ``-@", Fish will take the first argument
+      after the command and treat it as either an *about* tag value or
+      an ID. Its criteria for choosing are very simple: if the form of
+      that value is
 
          hhhhhhhh-hhhh-hhhh-hhhh-hhhhhhhhhhhh
 
-      where each ``h`` is a hex digit ``0–f`` (in lower case), it will
-      be assumed to be an object ID; otherwise it will be taken to be
-      an *about* tag.
+      where each "h" is a hex digit "0–f" (in lower case), it will be
+      assumed to be an object ID; otherwise it will be taken to be an
+      *about* tag.
 
-   2. ``-a "about tag value"`` is used to specify an object
-      specifically on the basis of its *about* tag
-      (``fluiddb/about``).   For example, ``-a "book:nineteen eighty
-      four (george orwell)"`` specifies an important book by George
-      Orwell.
+   2. "-a "about tag value"" is used to specify an object specifically
+      on the basis of its *about* tag ("fluiddb/about"). For example,
+      "-a "book:nineteen eighty four (george orwell)"" specifies an
+      important book by George Orwell.
 
       The main reason to do this would be if you wanted to tag an
       object with an about tag that has the exact form of an Object
       ID. This is a truly terrible idea, and I strongly recommend
       against it. If you do it, you will end up tagging and object
       with an *about* tag that has the form of an object ID, but whose
-      actual ID will (with probability 1.0000000) be different.   In
-      the future, it is likely that object IDs and *about* tags will
-      be merged into a single identifier, at which point data written
-      on such objects will be at risk.
+      actual ID will (with probability 1.0000000) be different. In the
+      future, it is likely that object IDs and *about* tags will be
+      merged into a single identifier, at which point data written on
+      such objects will be at risk.
 
-   * ``-i ID`` is used to specify an object on the basis of its ID
+   * "-i ID" is used to specify an object on the basis of its D
      (expressed as a hex string, appropriately formatted). For
-     example, ``-i 93bd1999-0998-49cc-8004-af457ce34ce4`` specifies
-     the object with this ID, which happens to be the on with the
-     about tag ``Eiffel Tower``.
+     example, "-i 93bd1999-0998-49cc-8004-af457ce34ce4" specifies the
+     object with this ID, which happens to be the n with the about tag
+     "Eiffel Tower".
 
-   * ``-q "fluidinfo query"`` is used to specify a set of objects on
-     the basis of a query expressed in the Fluidinfo query language.
-     For example ``-q has alice/rating`` specifies objects that have
-     an ``alice/rating`` rag on them.
+   * "-q "fluidinfo query"" is used to specify a set of objects n the
+     basis of a query expressed in the Fluidinfo query language. or
+     example "-q has alice/rating" specifies objects that have an
+     "alice/rating" tag on them.
 
-   * ``-@`` is used to specify a single new object having no *about*
-     tag. For example, if Jacqui says:
+   * "-@" is used to specify a single new object having no *about*
+     tag. or example, if Jacqui says:
 
         $ fish tag -@ private/note="Sometimes a girl needs a little privacy"
 
@@ -186,19 +184,18 @@ interested in and can take any of five different forms:
 
         Tagged object ebd22382-87f9-46f5-a6da-e330671dd8b7 with private/note = "Sometimes a girl needs a little privacy"
 
-     Here, ``ebd22382-87f9-46f5-a6da-e330671dd8b7`` is the ID of a new
-     object that Fluidinfo will create.   It has no *about* tag and
+     Here, "ebd22382-87f9-46f5-a6da-e330671dd8b7" is the ID of a new
+     object that Fluidinfo will create. It has no *about* tag and
      never will have. If you use only private tags (ones that others
-     can't read), you can have a very high degree of confidence that
-     no one else will ever find your object.   So this is a good place
-     to store data if you are very confident you will never want to
-     share it with anyone else.
+     can't read), you can ave a very high degree of confidence that no
+     one else will ever find our object. So this is a good place to
+     store data if you are very confident you will never want to share
+     it with anyone else.
 
 Finally, some commands need or accept a list of tags or tag-value
-pairs. Specifically, ``show`` and ``untag`` both require a list of
-tags to be shown or removed, and ``tag`` requires a set of tag-value
-pairs to know what tags to set.   Tag value pairs usually take the
-form:
+pairs. Specifically, "show" and "untag" both require a list of tags to
+be shown or removed, and "tag" requires a set of tag-value pairs to
+know what tags to set. Tag value pairs usually take the form:
 
    tag=value
 
@@ -209,10 +206,10 @@ so that a list of them might be
 Don't put spaces around equals signs assigning tag values: it won't
 work.
 
-In general, strings should be in double quotes ``"like this"``,
-booleans should be ``true``, ``false``, ``t`` or ``f`` (unquoted) and
-numbers should just be plain numbers like 3 or 4.7. All strings are
-always unicode, i.e. they may contain any character.
+In general, strings should be in double quotes ""like this"", booleans
+should be "true", "false", "t" or "f" (unquoted) and numbers should
+just be plain numbers like 3 or 4.7. All strings are always unicode,
+i.e. they may contain any character.
 
 It is also possible to set a tag without a value by just giving a tag
 name.
@@ -226,7 +223,7 @@ If Fish is invoked without any arguments, simply by typing
    $ fish
 
 then Fish starts as an interactive shell in which the user can enter a
-commands without the ``fish`` prefix at the start of the line. For
+commands without the "fish" prefix at the start of the line. For
 example:
 
    $ fish
@@ -240,14 +237,14 @@ example:
 
 Key things to know about the interactive shell are:
 
-   * When the ``readline`` library is available, it will be used,
+   * When the "readline" library is available, it will be used,
      meaning that you will be able to use either Emacs key bindings or
      the arrow keys to edit the command line, including moving up and
      down through the command history.
 
-   * Again, if the ``readline`` library is available, a ``history``
+   * Again, if the "readline" library is available, a "history"
      command will be available, to show you previous commands that you
-     have used in the session; this may also be abbreviated to ``h``.
+     have used in the session; this may also be abbreviated to "h".
 
    * Quoting and escaping follow the following rules:
 
@@ -258,23 +255,22 @@ Key things to know about the interactive shell are:
              tag "Occam's Razor" comment="I'm a believer"
              tag 'The "double" quote' comment='Is "doubleplusgood"'
 
-        * The escape character is blackslash (``\``), which can be
-          used to escape quotes or backslashes.   For example, this
-          command:
+        * The escape character is blackslash ("\"), which can be used
+          to escape quotes or backslashes. For example, this command:
 
              tag "The \"backslash\" (\\) character" comment="is used for escaping"
 
-          tags the object with about tag ``The "backslash" (\)
-          character``.
+          tags the object with about tag "The "backslash" (\)
+          character".
 
         * Left quotes (*backticks*) can be used to allow command
           substitution, whereby the phrase enclosed in backticks is
           evaluated as a Fish command and the output of that command
           replaces the quoted phrase when the enclosing command is
-          executed.   For example:
+          executed. For example:
 
              tag "`about book 'Animal Farm' 'George Orwell'`" rating=10
 
-          tags the object with about tag ``book:animal farm (george
-          orwell)``, since that is the result of the quoted Fish
-          ``about`` command.
+          tags the object with about tag "book:animal farm (george
+          orwell)", since that is the result of the quoted Fish
+          "about" command.

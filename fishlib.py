@@ -6,10 +6,9 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'4.30'
+__version__ = u'4.31'
 VERSION = __version__
 
-import base64
 import codecs
 import cPickle as pickle
 import os
@@ -18,8 +17,14 @@ import sys
 import types
 import urllib
 from functools import wraps
-#from httplib2 import Http
-import requests
+try:
+    import requests
+    if requests.__version__ >= '1.0.0':
+        raise ImportError
+    REQUESTS = True
+except:
+    from httplib2 import Http
+    REQUESTS = False
 import cline
 from cache import Cache
 from fishbase import (get_credentials_file, O, formatted_tag_value,
@@ -437,9 +442,17 @@ class Fluidinfo:
         self.timeout = choose_http_timeout()
         if not host.startswith(u'http'):
             self.host = u'http://%s' % host
-        self.headers = {
-        }
-        self.auth = (credentials.username, credentials.password)
+        if REQUESTS:
+            self.headers = {}
+            self.auth = (credentials.username, credentials.password)
+        else:
+            userpass = u'%s:%s' % (credentials.username, credentials.password)
+            encoded = unicode(userpass.encode('UTF-8').encode('base64').strip())
+            auth = u'Basic %s' % encoded
+            self.headers = {
+                u'Authorization': auth
+            }
+
 
     def Print(self, s, allowSave=True, allowPrint=True):
         if self.saveOutput:
@@ -514,28 +527,31 @@ class Fluidinfo:
         try:
             response, content, result, status = self.request(url, method,
                                                          body8, headers)
-        except:
-            raise Exception(u'URL Fetch failure (URL len %d): %s'
-                            % (len(url), url))
+        except Exception, e:
+            raise Exception(u'URL Fetch failure (URL len %d): %s\n%s'
+                            % (len(url), url, str(e)))
             
         return status, result
 
     def request(self, url, method, body8, headers):
-#        http = _get_http(self.timeout)
-#        response, content = http.request(url, method, body8, headers)
-        if method == 'GET':
-            r = requests.get(url, auth=self.auth, headers=headers)
-        elif method == 'PUT':
-            r = requests.put(url, body8, auth=self.auth, headers=headers)
-        elif method == 'POST':
-            r = requests.post(url, body8, auth=self.auth, headers=headers)
-        elif method == 'DELETE':
-            r = requests.delete(url, auth=self.auth, headers=headers)
+        if REQUESTS:
+            if method == 'GET':
+                r = requests.get(url, auth=self.auth, headers=headers)
+            elif method == 'PUT':
+                r = requests.put(url, body8, auth=self.auth, headers=headers)
+            elif method == 'POST':
+                r = requests.post(url, body8, auth=self.auth, headers=headers)
+            elif method == 'DELETE':
+                r = requests.delete(url, auth=self.auth, headers=headers)
+            else:
+                raise GeneralError('Unknown method')
+            response = r.headers
+            content = r.content
+            status = r.status_code
         else:
-            raise GeneralError('Unknown method')
-        response = r.headers
-        content = r.content
-        status = r.status_code
+            http = _get_http(self.timeout)
+            response, content = http.request(url, method, body8, headers)
+            status = response.status
 
         if response[u'content-type'].startswith(u'application/json'):
             result = json.loads(content)
@@ -1093,10 +1109,11 @@ class Fluidinfo:
 
 
         """
-        strHash = u'{%s}' % u', '.join(u'"%s": {"value": %s}'
-                                       % (tag, format_val(tagsToSet[tag]))
-                                       for tag in tagsToSet)
-        (v, r) = self.call(u'PUT', u'/values', strHash, {u'query': query})
+        h = {}
+        for tag in tagsToSet:
+            h[tag] = {u'value': tagsToSet[tag]}
+        (v, r) = self.call(u'PUT', u'/values', json.dumps(h),
+                          {u'query': query})
         assert_status(v, STATUS.NO_CONTENT)
 
 

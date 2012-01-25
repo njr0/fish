@@ -6,24 +6,28 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 #
+import sys
+import types
 import unittest
-from fishlib import *
-from cli import *
+import urllib
+import fishbase
+import fishlib
+import cli
 
 class TestFluidinfo(unittest.TestCase):
 
     def setUp(self):
-        self.db = Fluidinfo()
+        self.db = fishlib.Fluidinfo()
         self.user = self.db.credentials.username   # UNICODE
         self.db.set_connection_from_global()
         self.db.set_debug_timeout(5.0)
-        self.dadgadID = id(u'DADGAD', self.db.host)
+        self.dadgadID = fishlib.id(u'DADGAD', self.db.host)
 
     def testCreateObject(self):
         db = self.db
         o = db.create_object(u'DADGAD')
         self.assertEqual(o.id, self.dadgadID)
-        self.assertEqual(o.tags[u'URI'], object_uri(self.dadgadID))
+        self.assertEqual(o.tags[u'URI'], fishlib.object_uri(self.dadgadID))
 
     def testCreateObjectNoAbout(self):
         db = self.db
@@ -31,10 +35,11 @@ class TestFluidinfo(unittest.TestCase):
         self.assertEqual(type(o) not in (int, long), True)
 
     def testCreateObjectFail(self):
-        bad = Credentials(u'doesnotexist', u'certainlywiththispassword')
-        db = Fluidinfo(bad)
+        bad = fishlib.Credentials(u'doesnotexist',
+                                  u'certainlywiththispassword')
+        db = fishlib.Fluidinfo(bad)
         o = db.create_object(u'DADGAD')
-        self.assertEqual(o, STATUS.UNAUTHORIZED)
+        self.assertEqual(o, fishlib.STATUS.UNAUTHORIZED)
 
     def testCreateTag(self):
         db = self.db
@@ -47,7 +52,7 @@ class TestFluidinfo(unittest.TestCase):
         self.assertEqual(type(o.id) in types.StringTypes, True)
         self.assertEqual(unicode(urllib.unquote(o.tags['URI'].encode('UTF-8')),
                                  'UTF-8'),
-                         tag_uri(db.credentials.username,
+                         fishlib.tag_uri(db.credentials.username,
                          u'test-fish/testrating'))
                                                 
 
@@ -94,7 +99,7 @@ class TestFluidinfo(unittest.TestCase):
 
         query = u'fluiddb/about = "%s"' % object_about
         db.tag_by_query(query, tagsToSet)
-        objects = db.get_values_by_query(query, tagsToSet)
+        objects = db.get_values_by_query(query, tagsToSet.keys())
         self.assertEqual(len(objects), 1)
         o = objects[0]
         for key in tagsToSet:
@@ -157,7 +162,7 @@ class TestFluidinfo(unittest.TestCase):
         self.assertEqual(error, 0)
         status, v = db.get_tag_value_by_id(self.dadgadID,
                                            u'test-fish/testrating')
-        self.assertEqual(status, STATUS.NOT_FOUND)
+        self.assertEqual(status, fishlib.STATUS.NOT_FOUND)
 
         # Now untag it again (should be OK)
         error = db.untag_object_by_id(self.dadgadID, u'test-fish/testrating')
@@ -186,7 +191,7 @@ class TestFluidinfo(unittest.TestCase):
         self.assertEqual(error, 0)
         status, v = db.get_tag_value_by_about(u'DADGAD',
                                               u'test-fish/testrating')
-        self.assertEqual(status, STATUS.NOT_FOUND)
+        self.assertEqual(status, fishlib.STATUS.NOT_FOUND)
 
     def testAddValuelessTag(self):
         db = self.db
@@ -203,11 +208,11 @@ class TestFluidinfo(unittest.TestCase):
 class TestFDBUtilityFunctions(unittest.TestCase):
 
     def setUp(self):
-        self.db = Fluidinfo()
+        self.db = fishlib.Fluidinfo()
         self.user = self.db.credentials.username
         self.db.set_connection_from_global()
         self.db.set_debug_timeout(5.0)
-        self.dadgadID = id(u'DADGAD', self.db.host)
+        self.dadgadID = fishlib.id(u'DADGAD', self.db.host)
 
     def testFullTagPath(self):
         db = self.db
@@ -261,9 +266,9 @@ class TestFDBUtilityFunctions(unittest.TestCase):
                          (user, u'foo/bar', u'rating'))
         self.assertEqual(db.tag_path_split('/tags/%s/foo/bar/rating' % user),
                          (user, u'foo/bar', u'rating'))
-        self.assertRaises(TagPathError, db.tag_path_split, u'')
-        self.assertRaises(TagPathError, db.tag_path_split, u'/')
-        self.assertRaises(TagPathError, db.tag_path_split, u'/foo')
+        self.assertRaises(fishlib.TagPathError, db.tag_path_split, u'')
+        self.assertRaises(fishlib.TagPathError, db.tag_path_split, u'/')
+        self.assertRaises(fishlib.TagPathError, db.tag_path_split, u'/foo')
 
     def testTypedValueInterpretation(self):
         corrects = {
@@ -299,18 +304,19 @@ class TestFDBUtilityFunctions(unittest.TestCase):
         }
         for s in corrects:
             target, targetType = corrects[s]
-            v = get_typed_tag_value(s)
+            v = fishlib.get_typed_tag_value(s)
             self.assertEqual((s, v), (s, target))
             self.assertEqual((s, type(v)), (s, targetType))
 
 
 def specify_DADGAD(mode, host):
     if mode == 'about':
-        return ('-a', 'DADGAD', O(about=u'DADGAD'))
+        return ('-a', 'DADGAD', fishbase.O(about=u'DADGAD'))
     elif mode == 'id':
-        return ('-i', id('DADGAD', host), O(id=id('DADGAD', host)))
+        return ('-i', fishlib.id('DADGAD', host),
+                fishbase.O(id=fishlib.id('DADGAD', host)))
     elif mode == 'query':
-        return ('-q', 'fluiddb/about="DADGAD"', O(about=u'DADGAD'))
+        return ('-q', 'fluiddb/about="DADGAD"', fishbase.O(about=u'DADGAD'))
     else:
         raise ModeError('Bad mode')
 
@@ -318,19 +324,19 @@ def specify_DADGAD(mode, host):
 class TestCLI(unittest.TestCase):
 
     def setUp(self):
-        self.db = Fluidinfo()
+        self.db = fishlib.Fluidinfo()
         self.user = self.db.credentials.username
         self.db.set_connection_from_global()
         self.db.set_debug_timeout(5.0)
-        self.dadgadID = id('DADGAD', self.db.host)
+        self.dadgadID = fishlib.id('DADGAD', self.db.host)
         self.stdout = sys.stdout
         self.stderr = sys.stderr
         self.stealOutput()
-        self.hostname = ['--hostname', choose_host()]
+        self.hostname = ['--hostname', fishlib.choose_host()]
 
     def stealOutput(self):
-        self.out = SaveOut()
-        self.err = SaveOut()
+        self.out = fishlib.SaveOut()
+        self.err = fishlib.SaveOut()
         sys.stdout = self.out
         sys.stderr = self.err
 
@@ -351,10 +357,10 @@ class TestCLI(unittest.TestCase):
     def tagTest(self, mode, verbose=True):
         self.stealOutput()
         (flag, spec, o) = specify_DADGAD(mode, self.db.host)
-        description = describe_by_mode(o)
+        description = cli.describe_by_mode(o)
         flags = ['-v', flag] if verbose else [flag]
         args = ['tag'] + ['-U'] + flags + [spec, 'rating=10'] + self.hostname
-        execute_command_line(*parse_args(args))
+        cli.execute_command_line(*cli.parse_args(args))
         self.reset()
         if verbose:
             target = ['Tagged object %s with rating = 10' % description, '\n']
@@ -369,10 +375,10 @@ class TestCLI(unittest.TestCase):
     def untagTest(self, mode, verbose=True):
         self.stealOutput()
         (flag, spec, o) = specify_DADGAD(mode, self.db.host)
-        description = describe_by_mode(o)
+        description = cli.describe_by_mode(o)
         flags = ['-v', flag] if verbose else [flag]
         args = ['untag'] + ['-U'] + flags + [spec, 'rating'] + self.hostname
-        execute_command_line(*parse_args(args))
+        cli.execute_command_line(*cli.parse_args(args))
         self.reset()
         if verbose:
             target = ['Removed tag rating from object %s\n' % description,
@@ -385,10 +391,10 @@ class TestCLI(unittest.TestCase):
     def showTaggedSuccessTest(self, mode):
         self.stealOutput()
         (flag, spec, o) = specify_DADGAD(mode, self.db.host)
-        description = describe_by_mode(o)
+        description = cli.describe_by_mode(o)
         args = (['show', '-U', '-v', flag, spec, 'rating', '/fluiddb/about']
                 + self.hostname)
-        execute_command_line(*parse_args(args))
+        cli.execute_command_line(*cli.parse_args(args))
         self.reset()
         self.assertEqual(self.out.buffer,
                 ['Object %s:' % description, '\n',
@@ -399,10 +405,10 @@ class TestCLI(unittest.TestCase):
     def showUntagSuccessTest(self, mode):
         self.stealOutput()
         (flag, spec, o) = specify_DADGAD(mode, self.db.host)
-        description = describe_by_mode(o)
+        description = cli.describe_by_mode(o)
         args = (['show', '-U', '-v', flag, spec, 'rating', '/fluiddb/about']
                  + self.hostname)
-        execute_command_line(*parse_args(args))
+        cli.execute_command_line(*cli.parse_args(args))
         self.reset()
         self.assertEqual(self.out.buffer,
                 ['Object %s:' % description, '\n',
@@ -447,7 +453,7 @@ class TestCLI(unittest.TestCase):
                 args = command.split(' ')
             else:
                 args = command
-            execute_command_line(*parse_args(args))
+            cli.execute_command_line(*cli.parse_args(args))
         self.reset()
         self.assertEqual(self.strip_list(self.out.buffer), expected)
 

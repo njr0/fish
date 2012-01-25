@@ -1,26 +1,32 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>tag — adds tags to objects &mdash; fish v4.28 documentation</title>
+    <title>tag — adds tags to objects &mdash; fish 4.30 documentation</title>
+    
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '4.28',
-        COLLAPSE_MODINDEX: false,
+        VERSION:     '4.30',
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="fish v4.28 documentation" href="index.html" />
+    <link rel="top" title="fish 4.30 documentation" href="index.html" />
     <link rel="next" title="untag — removes tags from objects" href="untag.html" />
     <link rel="prev" title="Shell-Fish: The Online version of Fish" href="shell-fish.html" /> 
   </head>
@@ -37,7 +43,7 @@
         <li class="right" >
           <a href="shell-fish.html" title="Shell-Fish: The Online version of Fish"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fish v4.28 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish 4.30 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -114,14 +120,14 @@ Object with about="Paris":
 </div>
 <p>As you can see</p>
 <blockquote>
-<ul class="simple">
+<div><ul class="simple">
 <li>A tag with no value is written as a valueless tag (or NULL, if you prefer)</li>
 <li>Things that look like numbers are taken as numbers</li>
 <li>True and False, regardless of capitalization, are taken as booleans</li>
 <li>Almost anything else is taken as a string.   Quotes are not needed for
 strings other than to embed whitespace.</li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p>Fish also supports values that are lists of strings.
 The preferred form for these is as a list of strings enclosed in square
 brackets, but braces may also be used, mostly for backwards compatibility.
@@ -161,12 +167,12 @@ $ fish tag -f -M image/gif abouttag image/red-spinner.gif=/tmp/spinner.gif</pre>
 <p>This <tt class="docutils literal"><span class="pre">red-spinner.gif</span></tt> file has actually been written to this location,
 using a command similar to those above, and can be viewed at:</p>
 <blockquote>
-<a class="reference external" href="http://fluiddb.fluidinfo.com/about/abouttag/njr/image/red-spinner.gif">http://fluiddb.fluidinfo.com/about/abouttag/njr/image/red-spinner.gif</a></blockquote>
+<div><a class="reference external" href="http://fluiddb.fluidinfo.com/about/abouttag/njr/image/red-spinner.gif">http://fluiddb.fluidinfo.com/about/abouttag/njr/image/red-spinner.gif</a></div></blockquote>
 <p>Notice that the correct MIME type is served, so the browser can show
 the image.</p>
 <p>Points to note:</p>
 <blockquote>
-<ul class="simple">
+<div><ul class="simple">
 <li>The <tt class="docutils literal"><span class="pre">-f</span></tt> flag indicates that all tag values in the command are filenames,
 i.e. you can&#8217;t mix file-based values and literals in a single command.</li>
 <li>The filename has to be included even if it is indentical to the tag name
@@ -183,7 +189,7 @@ etc. may be used.</li>
 input will be read from stdin and used as the value for all such tags,
 with MIME type set to text/plain (or whatever is specified with <tt class="docutils literal"><span class="pre">-M</span></tt>).</li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p>The file extensions for which MIME types are inferred fall into two groups.
 First are the textual MIME types (not necessarily types that begin
 <tt class="docutils literal"><span class="pre">text/</span></tt>, but ones whose contents are textual).   These are:</p>
@@ -264,39 +270,39 @@ By default, the user can write any tag under her namespace.</p>
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/fish-doc-logo.png" alt="Logo"/>
             </a></p>
-            <h3><a href="index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="">tag — adds tags to objects</a><ul>
-<li><a class="reference external" href="#value-types">Value Types</a></li>
-<li><a class="reference external" href="#writing-files-to-fluidinfo">Writing Files to Fluidinfo</a></li>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">tag — adds tags to objects</a><ul>
+<li><a class="reference internal" href="#value-types">Value Types</a></li>
+<li><a class="reference internal" href="#writing-files-to-fluidinfo">Writing Files to Fluidinfo</a></li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="shell-fish.html"
-                                  title="previous chapter">Shell-Fish: The Online version of Fish</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="untag.html"
-                                  title="next chapter">untag — removes tags from objects</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="_sources/tag.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="shell-fish.html"
+                        title="previous chapter">Shell-Fish: The Online version of Fish</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="untag.html"
+                        title="next chapter">untag — removes tags from objects</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/tag.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -313,12 +319,12 @@ By default, the user can write any tag under her namespace.</p>
         <li class="right" >
           <a href="shell-fish.html" title="Shell-Fish: The Online version of Fish"
              >previous</a> |</li>
-        <li><a href="index.html">fish v4.28 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish 4.30 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2011-2012, Nicholas J. Radcliffe.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.2.
+        &copy; Copyright 2011-2012, Nicholas J. Radcliffe.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

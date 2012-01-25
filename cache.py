@@ -53,8 +53,11 @@ class Cache:
 
     def sync(self, db):
         alias_tag = u'%s/%s' % (self.username, ALIAS_TAG)
-        objects = db.get_values_by_query(u'has %s' % alias_tag,
-                                         [u'fluiddb/about', alias_tag])
+        try:
+            objects = db.get_values_by_query(u'has %s' % alias_tag,
+                                             [u'fluiddb/about', alias_tag])
+        except:   # Probably the tag doesn't exist
+            return 'Failed'
         if objects:
             self.objects = {}
             for o in objects:
@@ -62,6 +65,7 @@ class Cache:
             self.write()
         else:
             db.warning('Nothing to sync from Fluidinfo')
+        return None
 
     def aliases(self, name=None):
         alias_tag = u'%s/%s' % (self.username, ALIAS_TAG)

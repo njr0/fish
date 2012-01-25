@@ -34,7 +34,10 @@
 # rating                                           --- the short tag name
 #
 
-from testfish import *
+import sys
+import cli
+import fishbase
+import fishlib
 import cline
 try:
     import readline
@@ -43,7 +46,6 @@ except ImportError:
         print 'Readline not available; no command history'
 
 PROMPT = '> '
-SEPARATORS = ' \t'
 
 class ExpansionFailedError(Exception):
     pass
@@ -60,7 +62,7 @@ class REPL():
         if welcome:
             print welcome
         print 'Synchronizing . . .',
-        line_go(u'sync')
+        cli.line_go(u'sync')
         print 'synchronized.'
         self.repl()
 
@@ -80,106 +82,36 @@ class REPL():
                 break
             if line.strip() in ('exit', 'quit'):
                 break
-            line_go(line)
+            cli.line_go(line)
 
 
-class ExpandGo:
-    def __init__(self, user=None, pwd=None, unixPaths=None, docbase=None,
-                 cache=None):
-        self.user = user
-        self.pwd = pwd
-        self.unixPaths = unixPaths
-        self.docbase = docbase
-        self.cache = cache
-
-    def e_go(self, lineArgs, saveOut=False):
-        if lineArgs.words:
-            if lineArgs.words[0] in ('history', 'h'):
-                result = '\n'.join(self.get_history())
-                if saveOut:
-                    return result
-                else:
-                    print result
-            else:
-                self.expand(lineArgs)
-                return go(lineArgs.words, self.user, self.pwd, self.unixPaths,
-                          self.docbase, saveOut=saveOut, cache=self.cache)
-
-    def expand(self, lineArgs):
-        i = 0
-        while i < len(lineArgs.words):
-            word = lineArgs.words[i]
-            if lineArgs.info[i] == '`':
-                wordline = cline.CScanSplit(lineArgs.words[i], SEPARATORS,
-                                            quotes='"\'')
-                if wordline.words:
-                     lineArgs.ExpandTerm(i, self.e_go(wordline,
-                                                      saveOut=True))
-            elif len(word) > 2 and word[0] == word[-1] == '`':
-                wordline = cline.CScanSplit(word[1:-1], SEPARATORS,
-                                            quotes='"\'')
-                lineArgs.ExpandTerm(i, self.e_go(wordline, saveOut=True))
-            i += 1
-
-
-def line_go(line, user=None, pwd=None, unixPaths=None, docbase=None,
-            saveOut=False, cache=None):
-    expander = ExpandGo(user, pwd, unixPaths, docbase, cache=cache)
-    lineArgs = cline.CScanSplit(line, SEPARATORS, quotes='"\'`')
-    return expander.e_go(lineArgs, saveOut=saveOut)
-
-
-def fish_command(line, username=None):
-    """Executes a fish command without reading the cache.
-       If no user is give, default credentials are used;
-       if a username is given that user's credentials file is read.
+def fish_command(line, username=None, raiseErrors=None):
+    """
+        Executes a fish command without reading the cache.
+        If no user is give, default credentials are used;
+        if a username is given that user's credentials file is read.
     """
     cred = Credentials(username)
     cache = Cache(None)
-    return line_go(line, cred.username, cred.password, cache=cache)
+    return cli.line_go(line, cred.username, cred.password, cache=cache,
+                   raiseErrors=raiseErrors)
 
 
-def go(rawargs=None, user=None, pwd=None, unixPaths=None, docbase=None,
-       saveOut=False, cache=None):
-    action, args, options, parser = parse_args(rawargs)
-    if not rawargs:
-        rawargs = [a.decode(DEFAULT_ENCODING) for a in sys.argv[1:]]
-    if not saveOut and options.outform:
-        if options.outform[0] in ('json', 'python'):
-            saveOut = options.outform[0]
-    if action.startswith('test') and not user:
-        cases = {
-            'testcli': TestCLI,
-            'testdb': TestFluidinfo,
-            'testutil': TestFDBUtilityFunctions,
-        }
-        try:
-            cases = {action: cases[action]}
-        except KeyError:
-            pass
-        suite = unittest.TestSuite()
-        for c in cases.values():
-            s = unittest.TestLoader().loadTestsFromTestCase(c)
-            suite.addTest(s)
-        v = 2 if options.hightestverbosity else 1
-        unittest.TextTestRunner(verbosity=v).run(suite)
-    else:
-        if action == 'fish' and args:
-           action, words = args[0], args[1:]
-        else:
-           words = args
-        return execute_command_line(action, words, options, parser,
-                                    user, pwd, unixPaths, docbase,
-                                    saveOut=saveOut, rawargs=rawargs,
-                                    cache=cache)
+def command(line, username=None):
+    """
+        Execute a fish command.
+        Print to stdout.
+        Raise exception on error.
+    """
+    return fish_command(line, username, raiseErrors=True)
 
 
 def repl_or_go():
-    action, args, options, parser = parse_args(sys.argv)
+    action, args, options, parser = cli.parse_args(sys.argv)
     if len(args) == 0 and not options.version:
-        REPL('This is fish version %s.' % VERSION)
+        REPL('This is fish version %s.' % fishlib.VERSION)
     else:
-        return go()
+        return cli.go()
 
 
 if __name__ == '__main__':

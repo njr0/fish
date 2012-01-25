@@ -1,26 +1,32 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>touch — creates a tags and optionally sets their descriptions &mdash; fish v4.28 documentation</title>
+    <title>touch — creates a tags and optionally sets their descriptions &mdash; fish 4.30 documentation</title>
+    
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '4.28',
-        COLLAPSE_MODINDEX: false,
+        VERSION:     '4.30',
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="fish v4.28 documentation" href="index.html" />
+    <link rel="top" title="fish 4.30 documentation" href="index.html" />
     <link rel="next" title="mkns — makes a new namespace" href="mkns.html" />
     <link rel="prev" title="rm — removes tags and namespaces" href="rm.html" /> 
   </head>
@@ -37,7 +43,7 @@
         <li class="right" >
           <a href="rm.html" title="rm — removes tags and namespaces"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">fish v4.28 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish 4.30 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -55,14 +61,14 @@ to set its description.</p>
 </div>
 <p><strong>FLAGS</strong></p>
 <blockquote>
-<ul class="simple">
+<div><ul class="simple">
 <li><tt class="docutils literal"><span class="pre">-m</span> <span class="pre">description</span></tt> Sets the description (metadata) for a tag.</li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p><strong>EXAMPLES</strong></p>
 <p>When authenticated as user <tt class="docutils literal"><span class="pre">alice</span></tt>:</p>
 <blockquote>
-<ol class="arabic">
+<div><ol class="arabic">
 <li><p class="first">Create a tag called <tt class="docutils literal"><span class="pre">alice/rating</span></tt></p>
 <div class="highlight-python"><pre>$ touch rating</pre>
 </div>
@@ -72,7 +78,7 @@ to set its description.</p>
 </div>
 </li>
 </ol>
-</blockquote>
+</div></blockquote>
 <p><strong>NOTE</strong></p>
 <p>Tag creation is automatic on first use in <tt class="docutils literal"><span class="pre">fish</span></tt>.  Touch is only
 needed, therefore, if you wish to set permissions before use or
@@ -89,30 +95,30 @@ specify a description</p>
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/fish-doc-logo.png" alt="Logo"/>
             </a></p>
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="rm.html"
-                                  title="previous chapter">rm — removes tags and namespaces</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="mkns.html"
-                                  title="next chapter">mkns — makes a new namespace</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="_sources/touch.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="rm.html"
+                        title="previous chapter">rm — removes tags and namespaces</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="mkns.html"
+                        title="next chapter">mkns — makes a new namespace</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/touch.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -129,12 +135,12 @@ specify a description</p>
         <li class="right" >
           <a href="rm.html" title="rm — removes tags and namespaces"
              >previous</a> |</li>
-        <li><a href="index.html">fish v4.28 documentation</a> &raquo;</li> 
+        <li><a href="index.html">fish 4.30 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2011-2012, Nicholas J. Radcliffe.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.2.
+        &copy; Copyright 2011-2012, Nicholas J. Radcliffe.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

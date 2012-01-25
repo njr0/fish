@@ -13,9 +13,10 @@ import sys
 import time
 import types
 import traceback
+import unittest
 from optparse import OptionParser, OptionGroup
 from itertools import chain, imap
-from fishbase import get_credentials_file, Dummy
+import fishbase
 from fishlib import (
     Fluidinfo,
     O,
@@ -40,7 +41,8 @@ from fishlib import (
     TagValue,
     Namespace,
 )
-from cache import ALIAS_TAG
+import testfish
+import cache
 import ls
 import flags
 import cline
@@ -118,6 +120,7 @@ About Tag Construction
 USAGE_FI = USAGE.replace('/about', 'fluiddb/about').replace('/alice',
                          'alice').replace('/bert', 'bert')
 USAGE_FISH = USAGE.replace('/alice/','')
+SEPARATORS = ' \t'
 
 
 
@@ -166,6 +169,7 @@ def execute_tag_command(objs, db, tags, options, action):
                              % (description,
                                 formatted_tag_value(tag.name, tag.value,
                                                     prefix=u'')))
+                    o = obj
             else:
                 db.warning(u'Failed to tag object %s with %s'
                         % (description, tag.name))
@@ -305,8 +309,8 @@ def execute_mkns_command(db, args, options):
 
 
 def execute_su_command(db, args):
-    source =  get_credentials_file(username=args[0])
-    dest = get_credentials_file()
+    source = fishbase.get_credentials_file(username=args[0])
+    dest = fishbase.get_credentials_file()
     shutil.copyfile(source, dest)
     db = Fluidinfo(Credentials(filename=dest))
     username = db.credentials.username
@@ -404,6 +408,95 @@ class SequenceTags:
                                         noneIfNone=zeroIfMissing) or 0
 
 
+class ExpandGo:
+    def __init__(self, user=None, pwd=None, unixPaths=None, docbase=None,
+                 cache=None):
+        self.user = user
+        self.pwd = pwd
+        self.unixPaths = unixPaths
+        self.docbase = docbase
+        self.cache = cache
+
+    def e_go(self, lineArgs, saveOut=False, raiseErrors=None):
+        if lineArgs.words:
+            if lineArgs.words[0] in ('history', 'h'):
+                result = '\n'.join(self.get_history())
+                if saveOut:
+                    return result
+                else:
+                    print result
+            else:
+                self.expand(lineArgs)
+                return go(lineArgs.words, self.user, self.pwd, self.unixPaths,
+                          self.docbase, saveOut=saveOut, cache=self.cache,
+                          raiseErrors=raiseErrors)
+
+    def expand(self, lineArgs):
+        i = 0
+        while i < len(lineArgs.words):
+            word = lineArgs.words[i]
+            if lineArgs.info[i] == '`':
+                wordline = cline.CScanSplit(lineArgs.words[i], SEPARATORS,
+                                            quotes='"\'')
+                if wordline.words:
+                     lineArgs.ExpandTerm(i, self.e_go(wordline,
+                                                      saveOut=True))
+            elif len(word) > 2 and word[0] == word[-1] == '`':
+                wordline = cline.CScanSplit(word[1:-1], SEPARATORS,
+                                            quotes='"\'')
+                lineArgs.ExpandTerm(i, self.e_go(wordline, saveOut=True))
+            i += 1
+
+
+def line_go(line, user=None, pwd=None, unixPaths=None, docbase=None,
+            saveOut=False, cache=None, raiseErrors=None):
+    expander = ExpandGo(user, pwd, unixPaths, docbase, cache=cache)
+    lineArgs = cline.CScanSplit(line, SEPARATORS, quotes='"\'`')
+    return expander.e_go(lineArgs, saveOut=saveOut, raiseErrors=raiseErrors)
+
+
+def db_go(db, line):
+    expander = ExpandGo(db.credentials.username, db.credentials.password,
+                        db.credentials.unixStyle, cache=db.cache)
+    lineArgs = cline.CScanSplit(line, SEPARATORS, quotes='"\'`')
+    return expander.e_go(lineArgs, saveOut=db.saveOutput)
+
+
+def go(rawargs=None, user=None, pwd=None, unixPaths=None, docbase=None,
+       saveOut=False, cache=None, raiseErrors=None):
+    action, args, options, parser = parse_args(rawargs)
+    if not rawargs:
+        rawargs = [a.decode(DEFAULT_ENCODING) for a in sys.argv[1:]]
+    if not saveOut and options.outform:
+        if options.outform[0] in ('json', 'python'):
+            saveOut = options.outform[0]
+    if action.startswith('test') and not user:
+        cases = {
+            'testcli': testfish.TestCLI,
+            'testdb': testfish.TestFluidinfo,
+            'testutil': testfish.TestFDBUtilityFunctions,
+        }
+        try:
+            cases = {action: cases[action]}
+        except KeyError:
+            pass
+        suite = unittest.TestSuite()
+        for c in cases.values():
+            s = unittest.TestLoader().loadTestsFromTestCase(c)
+            suite.addTest(s)
+        v = 2 if options.hightestverbosity else 1
+        unittest.TextTestRunner(verbosity=v).run(suite)
+    else:
+        if action == 'fish' and args:
+           action, words = args[0], args[1:]
+        else:
+           words = args
+        return execute_command_line(action, words, options, parser,
+                                    user, pwd, unixPaths, docbase,
+                                    saveOut=saveOut, rawargs=rawargs,
+                                    cache=cache, raiseErrors=raiseErrors)
+
+
 def execute_mkseq_command(db, args, options):
     if len(args) > 3:
         raise(u'Form: mkseq sequence-name [plural-form [base-tag]]')
@@ -483,7 +576,7 @@ def execute_seq_command(db, args, options):
 
 
 def execute_unalias_command(db, args, options):
-    abstag = db.abs_tag_path(ALIAS_TAG)
+    abstag = db.abs_tag_path(cache.ALIAS_TAG)
     options.unixstylepaths=True
     if len(args) < 1:
         raise CommandError(u'Form unalias alias [alias2...]')
@@ -493,7 +586,7 @@ def execute_unalias_command(db, args, options):
 
 
 def execute_alias_command(db, args, options):
-    abstag = db.abs_tag_path(ALIAS_TAG, inPref=True, outPref=False)
+    abstag = db.abs_tag_path(cache.ALIAS_TAG, inPref=True, outPref=False)
     if len(args) < 2:
         aliases = db.cache.aliases(args[0] if len(args) == 1 else None)
         z = [(a.about, a) for a in aliases]
@@ -509,7 +602,7 @@ def execute_alias_command(db, args, options):
 
 
 def create_alias(db, name, definition, options):
-    abstag = db.abs_tag_path(ALIAS_TAG)
+    abstag = db.abs_tag_path(cache.ALIAS_TAG)
     options.unixstylepaths=True
     o = O({abstag[1:]: definition}, about=name)
     e = execute_tag_command([o], db, [u"%s='%s'" % (abstag, definition)],
@@ -526,8 +619,12 @@ def execute_showcache_command(db, args, options):
 
 
 def execute_sync_command(db, args, options):
-    db.cache.sync(db)
-
+    if db.cache.sync(db):  # failed
+        print 'Creating alias tag . . .'
+        db_go(db, u'touch -U .fish/alias')
+        db_go(db, u'perms -U private .fish/alias')
+        print 'fish/alias tag created'
+        db.cache.sync(db)
 
 def execute_search_command(db, args, options):
     abouts, info, n = db.search(words=args, maxResults=options.pagesize,
@@ -573,7 +670,7 @@ def form_tag_value_pairs(tags, options=None):
         if eqPos == -1:
             if fromFile:
                 if value is None:
-                    value = Dummy()
+                    value = fishbase.Dummy()
                     value.value = sys.stdin.read()
                     value.mime = options.mime or 'text/plain'
             pairs.append(TagValue(tag, value))
@@ -751,13 +848,14 @@ def toOutputString(s):
 
 def execute_command_line(action, args, options, parser, user=None, pwd=None,
                          unixPaths=None, docbase=None, saveOut=False,
-                         rawargs=None, cache=None):
+                         rawargs=None, cache=None, raiseErrors=False):
     credentials = (Credentials(user or options.user[0], pwd)
                    if (user or options.user) else None)
     unixPaths = (path_style(options) if path_style(options) is not None
                                      else unixPaths)
     db = ls.ExtendedFluidinfo(host=options.hostname, credentials=credentials,
-                              debug=options.debug, unixStylePaths=unixPaths,
+                              debug=options.debug,
+                              unixStylePaths=unixPaths,
                               saveOut=saveOut, cache=cache)
     quiet = (action == 'get')
 
@@ -834,6 +932,7 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
             return
     
     try:
+        retval = None
         if action == 'help':
             if args and args[0] in command_list:
                 base = docbase or sys.path[0]
@@ -847,10 +946,10 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
         elif action == 'commands':
             db.Print(' '.join(command_list))
         elif action not in command_list:
-            db.Print('Unrecognized command %s' % action)        
+            raise CommandError('Unrecognized command %s' % action)        
         elif (action.lower() not in ARGLESS_COMMANDS
               and not args and not options.anon):
-            db.Print('Too few arguments for action %s' % action)
+            raise CommandError('Too few arguments for action %s' % action)
         elif action == 'count':
             db.Print('Total: %s' % (flags.Plural(len(objs), 'object')))
         elif action in ('tags', 'tag', 'untag', 'show', 'get'):
@@ -866,8 +965,10 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
                         options.about = [spec]
                     args = args[1:]
                 else:
-                    db.Print('You must use -q or specify an about tag or'
-                             ' object ID for the %s command.' % action)
+                    raise CommandError('You must use -q or specify an about '
+                                       'tag or object ID for the %s command.'
+                                       % action)
+                                       
             if action == 'tags':
                 execute_tags_command(objs, db, options)
             elif objs:
@@ -881,7 +982,7 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
                     'get': execute_show_command,
                 }
                 command = actions[action]
-                command(objs, db, args, options, action)
+                retval = command(objs, db, args, options, action)
         elif action == 'ls':
             ls.execute_ls_command(db, objs, args, options, credentials,
                                   unixPaths)
@@ -931,9 +1032,11 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
         elif action in ('quit', 'exit'):
             pass
         else:
-            db.Print('Unrecognized command %s' % action)
+            raise CommandError('Unrecognized command %s' % action)
     except Exception, e:
-        if options.debug:
+        if raiseErrors:
+            raise
+        elif options.debug:
             db.Print(unicode(traceback.format_exc()))
         db.Print(u'Fish failure:\n  %s' % unicode(e))
     if db.saveOutput:
@@ -945,3 +1048,6 @@ def execute_command_line(action, args, options, parser, user=None, pwd=None,
         else:
             return (u'\n'.join([toOutputString(b) for b in db.buffer])
                     if saveOut else None)
+    else:
+        return retval
+        
