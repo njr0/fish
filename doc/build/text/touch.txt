@@ -2,8 +2,8 @@
 touch — creates a tags and optionally sets their descriptions
 *************************************************************
 
-The ``touch`` command may be used to create a tag, and optionally to
-set its description.
+The "touch" command may be used to create a tag, and optionally to set
+its description.
 
 **FORM**
 
@@ -11,24 +11,23 @@ set its description.
 
 **FLAGS**
 
-   * ``-m description`` Sets the description (metadata) for a tag.
+   * "-m description" Sets the description (metadata) for a tag.
 
 **EXAMPLES**
 
-When authenticated as user ``alice``:
+When authenticated as user "alice":
 
-   1. Create a tag called ``alice/rating``
+   1. Create a tag called "alice/rating"
 
          $ touch rating
 
-   2. Create a tag ``alice/private/rating`` with description "keep
-      out"
+   2. Create a tag "alice/private/rating" with description "keep out"
 
          $ touch -m "keep out"  private/rating
 
 **NOTE**
 
-Tag creation is automatic on first use in ``fish``.  Touch is only
+Tag creation is automatic on first use in "fish".  Touch is only
 needed, therefore, if you wish to set permissions before use or
 specify a description
 

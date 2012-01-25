@@ -576,4 +576,10 @@ For the moment, therefore, I have made it so that tries to import
 requests and checks that it is a version under 1.0.0.   If the
 library is not present, or is at 1.0.0 or above, Fish falls back to
 httplib2.
+
+2012/01/24 v4.32
+Turned this into something more like a proper python package
+with a setup.py, moved the fish script into scripts etc.
+Plan to add to PyPI.
 """
+

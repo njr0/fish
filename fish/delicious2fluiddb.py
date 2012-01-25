@@ -7,7 +7,7 @@
 # See LICENSE for license.
 #
 import types, sys
-import fdb
+from fish import fish
 #import fdbdummy as fdb
 from delicious import *
 try:
@@ -74,7 +74,7 @@ if __name__ == '__main__':
     nShared = len(entries)
     print 'Removed %d private entries' % (nTotal - nShared)
 
-    db = fdb.Fluidinfo()
+    db = fluidinfo.Fluidinfo()
     nURLs = nTags = 0
     tagsUsed = set()
     for i, entry in enumerate(entries[startAt:]):

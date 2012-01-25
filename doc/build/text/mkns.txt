@@ -2,8 +2,8 @@
 mkns — makes a new namespace
 ****************************
 
-The ``mkns`` command may be used to create a namespace, and optionally
-to set its description. The command ``mkdir`` may be used as an
+The "mkns" command may be used to create a namespace, and optionally
+to set its description. The command "mkdir" may be used as an
 alternative.
 
 **FORMS**
@@ -13,26 +13,26 @@ alternative.
 
 **FLAGS**
 
-   * ``-m description`` Sets the description (metadata) for a tag.
+   * "-m description" Sets the description (metadata) for a tag.
 
 **EXAMPLES**
 
-When authenticated as the user ``alice``:
+When authenticated as the user "alice":
 
-   1. Create a namespace called ``alice/secret``
+   1. Create a namespace called "alice/secret"
 
          $ touch secret
 
-   2. Create a tag ``alice/very/secret`` with description "keep right
+   2. Create a tag "alice/very/secret" with description "keep right
       out"
 
          $ touch -m "keep right out"  very/secret
 
 **NOTE**
 
-Namespace Tag creation is automatic on first use in ``fish``.  This
+Namespace Tag creation is automatic on first use in "fish".  This
 command is only needed, therefore, if you wish to set permissions
 before use set permissions before use or specify a description.
 
-The ``mkns`` command cannot be used (at present) to change the
+The "mkns" command cannot be used (at present) to change the
 description of an existing namespace.

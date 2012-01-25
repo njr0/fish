@@ -11,16 +11,16 @@ Download
 ========
 
 Fish is available from Github at https://github.com/njr0/fish (use the
-download button).   The main program is ``fish.py`` in the top level
-folder and the ``fish`` script, which simply executes ``fish.py``.
+download button).   The main program is "fish.py" in the top level
+folder and the "fish" script, which simply executes "fish.py".
 
 
 Dependencies
 ============
 
-If you're running python 2.6, ``fish.py`` should just run.   With
-earlier version of python, you need to get access to ``simplejson``
-and ``httplib2``. You can get simplejson from
+If you're running python 2.6, "fish.py" should just run.   With
+earlier version of python, you need to get access to "simplejson" and
+"httplib2". You can get simplejson from
 http://pypi.python.org/pypi/simplejson/ and httplib2 from
 http://code.google.com/p/httplib2/.
 
@@ -33,14 +33,14 @@ available from http://github.com/njr0/abouttag.
 Making the Fish command available
 =================================
 
-The file ``fish`` included in the download is executable provided that
-a suitable python is installed.    You can make it available more
+The file "fish" included in the download is executable provided that a
+suitable python is installed.    You can make it available more
 conveniently by using a shell alias or adding a symbolic link to it
-somewhere on your ``PATH``.   For example:
+somewhere on your "PATH".   For example:
 
    alias fish='/path/to/fish'
 
-or, if ``~/bin`` is on your ``PATH``:
+or, if "~/bin" is on your "PATH":
 
    cd ~/bin
    ln -s /path/to/fish
@@ -74,11 +74,11 @@ the format
 username password
 
 On Unix-like operating systems (including Mac OS X), the default
-location for this is ``~/.fluidDBcredentials``.
+location for this is "~/.fluidDBcredentials".
 
 On windows, the lcoation of the credentials file is specified by the
-environment variable ``FDB_CREDENTIALS_FILE``; if that is not set, the
-Fish looks for ``c:\fish\credentials.txt``.
+environment variable "FDB_CREDENTIALS_FILE"; if that is not set, the
+Fish looks for "c:\fish\credentials.txt".
 
 You can also optionally add a line, after password, saying either
 
@@ -89,14 +89,14 @@ used.
 
 If you want to use multiple Fluidinfo accounts, store extra sets of
 credentials in files with an extra extention corresponding to the user
-name. For example, if you want to use accounts ``alice`` and ``bob``
-store Alice's credentials in ``~/.fluidDBcredentials.alice`` and Bob's
-in ``~/.fluidDBcredentials.bob``.   The ``su`` command will then copy
-the appropriate set of credentials to ``~/.fluidDBcredentials``. When
+name. For example, if you want to use accounts "alice" and "bob" store
+Alice's credentials in "~/.fluidDBcredentials.alice" and Bob's in
+"~/.fluidDBcredentials.bob".   The "su" command will then copy the
+appropriate set of credentials to "~/.fluidDBcredentials". When
 operating in this mode, you also have the option of setting the
-environment variable ``FISHUSER`` to ``alice`` or ``bob``, and that
-will cause Fish to user those credentials.   This allows different
-shell instances to use different users, should you need that.
+environment variable "FISHUSER" to "alice" or "bob", and that will
+cause Fish to user those credentials.   This allows different shell
+instances to use different users, should you need that.
 
 
 Tag Conventions
@@ -121,8 +121,8 @@ unless they are introduced with a leading slash.  Also, the about tag
 output.
 
 If you want to overrride this behaviour for a given command, you can
-use the ``-U`` flag to specify that the command will use unix-style
-paths, or ``-F`` to indicate that it will use fluidinfo-style paths.
+use the "-U" flag to specify that the command will use unix-style
+paths, or "-F" to indicate that it will use fluidinfo-style paths.
 
 
 Tests
@@ -130,7 +130,7 @@ Tests
 
 The library includes a set of tests.   If you have valid credentials,
 and everything is OK, these should run successfully if you just
-execute the file ``testfish.py`` or say
+execute the file "testfish.py" or say
 
    python fish.py test
 
@@ -142,21 +142,20 @@ Using the Library
 
 Four ways of exploring the library are:
 
-   1. look at the tests (the ones in the class ``TestFluidDB``)
+   1. look at the tests (the ones in the class "TestFluidDB")
 
    2. look at the blog (http://abouttag.blogspot.com)
 
    3. read the function documentation in the source.
 
-   4. look at and run ``example.py``, which should print DADGAD and
-      10.
+   4. look at and run "example.py", which should print DADGAD and 10.
 
 
 Documentation
 =============
 
-This documentation is included with the release in the ``doc``
-subdirectory of with ``doc/build/html/index.html`` being the main web
+This documentation is included with the release in the "doc"
+subdirectory of with "doc/build/html/index.html" being the main web
 page.
 
 

@@ -10,7 +10,7 @@ Shows the values of the tags nominated from the objects specified.
 
 **EXAMPLES**
 
-When authenticated as  user ``alice``:
+When authenticated as  user "alice":
 
    $ fish show "Eiffel Tower" rating seen bert/seen
    Object with about="Eiffel Tower":
@@ -27,20 +27,20 @@ Alternative specifications:
    show "Eiffel Tower" rating seen /bert/seen
    show 93bd1999-0998-49cc-8004-af457ce34ce4 rating seen /bert/seen
 
-All of these commands will show the values the tags ``alice/rating``,
-``alice/seen`` and ``bert/seen`` from the object with about tag
-"Eiffel Tower" and ID ``93bd1999-0998-49cc-8004-af457ce34ce4``; The
-last one may also show other objects since the query
+All of these commands will show the values the tags "alice/rating",
+"alice/seen" and "bert/seen" from the object with about tag "Eiffel
+Tower" and ID "93bd1999-0998-49cc-8004-af457ce34ce4"; The last one may
+also show other objects since the query
 
    fluiddb/about matches "Eiffel Tower"
 
 is search-engine-style string match that will match any about tag
-containing the words ``Eiffel`` and ``Tower``, ignoring case, other
-words and punctuation.
+containing the words "Eiffel" and "Tower", ignoring case, other words
+and punctuation.
 
 **NOTES**
 
-The ``-F`` option specifies "Fluidinfo-style" full paths; when this
+The "-F" option specifies "Fluidinfo-style" full paths; when this
 option is used, all tag names are assumed be absolute, i.e. must start
 with the username.
 
@@ -51,4 +51,4 @@ system.
 See also:
 =========
 
-``get``, ``tags``
+"get", "tags"

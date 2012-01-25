@@ -2,7 +2,7 @@
 perms — sets access permissions on tags and namespaces
 ******************************************************
 
-The ``perms`` command provides a simple interface for changing the
+The "perms" command provides a simple interface for changing the
 permissions on tags and namespaces.   It only supports five cases, but
 there are powerful enough to cover the vast bulk of common situations.
 
@@ -10,68 +10,65 @@ there are powerful enough to cover the vast bulk of common situations.
 
    perms [flags] permissions-spec list-of-one-or-more-tags-or-namespaces
 
-Here ``permissions-spec`` can be one of the short forms:
+Here "permissions-spec" can be one of the short forms:
 
-   * ``private``
+   * "private"
 
-   * ``default``
+   * "default"
 
-   * ``lock``
+   * "lock"
 
-   * ``unlock``
+   * "unlock"
 
-   * ``group list+of+usernames+separated+by+pluses``
+   * "group list+of+usernames+separated+by+pluses"
 
-   * ``group-write list+of+usernames+separated+by+pluses``
+   * "group-write list+of+usernames+separated+by+pluses"
 
-   * ``group-read list+of+usernames+separated+by+pluses``
+   * "group-read list+of+usernames+separated+by+pluses"
 
 or one of three low-level forms:
 
-   * ``read [open|closed] [except
-     list+of+usernames+separated+by+pluses]``
+   * "read [open|closed] [except
+     list+of+usernames+separated+by+pluses]"
 
-   * ``write [open|closed] [except
-     list+of+usernames+separated+by+pluses]``
+   * "write [open|closed] [except
+     list+of+usernames+separated+by+pluses]"
 
-   * ``control [open|closed] [except
-     list+of+usernames+separated+by+pluses]``
+   * "control [open|closed] [except
+     list+of+usernames+separated+by+pluses]"
 
 **FLAGS**
 
-   ``-f``  The ``-f`` flag is used to force ``fish`` to set a policy
-   it
+   "-f"  The "-f" flag is used to force "fish" to set a policy it
       would otherwise resist.  In particular, setting any policy that
-      does not include owner control always requires use of the ``-f``
+      does not include owner control always requires use of the "-f"
       flag.
 
-   ``-X name -X name2`` The ``-X`` flag is used two allow fully
-      fine-grained control over permissions. If one or more ``-X``
-      flags are used. only the finest-grained permissions with the
-      Fish names specified are changed. These are the names shown by
-      ls -L:
+   "-X name -X name2" The "-X" flag is used two allow fully
+      fine-grained control over permissions. If one or more "-X" flags
+      are used. only the finest-grained permissions with the Fish
+      names specified are changed. These are the names shown by ls -L:
 
-         * ``metadata``, ``delete``, ``acontrol`` for abstract tags
+         * "metadata", "delete", "acontrol" for abstract tags
 
-         * ``read``, ``tag``, ``untag``, ``tcontrol`` for tags
+         * "read", "tag", "untag", "tcontrol" for tags
 
-         * ``read``, ``create``, ``delete``, ``control`` for
-           namespaces.
+         * "read", "create", "delete", "control" for namespaces.
 
       For example:
 
          $ fish perms write -X delete closed except alice /fish/z
 
-      Changes the fine-grained write permission ``delete`` on
-      ``fish/z`` so that only ``alice`` has the permission.
+      Changes the fine-grained write permission "delete" on "fish/z"
+      so that only "alice" has the permission.
 
-      ``-X`` is rarely used.
+      "-X" is rarely used.
 
 **EXAMPLES**
 
 The eight special cases supported are as follows and apply equally
-namespaces and tags.  In what follows, we'll use a ``rating`` tag and
-a namespace called ``friends``.
+namespaces and tags.  In what follows, we'll use a "rating" tag and a
+namespace called "friends".
 
    * Make a tag or namespace completely private.
 
@@ -83,9 +80,9 @@ a namespace called ``friends``.
         $ fish perms private rating fi
 
      This sets the permissions so that only the owner of the tag or
-     namespace has permission to do anything with it---``read``,
-     ``write`` and ``control`` permission. The abbreviated view of
-     this is shown by
+     namespace has permission to do anything with it---"read", "write"
+     and "control" permission. The abbreviated view of this is shown
+     by
 
         $ fish ls -ld rating fi
         trwc------   alice/rating
@@ -179,8 +176,8 @@ a namespace called ``friends``.
 
    * Set permissions so that one group of users can write tge tag or
      namespace, and another group can read it. In this case, let's
-     allow ``miro`` to write and ``bert`` and ``jacqui`` (as well as
-     ``miro``) to read.
+     allow "miro" to write and "bert" and "jacqui" (as well as "miro")
+     to read.
 
         $ fish perms group-read bert+jacqui+miro rating fi
         $ fish perms group-write miro rating fi
@@ -190,8 +187,8 @@ a namespace called ``friends``.
         nrwcrw----   r:bert+jacqui+miro  w:miro   alice/fi/
 
    * The final case is really just a special case of the previous one,
-     where the read and write groups are the same. Let's make ``miro``
-     the only user (other the owner, ``alice``) who can read or write
+     where the read and write groups are the same. Let's make "miro"
+     the only user (other the owner, "alice") who can read or write
      the tag and namespace.
 
         $ fish perms group miro rating fi
@@ -201,14 +198,14 @@ a namespace called ``friends``.
         nrwcrw----   miro   alice/fi/
 
 The three low-level case are exemplified by the following. In these
-forms, the Fluidinfo-style policy is explicitly given as ``open`` or
-``closed``, optionally foollowed by the word ``except`` and a list of
-user names on the exception list, separated by plus signs.
+forms, the Fluidinfo-style policy is explicitly given as "open" or
+"closed", optionally foollowed by the word "except" and a list of user
+names on the exception list, separated by plus signs.
 
 Note that the owner is not treated specially, so should normally be
 included in the exception list if the policy is closed. If the owner
-is excluded from control, ``fish`` will refuse to make the change
-unless forced with ``-f``.
+is excluded from control, "fish" will refuse to make the change unless
+forced with "-f".
 
    $ fish perms read open rating
    $ fish perms write closed except alice+miro rating
@@ -237,11 +234,11 @@ unless forced with ``-f``.
 1. **READ (LIST) PERMISSION ON NAMESPACES**.  Removing read access to
    a namespace prevents people from listing that namespace but does
    not stop them working with the contents of the namespace if they
-   can find them.  So if you have a namespace called ``secret`` and
-   set its permissions to ``nrwc------`` (owner-only access) and in it
-   have a tag called ``password`` with its permission set to the
-   default ``trwcr--r--`` then anyone will be able to read the
-   password if they discover it exists.
+   can find them.  So if you have a namespace called "secret" and set
+   its permissions to "nrwc------" (owner-only access) and in it have
+   a tag called "password" with its permission set to the default
+   "trwcr--r--" then anyone will be able to read the password if they
+   discover it exists.
 
    This is clearly not a good situation; the Fluidinfo team is aware
    of it and I expect some resolution will be forthcoming at some
@@ -249,20 +246,20 @@ unless forced with ``-f``.
 
    Note also that the *existence* of a tag cannot really be hidden in
    Fluidinfo, so people will be able to find out that you have a tag
-   called ``secret/password``.
+   called "secret/password".
 
 2. **LOSING CONTROL**.   If you give someone else write into one of
    your namespaces, you should be aware that any tags or namespaces
    that person creates will, by default be under the control of that
-   user, i.e. if ``alice`` creates a tag in your namespace, she will
+   user, i.e. if "alice" creates a tag in your namespace, she will
    have control permission and write permission over it and *you will
    not*.
 
    This is a recognized failure, and will be fixed.
 
-   In the meantime, if ``alice`` does create a tag called ``alice/a``
-   in ``bert``'s namespace, she can give back shared control to
-   ``bert`` by saying:
+   In the meantime, if "alice" does create a tag called "alice/a" in
+   "bert"'s namespace, she can give back shared control to "bert" by
+   saying:
 
       $ fish perms write closed except alice+bert /bert/alice/a
       $ fish perms control closed except alice+bert /bert/alice/a
@@ -273,4 +270,4 @@ unless forced with ``-f``.
 
 **SEE ALSO**:
 
-``ls``
+"ls"

@@ -1,4 +1,4 @@
-from fishlib import Fluidinfo, json
+from fish.fishlib import Fluidinfo, json
 
 def tag_by_about_values(db, items, map=None):
     # takes items as a list, tuple or dictionary of objects

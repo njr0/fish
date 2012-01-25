@@ -6,7 +6,7 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'4.31'
+__version__ = u'4.32'
 VERSION = __version__
 
 import codecs
@@ -25,10 +25,10 @@ try:
 except:
     from httplib2 import Http
     REQUESTS = False
-import cline
-from cache import Cache
-from fishbase import (get_credentials_file, O, formatted_tag_value,
-                      expandpath, Dummy, TEXTUAL_MIMES)
+from fish import cline
+from fish.cache import Cache
+from fish.fishbase import (get_credentials_file, O, formatted_tag_value,
+                           expandpath, Dummy, TEXTUAL_MIMES)
 
 if sys.version_info < (2, 6):
     try:

@@ -11,9 +11,9 @@ Runs fish's self-tests.
    fish testapi
    fish testdb
 
-The only normally relevant flag is ``-s``, to run against the sandbox.
+The only normally relevant flag is "-s", to run against the sandbox.
 
-The ``testcli``, ``testdb`` and ``testapi`` variants run subets of the
+The "testcli", "testdb" and "testapi" variants run subets of the
 tests.
 
 **EXAMPLE**
@@ -23,5 +23,5 @@ tests.
    ----------------------------------------------------------------------
    Ran 22 tests in 47.210s
 
-Everything is running correctly if you get a line of dots with no
-``E`` (error) or ``F`` failures.
+Everything is running correctly if you get a line of dots with no "E"
+(error) or "F" failures.

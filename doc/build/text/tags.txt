@@ -10,7 +10,7 @@ Show the list of tags (and their values) present on an objects
 
 **EXAMPLES**
 
-When authenticated as  user ``alice``:
+When authenticated as  user "alice":
 
    $ fish tags "Eiffel Tower"
    Object with about="Eiffel Tower":
@@ -35,11 +35,11 @@ and "stutter" quotes inside quotes.   So the last example becomes:
 
 All of these commands will show the names and values of all the tags
 (for which the user has read permission) from the object with about
-tag "Eiffel Tower" and ID ``93bd1999-0998-49cc-8004-af457ce34ce4``;
-The last one may also show other objects since the query
+tag "Eiffel Tower" and ID "93bd1999-0998-49cc-8004-af457ce34ce4"; The
+last one may also show other objects since the query
 
    fluiddb/about matches "Eiffel Tower"
 
 is search-engine-style string match that will match any about tag
-containing the words ``Eiffel`` and ``Tower``, ignoring case, other
-words and punctuation.
+containing the words "Eiffel" and "Tower", ignoring case, other words
+and punctuation.

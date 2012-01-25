@@ -36,7 +36,7 @@ not exist.
 
 **NOTES**
 
-The Fluidinfo API does not provide a primitive ``count`` function, so
+The Fluidinfo API does not provide a primitive "count" function, so
 FDB actually has to retrieve all the objects that match the query and
 count them; this operation can, therefore, be comparatively slow.
 
