@@ -6,7 +6,7 @@
 #               in the AUTHOR
 # Licence terms in LICENCE.
 
-__version__ = u'4.33'
+__version__ = u'4.34'
 VERSION = __version__
 
 import codecs
@@ -18,6 +18,7 @@ import types
 import urllib
 from functools import wraps
 try:
+    assert '/no/requests' not in sys.path
     import requests
     if requests.__version__ >= '1.0.0':
         raise ImportError
@@ -873,7 +874,7 @@ class Fluidinfo:
             result = json.loads(value)
             return result[u'tagPaths']
         else:
-            raise ObjectNotFoundError(u'Couldn\'t find object %s' % obj)
+            raise ObjectNotFoundError(u'Couldn\'t find object %s' % byAbout)
 
     def get_object_tags_by_id(self, id):
         return self.get_object_tags(id, False)

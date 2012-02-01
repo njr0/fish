@@ -1,6 +1,6 @@
 
-The Fish Command Line for Fluidinfo
-***********************************
+Fish — The Fluidinfo Shell
+**************************
 
 **Overview**
 

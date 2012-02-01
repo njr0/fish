@@ -6,8 +6,8 @@ A Brief Overview of Fluidinfo
 
 Fluidinfo is a simple, shared, online storage system in which each there are a set of objects, each of which can optionally be *about* something, and information is stored by tagging objects. Tags belong to users, and have names. Tags may store information simply by being present or absent, or they may have values. Thus I can indicate that I have read a book by attaching a tag called ``have-read`` to the object corresponding to that book, or I can rate it by attaching a ``rating`` tag with a numeric value to the object. Tag owners can set permissions on their tags to control who can see them and who can alter/use them. So tags are owned and are subject to a permissions system and policies, while all objects are shared.
 
-Overview of the Command Line
-----------------------------
+Overview of the Fish Command Line
+---------------------------------
 
 The Fish command line normally acts as a sort-of one-shot command shell for Fluidinfo. It gives access to much of the functionality of the underlying ``fishlib.py`` library, with a main focus on tagging, getting tag values, finding tags, querying Fluidinfo and clearing (removing tags). It also has some facilities for listing tags and viewing and altering their permissions.
 

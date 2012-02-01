@@ -587,5 +587,7 @@ Updated installation section of documentation and README.
 Localised imports.
 Was getting all ready to push fish to pypi, but there's already a fish there.
 
+2012/01/25 v4.24
+Added missing setup.py
 """
 

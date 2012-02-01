@@ -19,8 +19,8 @@ So tags are owned and are subject to a permissions system and
 policies, while all objects are shared.
 
 
-Overview of the Command Line
-============================
+Overview of the Fish Command Line
+=================================
 
 The Fish command line normally acts as a sort-of one-shot command
 shell for Fluidinfo. It gives access to much of the functionality of
