@@ -31,7 +31,7 @@ setup(name='fish',
           'Topic :: Software Development :: Libraries :: Python Modules',
           'Topic :: Internet',
       ],
-      install_requires = ['urlnorm>=1.1.2', 'requests==0.9.2'],
+      install_requires = ['urlnorm>=1.1.2', 'requests==2.20.0'],
       long_description = '''\
 The Fluidinfo shell provides a shell for Fluidinfo, modelled
 fairly closely on a Unix shell.
